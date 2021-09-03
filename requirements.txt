@@ -1,0 +1,13 @@
+pandas
+numpy
+matplotlib
+spacy
+myqlm
+scipy
+pytest
+jupyterlab
+
+# i've removed tensorflow for now, because it requires a lower numpy version
+# which is incompatible with jupyterlab (or something else)
+# tensorflow
+scikit-learn

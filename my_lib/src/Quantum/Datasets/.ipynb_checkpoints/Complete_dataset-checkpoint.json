@@ -1,0 +1,566 @@
+{
+  "train_data": [
+    {
+      "sentence": "cat chases",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse meows",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": false
+    },
+    {
+      "sentence": "chicken eats fox",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse flees krill",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "fish swims in water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "fox bites krill",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog chases cat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse eats dog",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat runs after dog",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse runs in water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat chases after fox",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "fox chases",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "seal swims on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat bites fish",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog meows",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": false
+    },
+    {
+      "sentence": "chicken runs",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "chicken runs in water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat flees krill",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "fish swims on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat runs on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "fox flees mouse",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "fox eats grain",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "fish clucks",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog chases",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "seal runs",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse bites cheese",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat meows",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse chases cat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog bites cat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog barks at cat",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog flees cat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat flees mouse",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs after fox",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat runs after fox",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "seal clucks",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs after grain",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "fox runs on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "fish swims",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "chicken eats grain",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat eats grain",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse eats cheese",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "fox runs",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog chases after fox",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "whale swims in water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "fox chases dog",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "whale eats chicken",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "fox runs after chicken",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog barks",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "whale eats krill",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse eats fox",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse squeaks",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat runs in water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs after cat",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "whale eats grain",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "fox bites chicken",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog squeaks",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": false
+    },
+    {
+      "sentence": "whale swims on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog eats krill",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog eats bone",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog bites grain",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat runs after mouse",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse chases fox",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "fox chases after chicken",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog barks at fox",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog eats grain",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs in water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "seal runs in water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "chicken runs on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat chases after mouse",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat runs",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat chases mouse",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat chases fox",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat flees chicken",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs after krill",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse bites cheese",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "fox eats chicken",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog bites fox",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "chicken flees fox",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "fox chases after dog",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog chases fox",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog barks at krill",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse flees cat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "fish meows",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog chases after cat",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat flees dog",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "chicken clucks",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "fox runs after dog",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat bites mouse",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    }
+  ],
+  "test_data": [
+    {
+      "sentence": "dog bites krill",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog chases after grain",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "chicken flees mouse",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "seal swims",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse runs",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog bites bone",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "seal eats grain",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog chases after krill",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog barks at grain",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "fox runs in water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "chicken eats cat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat squeaks",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse chases dog",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat eats fish",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "seal runs on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "fox flees dog",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "fox chases chicken",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "seal swims in water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "seal eats fish",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse runs on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "whale swims",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog flees fox",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    }
+  ]
+}

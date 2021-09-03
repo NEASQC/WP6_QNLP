@@ -1,0 +1,106 @@
+{
+  "train_data": [
+    {
+      "sentence": "mouse flees dog",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog flees fish",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog flees cat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat eats mouse",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog eats mouse",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse eats fish",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse eats dog",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog flees mouse",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog eats cat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat flees mouse",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog eats bone",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse flees fish",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse flees cat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat eats bone",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat flees dog",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse eats cat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    }
+  ],
+  "test_data": [
+    {
+      "sentence": "dog eats meat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat flees fish",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat eats fish",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat eats dog",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    }
+  ]
+}

@@ -1,0 +1,551 @@
+{
+  "train_data": [
+    {
+      "sentence": "cat chases on water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog eats at day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat chases at night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse runs on night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse eats dog",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat chases after water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat chases at water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse chases after day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog chases after day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog chases",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat chases on day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog chases at land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse chases on day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse flees cat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat runs at water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse flees fish",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat runs after day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse runs on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat runs after mouse",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse eats cat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat chases after night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse eats at night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat eats at night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse runs at water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat runs after water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse runs after night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse runs after land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog chases at water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat eats mouse",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog chases after land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog eats mouse",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat runs on day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse chases after night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse eats fish",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog eats",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat chases at day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog chases at day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat runs at night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog chases after water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat flees fish",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat flees dog",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse chases on night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs after day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse runs after water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat eats",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog eats on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse eats",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog runs on day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat chases on night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog chases after cat",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat eats on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog chases on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat eats bone",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog runs on night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog chases on water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse chases at water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat eats dog",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs on water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs at land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog flees mouse",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat runs on night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat eats at day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog chases on day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat runs on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog runs after mouse",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse runs on water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs at water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog chases after mouse",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat chases after land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse flees dog",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog runs after land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse chases after land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs after water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse runs",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse eats on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog eats cat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog eats bone",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat runs after land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat runs after night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse runs at land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat flees mouse",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat runs at day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog runs on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse eats at day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat chases after mouse",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse runs on day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    }
+  ],
+  "test_data": [
+    {
+      "sentence": "mouse chases after water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat chases at land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat runs on water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat runs at land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "cat chases on land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse runs at day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog flees fish",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs after cat",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat eats fish",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat chases after day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog chases on night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse runs at night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "dog flees cat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs after night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse chases at land",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog chases after night",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "mouse chases on water",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog eats meat",
+      "sentence_type": "NOUN-TVERB-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "mouse runs after day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": false
+    },
+    {
+      "sentence": "dog runs at day",
+      "sentence_type": "NOUN-IVERB-PREP-NOUN",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat chases",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    },
+    {
+      "sentence": "cat runs",
+      "sentence_type": "NOUN-IVERB",
+      "truth_value": true
+    }
+  ]
+}
