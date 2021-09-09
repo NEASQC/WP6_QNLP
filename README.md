@@ -9,7 +9,7 @@ To download the code as a local copy to run the code in your own machine, it is 
 ```console
 your@user:~$ git clone <copied_URL>
 ```
- * The code will be downloaded to the terminal directoyy
+ * The code will be downloaded to the terminal directory
 
 
 ## Jupyter notebooks
