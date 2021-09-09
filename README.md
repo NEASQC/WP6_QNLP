@@ -5,7 +5,8 @@ To download the code as a local copy to run the code in your own machine, it is 
 
  * Make sure you are viewing the **D6_3_PreAlphaPrototype**. Click on the drop down list with the branch symbol at the top left and select this branch. 
  * Then click on the green **code** button and copy the HTTPS link.
- * Open a terminal in your computer and run the following command: ```console
+ * Open a terminal in your computer and run the following command: 
+ * ```console
 your@user:~$ git clone <copied_URL>
 foo
 ```
