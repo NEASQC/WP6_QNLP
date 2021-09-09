@@ -7,8 +7,8 @@ To download the code as a local copy to run the code in your own machine, it is 
  * Then click on the green **code** button and copy the HTTPS link.
  * Open a terminal in your computer and run the following command: 
 ```console
-your@user:~$ git clone <copied_URL>```
-
+your@user:~$ git clone <copied_URL>
+```
  * The code will be downloaded to the terminal directoyy
 
 
