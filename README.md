@@ -3,11 +3,12 @@
 ## Download the code
 To download the code as a local copy to run the code in your own machine, it is recommended to clone the repository using **git**.
 
- * Make sure you are viewing the **D6_3_PreAlphaPrototype**. Click on the drop down list with the branch symbol at the top left and select this branch. 
+ * To see the different releases codes, make sure you are viewing the **releases** branch. Click on the drop down list with the branch symbol at the top left and select this branch. 
+ * To navigate between different versions click on the drop down list again and select the **tags** tab. There you can access the available releases (for now pre-alpha prototype is the only one).
  * Then click on the green **code** button and copy the HTTPS link.
- * Open a terminal in your computer and run the following command: 
+ * To download an specific release, open a terminal in your computer and run the following command: 
 ```console
-your@user:~$ git clone <copied_URL>
+your@user:~$ git clone --depth 1 --releases <tag_name> <copied_url>
 ```
  * The code will be downloaded to the terminal directory
 
