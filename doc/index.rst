@@ -7,8 +7,8 @@
 
 .. only:: html
 
-    Welcome to the NEASQC documentation
-    ===================================
+    Welcome to the WP6_QNLP documentation
+    =====================================
 
     .. image:: logo-neasqc.svg
         :scale: 50%
@@ -23,10 +23,6 @@
 .. toctree-filt::
     :maxdepth: 1
     :caption: Advanced usage
-
-.. toctree-filt::
-    :maxdepth: 1
-    :caption: myQLM Power Access
 
 .. toctree-filt::
     :maxdepth: 2
