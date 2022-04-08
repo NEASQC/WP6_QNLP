@@ -85,7 +85,7 @@ python -m spacy download en_core_web_lg
 
 ### Running
 To run the the notebooks, start jupyter lab and navigate to the notebooks in
-[misc/notebooks/](./misc/notebooks/)
+[my_lib/pre_alpha/notebooks/](./my_lib/pre_alpha/notebooks/)
 
 ```sh
 # Make sure the virtual environement is activated
@@ -98,7 +98,7 @@ jupyter-lab
 
 ### More information
 Some more information about the notebooks is provided in
-[misc/notebooks/README.md](./misc/notebooks/README.md)
+[my_lib/pre_alpha/notebooks/README.md](./my_lib/pre_alpha/notebooks/README.md)
 
 ## Generating the animal dataset
 Manual dataset generation isn't necessary for running the Jupyter notebooks.
@@ -108,7 +108,7 @@ using the following commands.
 Run
 ```sh
 # Choose a seed number, e.g, 1337, to deterministically randomize the sentence order
-./my_lib/src/DataPreparation/gen_animal_dataset.py --seed 1337 > outfile
+./my_lib/pre_alpha/src/DataPreparation/gen_animal_dataset.py --seed 1337 > outfile
 ```
 to generate a tab-separated file containing lines of the form
 `<sentence>\t<sentence_type>\t<truth_value>` where `<truth_value>` is 1 if the sentence states a
