@@ -12,7 +12,7 @@ your@user:~$ git clone --depth 1 --releases <tag_name> <copied_url>
 ```
  * The code will be downloaded to the terminal directory
 
-##Repository structure: Pre alpha and Alpha gaps
+## Repository structure: Pre alpha and Alpha gaps
 
 The repository contains code for the pre alpha and the alpha prototype. For the former, a task consisting of true/false sentence classification was implemented, and
 it can be found under the ´pre_alpha´ folder, along with example jupyter notebooks showing the training pipeline.
@@ -25,7 +25,7 @@ are retrieved for the words in a sentence, and a neural network reduce the dimen
 
 ## Jupyter notebooks
 
-The `misc/notebooks` directory contains examples demonstrating how the quantum
+An example of the pre-alpha implementation is found in  `my_lib/alpha/DressedQuantumCircuit` directory, and more examples for the pre-alpha are located in ``my_lib/pre_alpha/notebooks` containing examples demonstrating how the quantum
 and classical NLP modules are used to solve NLP-related problems (currently – a
 sentence classification task).
 
@@ -39,8 +39,10 @@ The instructions below describe the steps to set up an environment for the
 the project's root. The steps for setting up an environement for the **classical
 NLP module** are identical except for the fact that a different requirements
 file –
-[./misc/notebooks/classical/requirements.txt](./misc/notebooks/classical/requirements.txt)
+[./my_lib/pre_alpha/notebooks/classical/requirements.txt](./my_lib/pre_alpha/notebooks/classical/requirements.txt)
 – should be used.
+
+An additional [./my_lib/alpha/DressedQuantumCircuit/requirements.txt](./requirements.txt) needs to be installed to run the Notebook for the Alpha protoype demonstration.
 
 #### Dependencies
 We recommend using `virtualenv` or `anaconda` to create an isolated environment
