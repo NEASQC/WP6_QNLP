@@ -12,10 +12,20 @@ your@user:~$ git clone --depth 1 --releases <tag_name> <copied_url>
 ```
  * The code will be downloaded to the terminal directory
 
+## Repository structure: Pre alpha and Alpha gaps
+
+The repository contains code for the pre alpha and the alpha prototype. For the former, a task consisting of true/false sentence classification was implemented, and
+it can be found under the ´pre_alpha´ folder, along with example jupyter notebooks showing the training pipeline.
+For the latter, some research was made about hybrid quantum-classical algorithms and how quantum could fit in more complex NLP algorithm architectures. This lead to
+creating what XanaduAI calls Dressed Quantm Circuits. For this purpose, pretrained classical models are used as preprocessing layers in a transfer learning fashion. 
+We wanted to implement Neural Networks able to transform pretrained word vectors into usable lower dimensional vectors acting as the parameters for the rotations of
+variational quantum circuits. A first iteration (WIP) of this approach can be found under the folder ´alpha´. A Juyter Notebook can be found where context dependant BERT vectors 
+are retrieved for the words in a sentence, and a neural network reduce the dimensionality of the parameters to encode the sentence as a DisCoCat circuit.
+
 
 ## Jupyter notebooks
 
-The `misc/notebooks` directory contains examples demonstrating how the quantum
+An example of the pre-alpha implementation is found in  `my_lib/alpha/DressedQuantumCircuit` directory, and more examples for the pre-alpha are located in ``my_lib/pre_alpha/notebooks` containing examples demonstrating how the quantum
 and classical NLP modules are used to solve NLP-related problems (currently – a
 sentence classification task).
 
@@ -29,8 +39,10 @@ The instructions below describe the steps to set up an environment for the
 the project's root. The steps for setting up an environement for the **classical
 NLP module** are identical except for the fact that a different requirements
 file –
-[./misc/notebooks/classical/requirements.txt](./misc/notebooks/classical/requirements.txt)
+[./my_lib/pre_alpha/notebooks/classical/requirements.txt](./my_lib/pre_alpha/notebooks/classical/requirements.txt)
 – should be used.
+
+An additional [./my_lib/alpha/DressedQuantumCircuit/requirements.txt](./requirements.txt) needs to be installed to run the Notebook for the Alpha protoype demonstration.
 
 #### Dependencies
 We recommend using `virtualenv` or `anaconda` to create an isolated environment
@@ -73,7 +85,7 @@ python -m spacy download en_core_web_lg
 
 ### Running
 To run the the notebooks, start jupyter lab and navigate to the notebooks in
-[misc/notebooks/](./misc/notebooks/)
+[my_lib/pre_alpha/notebooks/](./my_lib/pre_alpha/notebooks/)
 
 ```sh
 # Make sure the virtual environement is activated
@@ -86,7 +98,7 @@ jupyter-lab
 
 ### More information
 Some more information about the notebooks is provided in
-[misc/notebooks/README.md](./misc/notebooks/README.md)
+[my_lib/pre_alpha/notebooks/README.md](./my_lib/pre_alpha/notebooks/README.md)
 
 ## Generating the animal dataset
 Manual dataset generation isn't necessary for running the Jupyter notebooks.
@@ -96,7 +108,7 @@ using the following commands.
 Run
 ```sh
 # Choose a seed number, e.g, 1337, to deterministically randomize the sentence order
-./my_lib/src/DataPreparation/gen_animal_dataset.py --seed 1337 > outfile
+./my_lib/pre_alpha/src/DataPreparation/gen_animal_dataset.py --seed 1337 > outfile
 ```
 to generate a tab-separated file containing lines of the form
 `<sentence>\t<sentence_type>\t<truth_value>` where `<truth_value>` is 1 if the sentence states a
