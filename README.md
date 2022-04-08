@@ -12,6 +12,16 @@ your@user:~$ git clone --depth 1 --releases <tag_name> <copied_url>
 ```
  * The code will be downloaded to the terminal directory
 
+##Repository structure: Pre alpha and Alpha gaps
+
+The repository contains code for the pre alpha and the alpha prototype. For the former, a task consisting of true/false sentence classification was implemented, and
+it can be found under the ´pre_alpha´ folder, along with example jupyter notebooks showing the training pipeline.
+For the latter, some research was made about hybrid quantum-classical algorithms and how quantum could fit in more complex NLP algorithm architectures. This lead to
+creating what XanaduAI calls Dressed Quantm Circuits. For this purpose, pretrained classical models are used as preprocessing layers in a transfer learning fashion. 
+We wanted to implement Neural Networks able to transform pretrained word vectors into usable lower dimensional vectors acting as the parameters for the rotations of
+variational quantum circuits. A first iteration (WIP) of this approach can be found under the folder ´alpha´. A Juyter Notebook can be found where context dependant BERT vectors 
+are retrieved for the words in a sentence, and a neural network reduce the dimensionality of the parameters to encode the sentence as a DisCoCat circuit.
+
 
 ## Jupyter notebooks
 
