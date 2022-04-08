@@ -3,9 +3,11 @@
 """
 Test for this module
 """
+import sys
 
+sys.path.insert(0, './pre_alpha')
 
-from my_lib import some_function, MyClass
+from pre_alpha import some_function, MyClass
 
 
 class TestMyClass:
