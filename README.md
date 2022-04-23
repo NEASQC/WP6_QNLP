@@ -4,7 +4,7 @@
 To download the code as a local copy to run the code in your own machine, it is recommended to clone the repository using **git**.
 
  * To see the different releases codes, make sure you are viewing the **releases** branch. Click on the drop down list with the branch symbol at the top left and select this branch. 
- * To navigate between different versions click on the drop down list again and select the **tags** tab. There you can access the available releases (for now pre-alpha prototype is the only one).
+ * To navigate between different versions click on the drop down list again and select the **tags** tab. There you can access the available releases.
  * Then click on the green **code** button and copy the HTTPS link.
  * To download an specific release, open a terminal in your computer and run the following command: 
 ```console
