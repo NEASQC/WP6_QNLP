@@ -113,3 +113,5 @@ Run
 to generate a tab-separated file containing lines of the form
 `<sentence>\t<sentence_type>\t<truth_value>` where `<truth_value>` is 1 if the sentence states a
 fact that is true and 0 otherwise, and `<sentence_type>` denotes the sentence type, e.g., `NOUN-TVERB-NOUN`.
+
+This project has received funding from the European Union’s Horizon 2020 research and innovation programme under Grant Agreement No. 951821.
