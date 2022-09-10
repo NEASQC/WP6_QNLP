@@ -23,9 +23,9 @@ class PyTest(TestCommand):
         sys.exit(errno)
 
 setup(
-    name="mylib",
+    name="QNLP",
     version="0.0.1",
-    author="XXX",
+    author="Irish Centre for High-End Computing (ICHEC), Tilde SIA",
     license="European Union Public License 1.2",
 
     packages=find_packages(),

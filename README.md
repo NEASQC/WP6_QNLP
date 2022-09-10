@@ -1,4 +1,10 @@
-# WP6
+# Quantum Natural Language Processing
+
+This repository is associated to the use case of Quantum Natural Language Processing of the European Quantum Flagship project NEASQC.
+
+## License
+
+The [LICENSE](./LICENSE) file contains the default license statement as specified in the proposal and partner agreement.
 
 ## Jupyter notebooks
 
@@ -83,8 +89,12 @@ using the following commands.
 Run
 ```sh
 # Choose a seed number, e.g, 1337, to deterministically randomize the sentence order
-./my_lib/src/DataPreparation/gen_animal_dataset.py --seed 1337 > outfile
+./QNLP_lib/src/DataPreparation/gen_animal_dataset.py --seed 1337 > outfile
 ```
 to generate a tab-separated file containing lines of the form
 `<sentence>\t<sentence_type>\t<truth_value>` where `<truth_value>` is 1 if the sentence states a
 fact that is true and 0 otherwise, and `<sentence_type>` denotes the sentence type, e.g., `NOUN-TVERB-NOUN`.
+
+## Acknowledgements
+
+This work is supported by the [NEASQC](www.neasqc.eu/) project, funded by the European Union's Horizon 2020 programme, Grant Agreement No. 951821.
