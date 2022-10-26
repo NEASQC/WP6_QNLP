@@ -10,6 +10,6 @@ pytket_qiskit>=0.18.0
 qiskit>=0.35.0
 qiskit_ignis>=0.6.0
 sympy==1.8
-torch==1.10.2
-torchvision==0.11.3
+torch==1.12.1
+torchvision==0.13.1
 transformers==4.16.2
