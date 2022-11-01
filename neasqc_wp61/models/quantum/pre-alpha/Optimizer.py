@@ -1,4 +1,4 @@
-import Circuit as circuit
+import circuit
 import scipy.optimize
 import sentence
 import math
