@@ -50,7 +50,7 @@ The language model will be stored in the created virtual environment.
 
 We can use jupyterlab to run the jupyter notebooks that appear on the repo. To do so, we can run the following command in our terminal:
 ```console
-  $ python3 -m jupyterlab <path of the notebook we want to run>
+  $ python3.9 -m jupyterlab <path of the notebook we want to run>
 ```
 This command will open a jupyterlab terminal on our explorer, where we can run the selected notebook.
 We will give now instructions for running each one of the notebooks, depending on the datasets that we want to use in our models. 
