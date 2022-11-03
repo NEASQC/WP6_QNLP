@@ -53,7 +53,7 @@ We can use jupyterlab to run the jupyter notebooks that appear on the repo. To d
   $ python -m ipykernel install --user --name  <environment_name> --display-name "<kernel name>"
   $ python3.9 -m jupyterlab <path of the notebook we want to run>
 ```
-This command will open a jupyterlab terminal on our explorer, where we can run the selected notebook.
+The first command will define a kernel, named <kernel name>, which you must change to after opening jupyterlab. The second command will open a jupyterlab terminal on our explorer, where we can run the selected notebook.
 We will give now instructions for running each one of the notebooks, depending on the datasets that we want to use in our models. 
 
 
