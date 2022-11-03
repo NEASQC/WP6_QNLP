@@ -67,6 +67,9 @@ We will give now instructions for running each one of the notebooks, depending o
 * **Dataset_example.ipynb**
     - In cell[3], the value of the variable ```filename``` must be one of the following:
         - ```"Complete_dataset.json"```
+        - ```"dataset_vectorized_bert_cased.json"```
+        - ```"dataset_vectorized_bert_uncased.json"```
+        - ```"dataset_vectorized_fasttext.json"```
         - ```"Expanded_Transitive_dataset.json"```
         - ```"Reduced_words_complete_dataset.json"```
   
