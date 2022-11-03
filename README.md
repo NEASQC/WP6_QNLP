@@ -50,6 +50,7 @@ The language model will be stored in the created virtual environment.
 
 We can use jupyterlab to run the jupyter notebooks that appear on the repo. To do so, we can run the following command in our terminal:
 ```console
+  $ python -m ipykernel install --user --name  <environment_name> --display-name "<kernel name>"
   $ python3.9 -m jupyterlab <path of the notebook we want to run>
 ```
 This command will open a jupyterlab terminal on our explorer, where we can run the selected notebook.
