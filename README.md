@@ -89,7 +89,23 @@ We will give now instructions for running each one of the notebooks, depending o
         - ```'../../../data/Reduced_words_complete_dataset.json"```
         - ```'../../../data/Reduced_words_transitive_dataset.json"```
 
+# Alpha Functionalities
 
+## BERT Sentence Embeddings
+
+Using the BERT model, the word embeddings of each word in each sentence in an inputted dataset are calculated. These word embeddings serve as the initial parameters, after dimensionality reduction, of the parametrised quantum circuits that represent each sentence.
+
+## DisCoCat Circuits
+
+Using the lambeq package, a tket parametrised quantum circuit is generated for each sentence in the dataset.
+
+## Dressed Quantum Circuit for Sentence Classification
+
+The dressed quantum circuit forms our trainable PyTorch neural network. Initially the sentence embedding dimensionality is reduced to be compatible with the dimension of their respective parameters within the parametrised quantum circuits. This is achieved using sequential, cascasding linear transformations. Next the quantum circuit is run, after which the measurement outcomes are fed into a post-processing neural network which ultimately classifies the sentence as true or false.
+
+## Torch OPtimisation
+
+The dressed quantum circuit model is trained using Torch.
   
 
 
