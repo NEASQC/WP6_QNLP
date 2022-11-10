@@ -131,6 +131,10 @@ The functions and classes used to implement the variational quantum circuit are 
 
 # Alpha Functionalities
 
+## Sentence Dataset and Model Purpose
+
+The datatset used is Complete_dataset.json, which contains sentences of varying grammatical structure that are labelled as true or false. The idea is to train a model, using this dataset, that can classify unknown sentences as true or false.
+ 
 ## BERT Sentence Embeddings
 
 Using the BERT model, the word embeddings of each word in each sentence in an inputted dataset are calculated. These word embeddings serve as the initial parameters, after dimensionality reduction, of the parametrised quantum circuits that represent each sentence.
@@ -146,6 +150,13 @@ The dressed quantum circuit forms our trainable PyTorch neural network. Initiall
 ## Torch OPtimisation
 
 The dressed quantum circuit model is trained using Torch.
+  
+# Alpha Documentation
+
+The alpha is currently implemented in one single jupyter notebook, Dressed_QNLP_demo.ipynb. The beginning of the notebook contains a demonstration of how BERT sentence embeddings and parametrised quantum circuits can be generated using a small number of sample sentences. After this demonstration, and below the "Dressed Quantum Circuits" heading, two classes are defined which can be used in a pipeline that takes in our sentence dataset and generates a trainable model. After this generation, the model is trained using PyTorch. 
+
+WARNING: You must run the initial demonstration as many of the functions and imports are used in the definition of the actual model, later in the notebook.
+
   
 
 
