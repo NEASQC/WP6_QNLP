@@ -1,44 +1,60 @@
-# WP6 
+# Quantum Natural Language Processing : NEASQC WP6.1
 
-# Installation
 
-## Cloning the GitHub repository
+## Installing locally
 
-To download the code as a local copy to run the code in your own machine, it is recommended to clone the repository using git. 
+### Obtaining a local copy of the code repository
+In order to run the code locally, you will need to obtain a copy of the repository. To this end, you can either fork the repository or clone it. 
 
-* Click on the 'Switch branches/tags' button to select v0.3 branch. 
-* Click on the green code button and copy the HTTPS link. 
-* Open a terminal in your computer and run the following command in the directory you want to clone the repository:
-```console
+#### Cloning
+We here detail the procedure to be followed for cloning.
+
+<ol>
+  <li>Open the code repository in your browser.</li>
+  <li>Open the drop-down menu on the leftClick on the 'Switch branches/tags' button to select v0.3 branch.</li>
+  <li>Click on the green code button and choose the cloning method you want to use, GitHub provides detailes steps for each method (HTTPS, SSH, etc).</li>
+  <li>Open a terminal on your computer and navigate to the directory you wish to clone the repository into. </li>
+  <li>Run the following command in your terminal:
+  ``` console
   $ git clone <copied_url>
-```
-* Go to the cloned repository folder and switch to v0.3 branch by running the following command in the terminal:
-```console
+  ```
+  . </li>
+  <li>Navigate into the cloned repository by using `cd WP6_QNLP`</li>
+  <li>Run the following command in your terminal: 
+  ```console
   $ git checkout v0.3
-```
+  ```.
+  </li>
+<ol>
 
-## Python version
 
+### Creating a new environment and installing required packages
+
+#### Python version
 The python version required to run the scripts and notebooks of this repo is Python3.9.
 
-## Creating a new environment and installing required packages
+#### Virtual environment
+Once you have cloned the repository, we recommend creating a virtual environment to run the code and notebooks. There are several tools to create a virtual environment, here we describe one of them and encourage users to resort to whichever approach is most familiar.
+<ul>
+  <li>To create a virtual environment, go to the directory where you want to create it and run the following command in the terminal:
+  ```console
+    $ python3.9 -m venv <environment name>
+  ```
+  .</li>
+  <li> Once this has been done, the environment can be activated by running the following command:
+  ```console
+    $ source <environment_name>/bin/activate
+  ```
+  If the environment has been activated correctly its name should appear in parentheses on the left of the user name in the terminal.</li>
+  <li>Ensure pip is installed. If if not, follow instructions found [here](https://pip.pypa.io/en/stable/installation/) to install it.</li>
+  <li> To install the required packages, run the command:
+  ```console
+    $ pip install -r requirements.txt
+  ```
+  .</li>
+<ul>
 
-Once you have cloned the repo, it is highly recommended to create a virtul environment which will act as a "virtual" isolated Python installation. To create a virtual environment, go to the directory where you want to create it and run the following command in the terminal:
-```console
-  $ python3.9 -m venv <environment name>
-```
-Once this has been done, the environment can be activated by running the following command:
-```console
-  $ source <environment_name>/bin/activate
-```
-If the environment has been activated correctly its name should appear in parentheses on the left of the user name in the terminal. To install the required packages, you will have to go to the root directory of the repository and run the command:
-```console
-  $ pip install -r requirements.txt
-```
-Instructions on how to install pip can be found in https://pip.pypa.io/en/stable/installation/ if it is not installed on the user's computer. 
-
-## Download spacy model
-
+#### Spacy model
 Some of the tools used in the module require a language model to be donwloaded by the user. This can be done running the following command:
 ```console
   $ python3.9 -m spacy download en_core_web_lg
@@ -46,9 +62,8 @@ Some of the tools used in the module require a language model to be donwloaded b
 The language model will be stored in the created virtual environment. 
 
 
-# Running the notebooks
-
-We can use jupyterlab to run the jupyter notebooks that appear on the repo. To do so, we can run the following command in our terminal:
+## Running the notebooks
+We can use jupyterlab to run the jupyter notebooks that appear on the repository. To do so, we can run the following command:
 ```console
   $ python -m ipykernel install --user --name  <environment_name> --display-name "<kernel name>"
   $ python3.9 -m jupyterlab <path of the notebook we want to run>
@@ -91,7 +106,6 @@ We will give now instructions for running each one of the notebooks, depending o
 
 
 # Pre-alpha Functionalities
-
 The main scope of the pre-alpha model is to build a variational quantum algorithm that makes sentence classification in categories True or False. The structure of the analyzed sentences will be: 
 
 * NOUN-TRANSITIVE VERB-NOUN
