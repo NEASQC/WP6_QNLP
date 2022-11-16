@@ -31,17 +31,40 @@ We here detail the procedure to be followed for cloning.
 ### Creating a new environment and installing required packages
 
 #### Python version
-The python version required to run the scripts and notebooks of this repo is Python3.10. Due to the presence of the myQLM , only [python.org](https://www.python.org/downloads/macos/) and brew python distributions are supported.
+The python version required to run the scripts and notebooks of this repo is Python3.10. Due to the presence of the myQLM , only [python.org](https://www.python.org/downloads/macos/) and brew python distributions are supported. 
 
-  * If Python3.10 hasn't been installed with brew yet, run the following command on the terminal to install it on your local device.
-  ```console
-    $ brew install python@3.10
-  ```
+1. If Python3.10 hasn't been installed (***using brew***) yet, or Python3.10 has been installed using any other method:
 
-  * By running the following command on the terminal, we make sure that we will link the recently installed Python3.10 to the environmental variable ***python3.10***.
-  ```console
-    $ brew link --overwrite python@3.10
-  ```
+    a. We run the following command on the terminal to install it on your local device.
+    ```console
+      $ brew install python@3.10
+    ```
+
+    b. By running the following command on the terminal, we make sure that we will link the recently installed Python3.10 to the environmental variable ***python3.10***.
+    ```console
+      $ brew link --overwrite python@3.10
+    ```
+    We may get an error if there was any other environmental variable named ***python3.10***. In that case we must remove the variable from the PATH with the command: 
+    ```console
+      $ unset python3.10
+    ```
+    and then use brew link command again. 
+
+2. If Python3.10 has been already installed (***using brew***):
+
+    a. We make sure that we have it linked to the the environmental variable ***python3.10*** using the command shown on section 1b. A warning message will appear if we have it already linked (we can ignore it).
+
+    b. We make sure that there are no packages installed on the global Python by running the command: 
+    
+    ```console
+      $ python3.10 -m pip list
+    ```
+    In the case where there were packages installed on the global Python we should uinstall them with the command: 
+
+    ```console
+      $ python3.10 -m pip uninstall <undesired package>
+    ```
+
 
 
 
@@ -76,12 +99,12 @@ The language model will be stored in the created virtual environment.
 
 
 ## Running the notebooks
-We can use jupyterlab to run the jupyter notebooks that appear on the repository. To do so, we can run the following command:
+We can use jupyter notebook to run the jupyter notebooks that appear on the repository. To do so, we can run the following command:
 ```console
   $ python3.10 -m ipykernel install --user --name  <environment_name> --display-name "<kernel name>"
   $ python3.10 -m jupyter notebook <path of the notebook we want to run>
 ```
-The first command will define a kernel, named <kernel name>, which you must change to after opening jupyterlab. The second command will open a jupyterlab terminal on our explorer, where we can run the selected notebook.
+The first command will define a kernel, named <kernel name>, which you must change to after opening jupyter notebook. The second command will open a jupyter notebook terminal on our explorer, where we can run the selected notebook.
 We will give now instructions for running each one of the notebooks, depending on the datasets that we want to use in our models. 
 
 
