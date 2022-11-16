@@ -31,14 +31,27 @@ We here detail the procedure to be followed for cloning.
 ### Creating a new environment and installing required packages
 
 #### Python version
-The python version required to run the scripts and notebooks of this repo is Python3.9.
+The python version required to run the scripts and notebooks of this repo is Python3.10. Due to the presence of the myQLM , only [python.org](https://www.python.org/downloads/macos/) and brew python distributions are supported.
+
+  * If Python3.10 hasn't been installed with brew yet, run the following command on the terminal to install it on your local device.
+  ```console
+    $ brew install python@3.10
+  ```
+
+  * By running the following command on the terminal, we make sure that we will link the recently installed Python3.10 to the environmental variable ***python3.10***.
+  ```console
+    $ brew link --overwrite python@3.10
+  ```
+
+
+
 
 #### Virtual environment
 Once you have cloned the repository, we recommend creating a virtual environment to run the code and notebooks. There are several tools to create a virtual environment, here we describe one of them and encourage users to resort to whichever approach is most familiar.
 <ul>
   <li>To create a virtual environment, go to the directory where you want to create it and run the following command in the terminal:
   ```console
-    $ python3.9 -m venv <environment name>
+    $ python3.10 -m venv <environment name>
   ```
   .</li>
   <li> Once this has been done, the environment can be activated by running the following command:
@@ -57,7 +70,7 @@ Once you have cloned the repository, we recommend creating a virtual environment
 #### Spacy model
 Some of the tools used in the module require a language model to be donwloaded by the user. This can be done running the following command:
 ```console
-  $ python3.9 -m spacy download en_core_web_lg
+  $ python3.10 -m spacy download en_core_web_lg
 ```
 The language model will be stored in the created virtual environment. 
 
@@ -65,8 +78,8 @@ The language model will be stored in the created virtual environment.
 ## Running the notebooks
 We can use jupyterlab to run the jupyter notebooks that appear on the repository. To do so, we can run the following command:
 ```console
-  $ python -m ipykernel install --user --name  <environment_name> --display-name "<kernel name>"
-  $ python3.9 -m jupyterlab <path of the notebook we want to run>
+  $ python3.10 -m ipykernel install --user --name  <environment_name> --display-name "<kernel name>"
+  $ python3.10 -m jupyter notebook <path of the notebook we want to run>
 ```
 The first command will define a kernel, named <kernel name>, which you must change to after opening jupyterlab. The second command will open a jupyterlab terminal on our explorer, where we can run the selected notebook.
 We will give now instructions for running each one of the notebooks, depending on the datasets that we want to use in our models. 
