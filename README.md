@@ -15,23 +15,38 @@ We here detail the procedure to be followed for cloning.
   <li>Click on the green code button and choose the cloning method you want to use, GitHub provides detailes steps for each method (HTTPS, SSH, etc).</li>
   <li>Open a terminal on your computer and navigate to the directory you wish to clone the repository into. </li>
   <li>Run the following command in your terminal:
-  ``` console
-  $ git clone <copied_url>
+  ```console
+      $ git clone <copied_url>
   ```
+
   . </li>
-  <li>Navigate into the cloned repository by using `cd WP6_QNLP`</li>
+
+  <li>Navigate into the cloned repository by using 
+  ```console
+      $ cd WP6_QNLP
+  ```
+  
+  . </li>
+
   <li>Run the following command in your terminal: 
   ```console
-  $ git checkout v0.3
-  ```.
+      $ git checkout v0.3
+  ```
+  .
+
   </li>
-<ol>
+
+</ol>
 
 
 ### Creating a new environment and installing required packages
 
 #### Python version
-The python version required to run the scripts and notebooks of this repo is Python3.10. Due to the presence of the myQLM , only [python.org](https://www.python.org/downloads/macos/) and brew python distributions are supported. 
+The python version required to run the scripts and notebooks of this repo is Python 3.10. Due to the presence of myQLM , only [python.org](https://www.python.org/downloads/macos/) and brew python distributions are supported and `pyenv` won't work.
+
+[comment]: <> (please use REPOSITORY instead of REPO, this is a formal document)
+[comment]: <> (please replace your numbering/lettering by list numbering based on standard markdown)
+
 
 1. If Python3.10 hasn't been installed (***using brew***) yet, or Python3.10 has been installed using any other method:
 
