@@ -284,10 +284,10 @@ fact that is true and 0 otherwise, and `<sentence_type>` denotes the sentence ty
 
 # Data
 
-This subdirectory contains the relevant datasets used in the models
+This subdirectory contains the relevant datasets used in the models. For example, consider the [complete_dataset.json](./neasqc_wp61/data/complete_dataset.json). In this dataset, a list of true or false labelled sentences of varying grammatical structure is contained. We can use this dataset in sentence classification training as in the alpha model.
 
 # Doc
-In this subdirectory,relecant documentation and tutorials are contained. Tutorials come in the form of jupyter notebooks and cover the classical mand pre-alpha models.
+In this subdirectory,relecant documentation and tutorials are contained. Tutorials come in the form of jupyter notebooks and cover the classical and pre-alpha models.
 
 # Models
 
