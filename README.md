@@ -103,7 +103,7 @@ Once you have cloned the repository, we recommend creating a virtual environment
     $ pip install -r requirements.txt
   ```
   .</li>
-<ul>
+</ul>
 
 #### Spacy model
 Some of the tools used in the module require a language model to be donwloaded by the user. This can be done running the following command:
