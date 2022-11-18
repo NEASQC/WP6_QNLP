@@ -238,8 +238,6 @@ Some benefits and issues of this approach are:
     
 * If the dimensionaility of the category space is changed, the NN can be re-scaled to reuse the model for new circuit dimensionaility.
     
-    
-
 ### Issues
 
 * Pytket loses the tensor nature of parameters, giving an output consisting of a list of floats or simply counts -> Differentiable circuits in Pennylane could be a solution.
@@ -258,7 +256,9 @@ The NNClassifier.py for the classical NLP module is located in the
 The notebooks for the classical NLP module are located in the
 [classical notebooks](./neasqc_wp61/doc/tutorials/) subdirectory.
 
-# Vectorizer
+# Benchmarking
+
+## Vectorizer
 
 Services in /neasqc_wp61/benchmarking/data_processing/ used for vectorizing using pretrained word embeddings.
 
@@ -266,7 +266,7 @@ The aim is to have vectorizing service detached from the rest of the library so 
 
 Currently, vectorizing with `BERT` and `fastText` models are implemented.
 
-# Dataset Generation Example
+## Dataset Generation Example
 
 ## Generating the animal dataset
 Manual dataset generation isn't necessary for running the Jupyter notebooks.
@@ -281,6 +281,17 @@ Run
 to generate a tab-separated file containing lines of the form
 `<sentence>\t<sentence_type>\t<truth_value>` where `<truth_value>` is 1 if the sentence states a
 fact that is true and 0 otherwise, and `<sentence_type>` denotes the sentence type, e.g., `NOUN-TVERB-NOUN`.
+
+# Data
+
+This subdirectory contains the relevant datasets used in the models
+
+# Doc
+In this subdirectory,relecant documentation and tutorials are contained. Tutorials come in the form of jupyter notebooks and cover the classical mand pre-alpha models.
+
+# Models
+
+Here we contain the Alpha and pre-alpha models.
 
 # Acknowledgements
 
