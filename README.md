@@ -222,7 +222,73 @@ The alpha is currently implemented in one single jupyter notebook, Dressed_QNLP_
 
 WARNING: You must run the initial demonstration as many of the functions and imports are used in the definition of the actual model, later in the notebook.
 
-  
+## Alpha Discussion
+
+The idea behind this Jupyter Notebook is to extend the work found in https://pennylane.ai/qml/demos/tutorial_quantum_transfer_learning.html. In transfer learning, the first layers of a pretrained neural network are used to solve a different problem to that used to train the network, adding new layers to the model that specialise in that specific task.
+
+We are using a BERT model to retrieve the context dependant embeddings for the words present in a sentence. Which layer is the best to retrieve the embeddings from is unclear, and it will need to be investigated. Once we have those vectors, they opropagate through a feedforward network that first will reduce the dimensionaility to an intermediate representation (in the notebook it is set to 20), and then the following layers will continue reducing the dimensionality of the vectors until reaching the number of parameters needed by the tensor representation of the quantum circuit offered by the Lambeq library for that word in a specific sentences.
+
+Some benefits and issues of this approach are:
+
+### Benefits
+
+* Any sentence structure and word contained in the BERT model used can be processed by the full pipeline. No need to store the values of parameters for a dictionary
+    
+* It is possible to generalize to different NLP tasks
+    
+* If the dimensionaility of the category space is changed, the NN can be re-scaled to reuse the model for new circuit dimensionaility.
+    
+    
+
+### Issues
+
+* Pytket loses the tensor nature of parameters, giving an output consisting of a list of floats or simply counts -> Differentiable circuits in Pennylane could be a solution.
+
+* It is not clear if we gain any quantum advantage with this methods, as a classical NN has to be trained.
+
+
+# Classical NLP
+
+A module implementing classical processing of the dataset.
+
+The NNClassifier.py for the classical NLP module is located in the
+[classical](./neasqc_wp61/models/classical/) subdirectory.          
+
+## Classical NLP Notebooks
+The notebooks for the classical NLP module are located in the
+[classical notebooks](./neasqc_wp61/doc/tutorials/) subdirectory.
+
+# Vectorizer
+
+Services in /neasqc_wp61/benchmarking/data_processing/ used for vectorizing using pretrained word embeddings.
+
+The aim is to have vectorizing service detached from the rest of the library so that different vectorizing methods can easily be tested using the same interface.
+
+Currently, vectorizing with `BERT` and `fastText` models are implemented.
+
+# Dataset Generation Example
+
+## Generating the animal dataset
+Manual dataset generation isn't necessary for running the Jupyter notebooks.
+However, if needed for some different purpose, the dataset can be generated
+using the following commands.
+
+Run
+```sh
+# Choose a seed number, e.g, 1337, to deterministically randomize the sentence order
+./neasqc_wp61/benchmarking/data_processing/gen_animal_dataset.py --seed 1337 > outfile
+```
+to generate a tab-separated file containing lines of the form
+`<sentence>\t<sentence_type>\t<truth_value>` where `<truth_value>` is 1 if the sentence states a
+fact that is true and 0 otherwise, and `<sentence_type>` denotes the sentence type, e.g., `NOUN-TVERB-NOUN`.
+
+# Acknowledgements
+
+This work is supported by the [NEASQC](www.neasqc.eu/) project, funded by the European Union's Horizon 2020 programme, Grant Agreement No. 951821.
+
+## License
+
+The [LICENSE](./LICENSE) file contains the default license statement as specified in the proposal and partner agreement.  
 
 
 
