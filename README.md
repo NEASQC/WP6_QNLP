@@ -268,7 +268,7 @@ Currently, vectorizing with `BERT` and `fastText` models are implemented.
 
 ## Dataset Generation Example
 
-## Generating the animal dataset
+### Generating the animal dataset
 Manual dataset generation isn't necessary for running the Jupyter notebooks.
 However, if needed for some different purpose, the dataset can be generated
 using the following commands.
