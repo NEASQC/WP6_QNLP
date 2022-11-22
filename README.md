@@ -15,70 +15,45 @@ We here detail the procedure to be followed for cloning.
   <li>Click on the green code button and choose the cloning method you want to use, GitHub provides detailes steps for each method (HTTPS, SSH, etc).</li>
   <li>Open a terminal on your computer and navigate to the directory you wish to clone the repository into. </li>
   <li>Run the following command in your terminal:
-  ```console
-      $ git clone <copied_url>
-  ```
-
-  . </li>
-
+      <pre><code>$ git clone <copied_url></pre></code></li>
   <li>Navigate into the cloned repository by using 
-  ```console
-      $ cd WP6_QNLP
-  ```
-  
-  . </li>
-
+     <pre><code>$ cd WP6_QNLP</pre></code> </li>
   <li>Run the following command in your terminal: 
-  ```console
-      $ git checkout v0.3
-  ```
-  .
-
-  </li>
-
+      <pre><code>$ git checkout v0.3</pre></code></li>
 </ol>
 
 
 ### Creating a new environment and installing required packages
 
 #### Python version
-The python version required to run the scripts and notebooks of this repo is Python 3.10. Due to the presence of myQLM , only [python.org](https://www.python.org/downloads/macos/) and brew python distributions are supported and `pyenv` won't work.
+The python version required to run the scripts and notebooks of this repository is Python 3.10. Due to the presence of myQLM , only [python.org](https://www.python.org/downloads/macos/) and brew python distributions are supported and `pyenv` won't work.
 
 [comment]: <> (please use REPOSITORY instead of REPO, this is a formal document)
 [comment]: <> (please replace your numbering/lettering by list numbering based on standard markdown)
 
+<ol>
+<li>If Python3.10 hasn't been installed (<em><strong>using brew</strong></em>) yet, or Python3.10 has been installed using any other method:
+  <ol>
+    <li>We run the following command on the terminal to install it on your local device.
+      <pre><code>$ brew install python@3.10</pre></code></li>
+    <li>By running the following command on the terminal, we make sure that we will link the recently installed Python3.10 to the environmental variable <em><strong>python3.10</em></strong>.
+      <pre><code>$ brew link --overwrite python@3.10</pre></code>
+    We may get an error if there was any other environmental variable named <em><strong>python3.10</em></strong>. In that case we must remove the variable from the PATH with the command: 
+      <pre><code>$ unset python3.10</pre></code>
+    and then use brew link command again.</li>
+  </ol>
+</li>
 
-1. If Python3.10 hasn't been installed (***using brew***) yet, or Python3.10 has been installed using any other method:
-
-    a. We run the following command on the terminal to install it on your local device.
-    ```console
-      $ brew install python@3.10
-    ```
-
-    b. By running the following command on the terminal, we make sure that we will link the recently installed Python3.10 to the environmental variable ***python3.10***.
-    ```console
-      $ brew link --overwrite python@3.10
-    ```
-    We may get an error if there was any other environmental variable named ***python3.10***. In that case we must remove the variable from the PATH with the command: 
-    ```console
-      $ unset python3.10
-    ```
-    and then use brew link command again. 
-
-2. If Python3.10 has been already installed (***using brew***):
-
-    a. We make sure that we have it linked to the the environmental variable ***python3.10*** using the command shown on section 1b. A warning message will appear if we have it already linked (we can ignore it).
-
-    b. We make sure that there are no packages installed on the global Python by running the command: 
-    
-    ```console
-      $ python3.10 -m pip list
-    ```
+<li>If Python3.10 has been already installed (<em><strong>using brew</em></strong>):
+  <ol>
+    <li>We make sure that we have it linked to the the environmental variable <em><strong>python3.10</em></strong> using the command shown on section 1b. A warning message will appear if we have it already linked (we can ignore it).</li>
+    <li>We make sure that there are no packages installed on the global Python by running the command: 
+      <pre><code>$ python3.10 -m pip list</pre></code>
     In the case where there were packages installed on the global Python we should uinstall them with the command: 
-
-    ```console
-      $ python3.10 -m pip uninstall <undesired package>
-    ```
+      <pre><code>$ python3.10 -m pip uninstall <undesired package></pre></code></li>
+  </ol>
+</li>
+</ol>
 
 
 
@@ -88,90 +63,103 @@ The python version required to run the scripts and notebooks of this repo is Pyt
 Once you have cloned the repository, we recommend creating a virtual environment to run the code and notebooks. There are several tools to create a virtual environment, here we describe one of them and encourage users to resort to whichever approach is most familiar.
 <ul>
   <li>To create a virtual environment, go to the directory where you want to create it and run the following command in the terminal:
-  ```console
-    $ python3.10 -m venv <environment name>
-  ```
-  .</li>
+    <pre><code>$ python3.10 -m venv <environment name></pre></code></li>
   <li> Once this has been done, the environment can be activated by running the following command:
-  ```console
-    $ source <environment_name>/bin/activate
-  ```
+    <pre><code>$ source <environment_name>/bin/activate</pre></code>
   If the environment has been activated correctly its name should appear in parentheses on the left of the user name in the terminal.</li>
   <li>Ensure pip is installed. If if not, follow instructions found [here](https://pip.pypa.io/en/stable/installation/) to install it.</li>
   <li> To install the required packages, run the command:
-  ```console
-    $ pip install -r requirements.txt
-  ```
-  .</li>
+    <pre><code>$ pip install -r requirements.txt</pre></code></li>
 </ul>
 
 #### Spacy model
 Some of the tools used in the module require a language model to be donwloaded by the user. This can be done running the following command:
-```console
-  $ python3.10 -m spacy download en_core_web_lg
-```
+  <pre><code>$ python3.10 -m spacy download en_core_web_lg</pre></code>
 The language model will be stored in the created virtual environment. 
 
 
 ## Running the notebooks
 We can use jupyter notebook to run the jupyter notebooks that appear on the repository. To do so, we can run the following command:
-```console
-  $ python3.10 -m ipykernel install --user --name  <environment_name> --display-name "<kernel name>"
-  $ python3.10 -m jupyter notebook <path of the notebook we want to run>
-```
+ <pre>
+  <code>
+    $ python3.10 -m ipykernel install --user --name  <environment_name> --display-name "<kernel name>"
+    $ python3.10 -m jupyter notebook <path of the notebook we want to run>
+  </code>
+</pre>
+
+
 The first command will define a kernel, named <kernel name>, which you must change to after opening jupyter notebook. The second command will open a jupyter notebook terminal on our explorer, where we can run the selected notebook.
 We will give now instructions for running each one of the notebooks, depending on the datasets that we want to use in our models. 
 
+### [Classical_classifiers.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Classical_classifiers.ipynb)
+  <ul>
+    <li>In cell[2], the argument of <code>loadData()</code> must be one of the following:
+      <ul>
+        <li><code>"../../data/dataset_vectorized_bert_uncased.json"</code></li>
+        <li><code>"../../data/dataset_vectorized_bert_cased.json"</code></li>
+      </ul>
+    </li>
+    <li>In cell[8], the argument of ```loadData()``` must be:
+      <ul>
+        <li><code>"../../data/dataset_vectorized_fasttext.json"</code></li>
+      </ul>
+    </li>
+  </ul>
 
-* [Classical_classifiers.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Classical_classifiers.ipynb)
-    - In cell[2], the argument of ```loadData()``` must be one of the following:
-        - ```"../../data/dataset_vectorized_bert_uncased.json"```
-        - ```"../../data/dataset_vectorized_bert_cased.json"```
-    - In cell[8], the argument of ```loadData()``` must be:
-        - ```"../../data/dataset_vectorized_fasttext.json"```
 
-
-* [Dataset_example.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Dataset_example.ipynb)
-    - In cell[3], the value of the variable ```filename``` must be one of the following:
-        - ```"Complete_dataset.json"```
-        - ```"dataset_vectorized_bert_cased.json"```
-        - ```"dataset_vectorized_bert_uncased.json"```
-        - ```"dataset_vectorized_fasttext.json"```
-        - ```"Expanded_Transitive_dataset.json"```
-        - ```"Reduced_words_complete_dataset.json"```
+### [Dataset_example.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Dataset_example.ipynb)
+  <ul>
+    <li>In cell[3], the value of the variable ```filename``` must be one of the following:
+      <ul>
+        <li><code>"Complete_dataset.json"</code></li>
+        <li><code>"dataset_vectorized_bert_cased.json"</code></li>
+        <li><code>"dataset_vectorized_bert_uncased.json"</code></li>
+        <li><code>"dataset_vectorized_fasttext.json"</code></li>
+        <li><code>"Expanded_Transitive_dataset.json"</code></li>
+        <li><code>"Reduced_words_complete_dataset.json"</code></li>
+      </ul>
+    </li>
+  </ul>
   
 
-* [Single_sentence_example.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Single_sentence_example.ipynb)
-    - No dataset is input on this notebook. No restrictions when running the notebook. 
+### [Single_sentence_example.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Single_sentence_example.ipynb)
+  <ul>
+    <li>No dataset is input on this notebook. No restrictions when running the notebook.</li>
+  </ul>
 
 
-* [Dressed_QNLP_demo.ipynb](//repo/WP6_QNLP/neasqc_wp61/models/quantum/alpha/Dressed_QNLP_demo.ipynb)
-    - In cell[24], the value of the variable ```filename``` can be any of the datasets:
-        - ```"../../../data/Complete_dataset.json"```
-        - ```'../../../data/dataset_vectorized_bert_cased.json"```
-        - ```'../../../data/dataset_vectorized_bert_uncased.json"```
-        - ```'../../../data/dataset_vectorized_fasttext.json"```
-        - ```'../../../data/Expanded_Transitive_dataset.json"```
-        - ```'../../../data/Reduced_words_complete_dataset.json"```
-        - ```'../../../data/Reduced_words_transitive_dataset.json"```
+### [Dressed_QNLP_demo.ipynb](//repo/WP6_QNLP/neasqc_wp61/models/quantum/alpha/Dressed_QNLP_demo.ipynb)
+  <ul>
+    <li>In cell[24], the value of the variable ```filename``` can be any of the datasets:
+      <ul>
+        <li><code>"../../../data/Complete_dataset.json"</code></li>
+        <li><code>'../../../data/dataset_vectorized_bert_cased.json"</code></li>
+        <li><code>'../../../data/dataset_vectorized_bert_uncased.json"</code></li>
+        <li><code>'../../../data/dataset_vectorized_fasttext.json"</code></li>
+        <li><code>'../../../data/Expanded_Transitive_dataset.json"</code></li>
+        <li><code>'../../../data/Reduced_words_complete_dataset.json"</code></li>
+        <li><code>'../../../data/Reduced_words_transitive_dataset.json"</code></li>
+      </ul>
+    </li>
+  </ul>
 
 
 # Pre-alpha Functionalities
 The main scope of the pre-alpha model is to build a variational quantum algorithm that makes sentence classification in categories True or False. The structure of the analyzed sentences will be: 
-
-* NOUN-TRANSITIVE VERB-NOUN
-* NOUN-INTRANSIIVE VERB
-* NOUN-INTRANSITIVE VERB-PREPOSITION-NOUN
+<ul>
+  <li>NOUN-TRANSITIVE VERB-NOUN</li>
+  <li>NOUN-INTRANSIIVE VERB</li>
+  <li>NOUN-INTRANSITIVE VERB-PREPOSITION-NOUN</li>
+</ul>
 
 ## Classical classifiers
 
 Some classical classifiers are implemented in order to have a reference against which to compare our quantum solution.
-
-* K-nearest neighbors classifier from sklearn package applied to BERT embeddings.
-
-* A feedforward neural network classifier from tensorflow package applied to BERT embeddings. 
-
-* A convolutional neural network classifier from tensorflow package applied to fasttext embeddings. 
+<ul>
+  <li>K-nearest neighbors classifier from sklearn package applied to BERT embeddings.</li>
+  <li>A feedforward neural network classifier from tensorflow package applied to BERT embeddings.</li>
+  <li>A convolutional neural network classifier from tensorflow package applied to fasttext embeddings.</li>
+</ul>
 
 After the models are trained we compute and compare their accuracies on the training and test dataset. 
 
@@ -231,19 +219,17 @@ We are using a BERT model to retrieve the context dependant embeddings for the w
 Some benefits and issues of this approach are:
 
 ### Benefits
+<ul>
+  <li>Any sentence structure and word contained in the BERT model used can be processed by the full pipeline. No need to store the values of parameters for a dictionary</li>
+  <li>It is possible to generalize to different NLP tasks</li>
+  <li>If the dimensionaility of the category space is changed, the NN can be re-scaled to reuse the model for new circuit dimensionaility.</li>
+</ul>  
 
-* Any sentence structure and word contained in the BERT model used can be processed by the full pipeline. No need to store the values of parameters for a dictionary
-    
-* It is possible to generalize to different NLP tasks
-    
-* If the dimensionaility of the category space is changed, the NN can be re-scaled to reuse the model for new circuit dimensionaility.
-    
 ### Issues
-
-* Pytket loses the tensor nature of parameters, giving an output consisting of a list of floats or simply counts -> Differentiable circuits in Pennylane could be a solution.
-
-* It is not clear if we gain any quantum advantage with this methods, as a classical NN has to be trained.
-
+<ul>
+  <li>Pytket loses the tensor nature of parameters, giving an output consisting of a list of floats or simply counts -> Differentiable circuits in Pennylane could be a solution.</li>
+  <li>It is not clear if we gain any quantum advantage with this methods, as a classical NN has to be trained.</li>
+</ul>
 
 # Classical NLP
 
@@ -274,10 +260,12 @@ However, if needed for some different purpose, the dataset can be generated
 using the following commands.
 
 Run
-```sh
+<pre>
+  <code>
 # Choose a seed number, e.g, 1337, to deterministically randomize the sentence order
 ./neasqc_wp61/benchmarking/data_processing/gen_animal_dataset.py --seed 1337 > outfile
-```
+  </code>
+</pre>
 to generate a tab-separated file containing lines of the form
 `<sentence>\t<sentence_type>\t<truth_value>` where `<truth_value>` is 1 if the sentence states a
 fact that is true and 0 otherwise, and `<sentence_type>` denotes the sentence type, e.g., `NOUN-TVERB-NOUN`.
