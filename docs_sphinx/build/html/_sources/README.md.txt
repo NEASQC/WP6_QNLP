@@ -89,7 +89,7 @@ We can use jupyter notebook to run the jupyter notebooks that appear on the repo
 The first command will define a kernel, named <kernel_name>, which you must change to after opening jupyter notebook. The second command will open a jupyter notebook terminal on our explorer, where we can run the selected notebook.
 We will give now instructions for running each one of the notebooks, depending on the datasets that we want to use in our models. 
 
-### [Classical_classifiers.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Classical_classifiers.ipynb)
+### [Classical_classifiers.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/doc/tutorials/Classical_classifiers.ipynb)
   <ul>
     <li>In cell[2], the argument of <code>loadData()</code> must be one of the following:
       <ul>
@@ -105,7 +105,7 @@ We will give now instructions for running each one of the notebooks, depending o
   </ul>
 
 
-### [Dataset_example.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Dataset_example.ipynb)
+### [Dataset_example.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/doc/tutorials/Dataset_example.ipynb)
   <ul>
     <li>In cell[3], the value of the variable <code>filename</code> must be one of the following:
       <ul>
@@ -120,13 +120,13 @@ We will give now instructions for running each one of the notebooks, depending o
   </ul>
   
 
-### [Single_sentence_example.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Single_sentence_example.ipynb)
+### [Single_sentence_example.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/doc/tutorials/Single_sentence_example.ipynb)
   <ul>
     <li>No dataset is input on this notebook. No restrictions when running the notebook.</li>
   </ul>
 
 
-### [Dressed_QNLP_demo.ipynb](//repo/WP6_QNLP/neasqc_wp61/models/quantum/alpha/Dressed_QNLP_demo.ipynb)
+### [Dressed_QNLP_demo.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/quantum/alpha/Dressed_QNLP_demo.ipynb)
   <ul>
     <li>In cell[24], the value of the variable <code>filename</code> can be any of the datasets:
       <ul>
@@ -234,17 +234,17 @@ Some benefits and issues of this approach are:
 A module implementing classical processing of the dataset.
 
 The NNClassifier.py for the classical NLP module is located in the
-[classical](./neasqc_wp61/models/classical/) subdirectory.          
+[classical](https://github.com/NEASQC/WP6_QNLP/tree/v0.3/neasqc_wp61/models/classical) subdirectory.          
 
 ### Classical NLP Notebooks
 The notebooks for the classical NLP module are located in the
-[classical notebooks](./neasqc_wp61/doc/tutorials/) subdirectory.
+[classical notebooks](https://github.com/NEASQC/WP6_QNLP/tree/v0.3/neasqc_wp61/doc/tutorials) subdirectory.
 
 ## Benchmarking
 
 ### Vectorizer
 
-Services are found [here](./neasqc_wp61/benchmarking/data_processing/) for vectorizing using pretrained word embeddings.
+Services are found [here](https://github.com/NEASQC/WP6_QNLP/tree/v0.3/neasqc_wp61/benchmarking/data_processing) for vectorizing using pretrained word embeddings.
 
 The aim is to have vectorizing service detached from the rest of the library so that different vectorizing methods can easily be tested using the same interface.
 
@@ -270,7 +270,7 @@ fact that is true and 0 otherwise, and `<sentence_type>` denotes the sentence ty
 
 ## Data
 
-This subdirectory contains the relevant datasets used in the models. For example, consider the [complete_dataset.json](./neasqc_wp61/data/complete_dataset.json). In this dataset, a list of true or false labelled sentences of varying grammatical structure is contained. We can use this dataset in sentence classification training as in the alpha model.
+This subdirectory contains the relevant datasets used in the models. For example, consider the [complete_dataset.json](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/data/Complete_dataset.json). In this dataset, a list of true or false labelled sentences of varying grammatical structure is contained. We can use this dataset in sentence classification training as in the alpha model.
 
 ## Doc
 In this subdirectory,relevant documentation and tutorials are contained. Tutorials come in the form of jupyter notebooks and cover the classical and pre-alpha models.
@@ -281,11 +281,11 @@ Here we can find the Alpha and Pre-Alpha models.
 
 ## Acknowledgements
 
-This work is supported by the [NEASQC](www.neasqc.eu/) project, funded by the European Union's Horizon 2020 programme, Grant Agreement No. 951821.
+This work is supported by the [NEASQC](https://www.neasqc.eu) project, funded by the European Union's Horizon 2020 programme, Grant Agreement No. 951821.
 
 ### License
 
-The [LICENSE](./LICENSE) file contains the default license statement as specified in the proposal and partner agreement.  
+The [LICENSE](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/LICENSE) file contains the default license statement as specified in the proposal and partner agreement.  
 
 
 
