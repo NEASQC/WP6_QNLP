@@ -1,4 +1,4 @@
-# Quantum Natural Language Processing : NEASQC WP6.1
+# Quantum Natural Language Processing : NEASQC WP 6.1
 
 
 ## Installing locally
@@ -28,7 +28,6 @@ We here detail the procedure to be followed for cloning.
 #### Python version
 The Python version required to run the scripts and notebooks of this repository is Python 3.10. Due to the presence of myQLM , only [python.org](https://www.python.org/downloads/macos/) and brew python distributions are supported and `pyenv` won't work.
 
-
 <ol>
 <li>If Python3.10 hasn't been installed (<em><strong>using brew</strong></em>) yet, or Python3.10 has been installed using any other method:
   <ol>
@@ -55,10 +54,17 @@ The Python version required to run the scripts and notebooks of this repository 
 
 
 
+#### Dependencies
 
+##### Poetry
+Note: we here assume that you are happy to use `poetry`'s lightweight virtual environenment set-up. If for some reason you prefer to use an external virtual environemnt, simply activate it before using `poetry`, it will respect its precedence.
+<ol>
+  <li> Make sure you have <code>poetry</code> installed locally. This can be done by running  <pre><code>$ poetry --version</pre></code> in your shell and checking the output. If installed, proceed, if not, follow instructions on their official website <a href="https://python-poetry.org/docs/#installation">here</a>. </li>
+  <li> <code>cd</code> to the root of the repository where the files <code>pyproject.toml</code> and <code>poetry.lock</code> are located. </li>
+  <li> Run the following command in your shell: <pre><code>$ poetry install</pre></code> </li>
+</ol>
 
-#### Virtual environment
-Once you have cloned the repository, we recommend creating a virtual environment to run the code and notebooks. There are several tools to create a virtual environment, here we describe one of them and encourage users to resort to whichever approach is most familiar.
+##### Virtualenv
 <ul>
   <li>To create a virtual environment, go to the directory where you want to create it and run the following command in the terminal:
     <pre><code>$ python3.10 -m venv &ltenvironment_name&gt</pre></code></li>
