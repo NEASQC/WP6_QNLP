@@ -68,9 +68,7 @@ Note: we here assume that you are happy to use `poetry`'s lightweight virtual en
 <ul>
   <li>To create a virtual environment, go to the directory where you want to create it and run the following command in the terminal:
     <pre><code>$ python3.10 -m venv &ltenvironment_name&gt</pre></code></li>
-  <li> Once this has been done, the environment can be activated by running the following command:
-    <pre><code>$ source &ltenvironment_name&gt/bin/activate</pre></code>
-  If the environment has been activated correctly its name should appear in parentheses on the left of the user name in the terminal.</li>
+  <li> Activate the environment (see instructions <a href="#venv_activation">here</a>). If the environment has been activated correctly its name should appear in parentheses on the left of the user name in the terminal.</li>
   <li>Ensure pip is installed. If if not, follow instructions found <a href="https://pip.pypa.io/en/stable/installation/">here</a> to install it.</li>
   <li> To install the required packages, run the command:
     <pre><code>$ python3.10 -m pip install -r requirements.txt</pre></code></li>
@@ -80,6 +78,21 @@ Note: we here assume that you are happy to use `poetry`'s lightweight virtual en
 Some of the tools used in the module require a language model to be donwloaded by the user. This can be done running the following command:
   <pre><code>$ python3.10 -m spacy download en_core_web_lg</pre></code>
 The language model will be stored in the created virtual environment. 
+
+
+#### Activating the virtual environments
+
+##### Poetry
+To activate <code>poetry</code>'s default virtual environment, simply run:
+<pre><code>poetry shell</code></pre>
+inside your terminal. More details can be found <a href="https://python-poetry.org/docs/basic-usage/#using-your-virtual-environment">here</a>.
+
+##### <a id="venv_activation"> Virtualenv </a>
+To activate your virtualenv, simply type the following in your terminal:
+<pre><code>$ source &ltenvironment_name&gt/bin/activate</pre></code>
+Note that contrary to <code>poetry</code>, this virtual environment needs to be activated before you install the requirements.
+
+
 
 
 ## Running the notebooks
