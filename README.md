@@ -61,8 +61,11 @@ Note: we here assume that you are happy to use `poetry`'s lightweight virtual en
 <ol>
   <li> Make sure you have <code>poetry</code> installed locally. This can be done by running  <pre><code>$ poetry --version</pre></code> in your shell and checking the output. If installed, proceed, if not, follow instructions on their official website <a href="https://python-poetry.org/docs/#installation">here</a>. </li>
   <li> <code>cd</code> to the root of the repository where the files <code>pyproject.toml</code> and <code>poetry.lock</code> are located. </li>
-  <li> Run the following command in your shell: <pre><code>$ poetry install</pre></code> </li>
+  <li> Run the following command in your shell: <pre><code>$ poetry install</pre></code>
+  If you also want to install the dependancies used to build sphinx documentation, run the following command insted:
+  <pre><code>poetry install --with docs</pre></code></li>
 </ol>
+
 
 ##### Virtualenv
 <ul>
@@ -74,10 +77,7 @@ Note: we here assume that you are happy to use `poetry`'s lightweight virtual en
     <pre><code>$ python3.10 -m pip install -r requirements.txt</pre></code></li>
 </ul>
 
-#### Spacy model
-Some of the tools used in the module require a language model to be donwloaded by the user. This can be done running the following command:
-  <pre><code>$ python3.10 -m spacy download en_core_web_lg</pre></code>
-The language model will be stored in the created virtual environment. 
+
 
 
 #### Activating the virtual environments
@@ -93,7 +93,10 @@ To activate your virtualenv, simply type the following in your terminal:
 Note that contrary to <code>poetry</code>, this virtual environment needs to be activated before you install the requirements.
 
 
-
+#### Spacy model
+Some of the tools used in the module require a language model to be donwloaded by the user. This can be done running the following command:
+  <pre><code>$ python3.10 -m spacy download en_core_web_lg</pre></code>
+The language model will be stored in the created virtual environment. 
 
 ## Running the notebooks
 We can use jupyter notebook to run the jupyter notebooks that appear on the repository. To do so, we can run the following command:
