@@ -1,0 +1,362 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>module.DressedQuantumNet &#8212; WP6_QNLP 0.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for module.DressedQuantumNet</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">import</span> <span class="nn">nltk</span>
+
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
+<span class="kn">from</span> <span class="nn">qiskit.circuit</span> <span class="kn">import</span> <span class="n">Parameter</span>
+<span class="kn">from</span> <span class="nn">pytket.extensions.qiskit</span> <span class="kn">import</span> <span class="n">qiskit_to_tk</span><span class="p">,</span> <span class="n">tk_to_qiskit</span><span class="p">,</span> <span class="n">IBMQBackend</span>
+<span class="kn">from</span> <span class="nn">pytket.qasm</span> <span class="kn">import</span> <span class="n">circuit_to_qasm_str</span>
+
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">QuantumCircuit</span>
+<span class="kn">from</span> <span class="nn">qiskit.circuit</span> <span class="kn">import</span> <span class="n">Parameter</span>
+<span class="kn">from</span> <span class="nn">pytket.extensions.qiskit</span> <span class="kn">import</span> <span class="n">qiskit_to_tk</span><span class="p">,</span> <span class="n">tk_to_qiskit</span><span class="p">,</span> <span class="n">IBMQBackend</span>
+
+<span class="kn">import</span> <span class="nn">qiskit</span>
+<span class="kn">from</span> <span class="nn">qiskit</span> <span class="kn">import</span> <span class="n">transpile</span><span class="p">,</span> <span class="n">assemble</span>
+<span class="kn">from</span> <span class="nn">qiskit.visualization</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="kn">from</span> <span class="nn">pytket.qasm</span> <span class="kn">import</span> <span class="n">circuit_to_qasm_str</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.autograd</span> <span class="kn">import</span> <span class="n">Function</span>
+<span class="kn">from</span> <span class="nn">torchvision</span> <span class="kn">import</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">transforms</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+
+<span class="kn">from</span> <span class="nn">pytket</span> <span class="kn">import</span> <span class="n">Circuit</span><span class="p">,</span> <span class="n">Qubit</span><span class="p">,</span> <span class="n">Bit</span>
+<span class="kn">from</span> <span class="nn">pytket.extensions.qiskit</span> <span class="kn">import</span> <span class="n">AerBackend</span>
+<span class="kn">from</span> <span class="nn">pytket.utils</span> <span class="kn">import</span> <span class="n">probs_from_counts</span>
+
+
+<span class="kn">from</span> <span class="nn">module.Qsentence</span> <span class="kn">import</span> <span class="o">*</span>
+
+<div class="viewcode-block" id="DressedQuantumNet"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet">[docs]</a><span class="k">class</span> <span class="nc">DressedQuantumNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+
+
+    <span class="sd">&quot;&quot;&quot;Neural Network Classifier with Forward Method.</span>
+
+<span class="sd">    Defines the Dressed Quantum Neural Network Classifier for a Sentence. A feed forward step is also defined for later training along with supporting methods.</span>
+<span class="sd">    This class implements the pre processing neural network needed to reduce the dimensionality of BERT embeddings. A dimension for an intermediate representation, as well as the max and min numbers of parameters that are expected to appear in the circuits is also provided. A different number of layers will be applied depending of the numbers of parameters needed to encode that word.</span>
+<span class="sd">    When the circuit is run using pytket and AerBackend(), the tensor network nature of the parameters is lost, and all we is a classical bitstring and some probabilities. Alternative options like using differentiable Pennylane circuits could solve this issue. An interface between Pennylane and tket exists and it is worth looking into it. </span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Sentence : str</span>
+<span class="sd">        Input Sentence</span>
+<span class="sd">    QNParamWords : list</span>
+<span class="sd">        Number of parameters for each word.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Sentence</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialises DressedQuantumNet.</span>
+
+<span class="sd">        Defines a neural network implemented before the paremtrised quantum circuit.</span>
+<span class="sd">       </span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        Sentence : str</span>
+<span class="sd">            Input sentence.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="n">BertDim</span> <span class="o">=</span> <span class="mi">768</span>
+        <span class="n">intermediate_dimension</span><span class="o">=</span> <span class="mi">20</span>
+        <span class="n">max_param</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">min_param</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Sentence</span> <span class="o">=</span> <span class="n">Sentence</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">QNParamWords</span> <span class="o">=</span> <span class="n">Sentence</span><span class="o">.</span><span class="n">GetNParamsWord</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pre_net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">BertDim</span><span class="p">,</span> <span class="n">intermediate_dimension</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pre_net_max_params</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">intermediate_dimension</span><span class="p">,</span> <span class="n">max_param</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cascade_layers</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1">#CASCADE LAYERS: Consecutive layers reduce the number of parameters until getting the desired number</span>
+        <span class="c1">#for that specific word</span>
+        
+        <span class="k">for</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_param</span><span class="p">,</span><span class="n">min_param</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cascade_layers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">layer</span><span class="p">,</span> <span class="n">layer</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            
+            
+<div class="viewcode-block" id="DressedQuantumNet.forward"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Performs forward step in neural network.</span>
+
+<span class="sd">        Takes a list of sentences and find a Bert embedding for each.:</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result_dict.values(): list</span>
+<span class="sd">            Outputs a two-dimensional list of floats that represents the classification of the Neural Network. True corresponds to [1,0] and False correseponds to [0,1]</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sentence_q_params</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">embedding</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Sentence</span><span class="o">.</span><span class="n">embeddings</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">n_q_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">QNParamWords</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">pre_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_net</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">embedding</span><span class="p">))</span>
+            <span class="n">pre_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_net_max_params</span><span class="p">(</span><span class="n">pre_out</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cascade_layers</span><span class="p">):</span>
+                <span class="n">layer_n_out</span> <span class="o">=</span> <span class="n">layer</span><span class="o">.</span><span class="n">out_features</span>
+                <span class="k">if</span> <span class="n">n_q_params</span> <span class="o">&lt;=</span> <span class="n">layer_n_out</span><span class="p">:</span>
+                    <span class="n">pre_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cascade_layers</span><span class="p">[</span><span class="n">j</span><span class="p">](</span><span class="n">pre_out</span><span class="p">)</span>
+            <span class="n">q_in</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tanh</span><span class="p">(</span><span class="n">pre_out</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">2.0</span>  
+            <span class="n">sentence_q_params</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">q_in</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qparams</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">sentence_q_params</span><span class="p">)</span>
+        <span class="n">parameter_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sentence</span><span class="o">.</span><span class="n">tk_circuit</span><span class="o">.</span><span class="n">free_symbols</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameter_names</span> <span class="o">=</span> <span class="n">parameter_names</span>
+        <span class="n">param_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">:</span> <span class="n">q</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameter_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">qparams</span><span class="p">)}</span>
+        <span class="n">MyCirc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sentence</span><span class="o">.</span><span class="n">tk_circuit</span>
+        <span class="n">s_qubits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Measure_s_qubits</span><span class="p">(</span><span class="n">MyCirc</span><span class="p">)</span>
+        <span class="n">MyCirc</span><span class="o">.</span><span class="n">symbol_substitution</span><span class="p">(</span><span class="n">param_dict</span><span class="p">)</span>
+        <span class="n">backend</span> <span class="o">=</span> <span class="n">AerBackend</span><span class="p">()</span>
+        <span class="c1">#backend.get_compiled_circuits([MyCirc])</span>
+
+        <span class="n">handle</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">process_circuits</span><span class="p">(</span><span class="n">backend</span><span class="o">.</span><span class="n">get_compiled_circuits</span><span class="p">([</span><span class="n">MyCirc</span><span class="p">]),</span> <span class="n">n_shots</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+        <span class="n">counts</span> <span class="o">=</span> <span class="n">backend</span><span class="o">.</span><span class="n">get_result</span><span class="p">(</span><span class="n">handle</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">get_counts</span><span class="p">()</span>
+        <span class="n">result_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_norm_circuit_output</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">s_qubits</span><span class="p">)</span>
+        <span class="n">all_bitstrings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_bitstring</span><span class="p">(</span><span class="n">s_qubits</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">bitstring</span> <span class="ow">in</span> <span class="n">all_bitstrings</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">bitstring</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">result_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">result_dict</span><span class="p">[</span><span class="n">bitstring</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">result_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+    
+<div class="viewcode-block" id="DressedQuantumNet.Measure_s_qubits"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet.Measure_s_qubits">[docs]</a>    <span class="k">def</span> <span class="nf">Measure_s_qubits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Circuit</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Obtains unmeasured qubits meausrements.</span>
+
+<span class="sd">        In the DisCoCat pytket circuits the sentence qubits are not measured, and thus additional measurements</span>
+<span class="sd">        need to be performed. Otherwise, we will get bitsrings shorter than the number of qubits of the circuits, </span>
+<span class="sd">        corresponding only to the post selected ones.:</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sen_c_regs: list</span>
+<span class="sd">            list of measurements.</span>
+<span class="sd">            </span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s_qubits</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="n">Circuit</span><span class="o">.</span><span class="n">qubits</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">qubit</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Circuit</span><span class="o">.</span><span class="n">qubit_readout</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="n">s_qubits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qubit</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">n_post_select</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Circuit</span><span class="o">.</span><span class="n">bit_readout</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s_qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">s_qubits</span><span class="p">):</span>
+            <span class="n">Circuit</span><span class="o">.</span><span class="n">add_bit</span><span class="p">(</span><span class="n">Bit</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">n_post_select</span><span class="o">+</span><span class="n">i</span><span class="p">))</span>
+        <span class="n">sen_c_regs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Circuit</span><span class="o">.</span><span class="n">bit_readout</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">n_post_select</span><span class="p">:]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">s_qubits</span><span class="p">):</span>
+            <span class="n">bit</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Circuit</span><span class="o">.</span><span class="n">bit_readout</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">sen_c_regs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">Circuit</span><span class="o">.</span><span class="n">Measure</span><span class="p">(</span><span class="n">qubit</span><span class="p">,</span> <span class="n">bit</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sen_c_regs</span></div>
+
+    
+<div class="viewcode-block" id="DressedQuantumNet.satisfy_post_selection"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet.satisfy_post_selection">[docs]</a>    <span class="k">def</span> <span class="nf">satisfy_post_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">post_selection</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks post selection criteria for circuit.</span>
+
+<span class="sd">        This is used to tell if the output bitstrings satify the post selection conditions given by the ciruit.:</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -------</span>
+<span class="sd">        post_selection: iterable</span>
+<span class="sd">        </span>
+<span class="sd">        result: iterable</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            </span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">result</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">post_selection</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">post_selection</span><span class="p">[</span><span class="n">index</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="DressedQuantumNet.list2bitstring"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet.list2bitstring">[docs]</a>    <span class="k">def</span> <span class="nf">list2bitstring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">bitlist</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Converts bit list to bit string.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -------</span>
+<span class="sd">        bitlist: str</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bitstring: str</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bitstring</span><span class="o">=</span><span class="nb">str</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">bitlist</span><span class="p">:</span>
+            <span class="n">bitstring</span><span class="o">+=</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bitstring</span></div>
+
+<div class="viewcode-block" id="DressedQuantumNet.norm_probs"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet.norm_probs">[docs]</a>    <span class="k">def</span> <span class="nf">norm_probs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">prob_result</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Normalises values in dictionary</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -------</span>
+<span class="sd">        prob_result: dict</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        prob_result: dict</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">prob_result</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="k">for</span> <span class="n">bitstring</span> <span class="ow">in</span> <span class="n">prob_result</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">prob_result</span><span class="p">[</span><span class="n">bitstring</span><span class="p">]</span><span class="o">/=</span><span class="n">tot</span>
+        <span class="k">return</span> <span class="n">prob_result</span></div>
+
+<div class="viewcode-block" id="DressedQuantumNet.get_norm_circuit_output"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet.get_norm_circuit_output">[docs]</a>    <span class="k">def</span> <span class="nf">get_norm_circuit_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">counts</span><span class="p">,</span> <span class="n">s_qubits</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Obtains normalised output of parametrised quantum circuit.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -------</span>
+<span class="sd">        counts: </span>
+<span class="sd">        </span>
+<span class="sd">        s_qubits:</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        self.norm_probs(prob_result): dict</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prob_result</span><span class="o">=</span><span class="nb">dict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">bits</span> <span class="ow">in</span> <span class="n">probs_from_counts</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">post_selected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">satisfy_post_selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Sentence</span><span class="o">.</span><span class="n">tk_circuit</span><span class="o">.</span><span class="n">post_selection</span><span class="p">,</span> <span class="n">bits</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">post_selected</span><span class="o">==</span><span class="kc">True</span><span class="p">:</span>
+                <span class="n">s_qubits_index</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">qubit</span> <span class="ow">in</span> <span class="n">s_qubits</span><span class="p">:</span>
+                    <span class="n">s_qubits_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qubit</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">bitlist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span> <span class="n">bits</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s_qubits_index</span><span class="p">)</span>
+                <span class="n">bitstring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">list2bitstring</span><span class="p">(</span><span class="n">bitlist</span><span class="p">)</span>
+                <span class="n">prob_result</span><span class="p">[</span><span class="n">bitstring</span><span class="p">]</span> <span class="o">=</span> <span class="n">probs_from_counts</span><span class="p">(</span><span class="n">counts</span><span class="p">)[</span><span class="n">bits</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_probs</span><span class="p">(</span><span class="n">prob_result</span><span class="p">)</span></div>
+    
+
+<div class="viewcode-block" id="DressedQuantumNet.calculate_bitstring"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet.calculate_bitstring">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_bitstring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s_qubits</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Finds bitstrings for each qubit.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -------</span>
+<span class="sd">        </span>
+<span class="sd">        s_qubits: </span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        all_bitstrings: list</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s_qubits</span><span class="p">)</span>
+        <span class="n">lst</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">repeat</span><span class="o">=</span><span class="n">n</span><span class="p">))</span>
+        <span class="n">all_bitstrings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
+            <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">bit</span> <span class="ow">in</span> <span class="n">element</span><span class="p">:</span>
+                <span class="n">string</span><span class="o">+=</span><span class="nb">str</span><span class="p">(</span><span class="n">bit</span><span class="p">)</span>
+            <span class="n">all_bitstrings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">all_bitstrings</span></div></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">WP6_QNLP</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../README.html">Quantum Natural Language Processing : NEASQC WP6.1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">alpha</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Richard Wolf, Conor Dunne, Pablo Suarez Vieites.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
