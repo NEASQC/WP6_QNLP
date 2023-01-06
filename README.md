@@ -289,26 +289,3 @@ Run
 to generate a tab-separated file containing lines of the form
 `<sentence>\t<sentence_type>\t<truth_value>` where `<truth_value>` is 1 if the sentence states a
 fact that is true and 0 otherwise, and `<sentence_type>` denotes the sentence type, e.g., `NOUN-TVERB-NOUN`.
-
-## Data
-
-This subdirectory contains the relevant datasets used in the models. For example, consider the [complete_dataset.json](./neasqc_wp61/data/complete_dataset.json). In this dataset, a list of true or false labelled sentences of varying grammatical structure is contained. We can use this dataset in sentence classification training as in the alpha model.
-
-## Doc
-In this subdirectory,relevant documentation and tutorials are contained. Tutorials come in the form of jupyter notebooks and cover the classical and pre-alpha models.
-
-## Models
-
-Here we can find the Alpha and Pre-Alpha models.
-
-## Acknowledgements
-
-This work is supported by the [NEASQC](www.neasqc.eu/) project, funded by the European Union's Horizon 2020 programme, Grant Agreement No. 951821.
-
-### License
-
-The [LICENSE](./LICENSE) file contains the default license statement as specified in the proposal and partner agreement.  
-
-
-
-
