@@ -1,4 +1,4 @@
-# Quantum Natural Language Processing : NEASQC WP 6.1
+# Quantum Natural Language Processing : NEASQC WP6.1
 
 
 ## Installing locally
@@ -28,6 +28,7 @@ We here detail the procedure to be followed for cloning.
 #### Python version
 The Python version required to run the scripts and notebooks of this repository is Python 3.10. Due to the presence of myQLM , only [python.org](https://www.python.org/downloads/macos/) and brew python distributions are supported and `pyenv` won't work.
 
+
 <ol>
 <li>If Python3.10 hasn't been installed (<em><strong>using brew</strong></em>) yet, or Python3.10 has been installed using any other method:
   <ol>
@@ -54,49 +55,26 @@ The Python version required to run the scripts and notebooks of this repository 
 
 
 
-#### Dependencies
-
-##### Poetry
-Note: we here assume that you are happy to use `poetry`'s lightweight virtual environenment set-up. If for some reason you prefer to use an external virtual environemnt, simply activate it before using `poetry`, it will respect its precedence.
-<ol>
-  <li> Make sure you have <code>poetry</code> installed locally. This can be done by running  <pre><code>$ poetry --version</pre></code> in your shell and checking the output. If installed, proceed, if not, follow instructions on their official website <a href="https://python-poetry.org/docs/#installation">here</a>. </li>
-  <li> <code>cd</code> to the root of the repository where the files <code>pyproject.toml</code> and <code>poetry.lock</code> are located. </li>
-  <li> Run the following command in your shell: <pre><code>$ poetry install</pre></code>
-  If you also want to install the dependancies used to build sphinx documentation, run the following command insted:
-  <pre><code>poetry install --with docs</pre></code></li>
-</ol>
 
 
-##### Virtualenv
+#### Virtual environment
+Once you have cloned the repository, we recommend creating a virtual environment to run the code and notebooks. There are several tools to create a virtual environment, here we describe one of them and encourage users to resort to whichever approach is most familiar.
 <ul>
   <li>To create a virtual environment, go to the directory where you want to create it and run the following command in the terminal:
     <pre><code>$ python3.10 -m venv &ltenvironment_name&gt</pre></code></li>
-  <li> Activate the environment (see instructions <a href="#venv_activation">here</a>). If the environment has been activated correctly its name should appear in parentheses on the left of the user name in the terminal.</li>
+  <li> Once this has been done, the environment can be activated by running the following command:
+    <pre><code>$ source &ltenvironment_name&gt/bin/activate</pre></code>
+  If the environment has been activated correctly its name should appear in parentheses on the left of the user name in the terminal.</li>
   <li>Ensure pip is installed. If if not, follow instructions found <a href="https://pip.pypa.io/en/stable/installation/">here</a> to install it.</li>
   <li> To install the required packages, run the command:
     <pre><code>$ python3.10 -m pip install -r requirements.txt</pre></code></li>
 </ul>
 
-
-
-
-#### Activating the virtual environments
-
-##### Poetry
-To activate <code>poetry</code>'s default virtual environment, simply run:
-<pre><code>poetry shell</code></pre>
-inside your terminal. More details can be found <a href="https://python-poetry.org/docs/basic-usage/#using-your-virtual-environment">here</a>.
-
-##### <a id="venv_activation"> Virtualenv </a>
-To activate your virtualenv, simply type the following in your terminal:
-<pre><code>$ source &ltenvironment_name&gt/bin/activate</pre></code>
-Note that contrary to <code>poetry</code>, this virtual environment needs to be activated before you install the requirements.
-
-
 #### Spacy model
 Some of the tools used in the module require a language model to be donwloaded by the user. This can be done running the following command:
   <pre><code>$ python3.10 -m spacy download en_core_web_lg</pre></code>
 The language model will be stored in the created virtual environment. 
+
 
 ## Running the notebooks
 We can use jupyter notebook to run the jupyter notebooks that appear on the repository. To do so, we can run the following command:
@@ -111,7 +89,7 @@ We can use jupyter notebook to run the jupyter notebooks that appear on the repo
 The first command will define a kernel, named <kernel_name>, which you must change to after opening jupyter notebook. The second command will open a jupyter notebook terminal on our explorer, where we can run the selected notebook.
 We will give now instructions for running each one of the notebooks, depending on the datasets that we want to use in our models. 
 
-### [Classical_classifiers.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Classical_classifiers.ipynb)
+### [Classical_classifiers.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/doc/tutorials/Classical_classifiers.ipynb)
   <ul>
     <li>In cell[2], the argument of <code>loadData()</code> must be one of the following:
       <ul>
@@ -127,7 +105,7 @@ We will give now instructions for running each one of the notebooks, depending o
   </ul>
 
 
-### [Dataset_example.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Dataset_example.ipynb)
+### [Dataset_example.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/doc/tutorials/Dataset_example.ipynb)
   <ul>
     <li>In cell[3], the value of the variable <code>filename</code> must be one of the following:
       <ul>
@@ -142,13 +120,13 @@ We will give now instructions for running each one of the notebooks, depending o
   </ul>
   
 
-### [Single_sentence_example.ipynb](//repo//WP6_QNLP/neasqc_wp61/doc/tutorials/Single_sentence_example.ipynb)
+### [Single_sentence_example.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/doc/tutorials/Single_sentence_example.ipynb)
   <ul>
     <li>No dataset is input on this notebook. No restrictions when running the notebook.</li>
   </ul>
 
 
-### [Dressed_QNLP_demo.ipynb](//repo/WP6_QNLP/neasqc_wp61/models/quantum/alpha/Dressed_QNLP_demo.ipynb)
+### [Dressed_QNLP_demo.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/quantum/alpha/Dressed_QNLP_demo.ipynb)
   <ul>
     <li>In cell[24], the value of the variable <code>filename</code> can be any of the datasets:
       <ul>
@@ -256,17 +234,17 @@ Some benefits and issues of this approach are:
 A module implementing classical processing of the dataset.
 
 The NNClassifier.py for the classical NLP module is located in the
-[classical](./neasqc_wp61/models/classical/) subdirectory.          
+[classical](https://github.com/NEASQC/WP6_QNLP/tree/v0.3/neasqc_wp61/models/classical) subdirectory.          
 
 ### Classical NLP Notebooks
 The notebooks for the classical NLP module are located in the
-[classical notebooks](./neasqc_wp61/doc/tutorials/) subdirectory.
+[classical notebooks](https://github.com/NEASQC/WP6_QNLP/tree/v0.3/neasqc_wp61/doc/tutorials) subdirectory.
 
 ## Benchmarking
 
 ### Vectorizer
 
-Services are found [here](./neasqc_wp61/benchmarking/data_processing/) for vectorizing using pretrained word embeddings.
+Services are found [here](https://github.com/NEASQC/WP6_QNLP/tree/v0.3/neasqc_wp61/benchmarking/data_processing) for vectorizing using pretrained word embeddings.
 
 The aim is to have vectorizing service detached from the rest of the library so that different vectorizing methods can easily be tested using the same interface.
 
@@ -289,3 +267,26 @@ Run
 to generate a tab-separated file containing lines of the form
 `<sentence>\t<sentence_type>\t<truth_value>` where `<truth_value>` is 1 if the sentence states a
 fact that is true and 0 otherwise, and `<sentence_type>` denotes the sentence type, e.g., `NOUN-TVERB-NOUN`.
+
+## Data
+
+This subdirectory contains the relevant datasets used in the models. For example, consider the [complete_dataset.json](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/data/Complete_dataset.json). In this dataset, a list of true or false labelled sentences of varying grammatical structure is contained. We can use this dataset in sentence classification training as in the alpha model.
+
+## Doc
+In this subdirectory,relevant documentation and tutorials are contained. Tutorials come in the form of jupyter notebooks and cover the classical and pre-alpha models.
+
+## Models
+
+Here we can find the Alpha and Pre-Alpha models.
+
+## Acknowledgements
+
+This work is supported by the [NEASQC](https://www.neasqc.eu) project, funded by the European Union's Horizon 2020 programme, Grant Agreement No. 951821.
+
+### License
+
+The [LICENSE](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/LICENSE) file contains the default license statement as specified in the proposal and partner agreement.  
+
+
+
+
