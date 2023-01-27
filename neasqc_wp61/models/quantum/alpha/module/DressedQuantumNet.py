@@ -52,7 +52,7 @@ class DressedQuantumNet(nn.Module):
 
     """
 
-    def __init__(self, Sentence):
+    def __init__(self, Qsentence):
         """Initialises DressedQuantumNet.
 
         Defines a neural network implemented before the paremtrised quantum circuit.
@@ -60,7 +60,7 @@ class DressedQuantumNet(nn.Module):
 
         Parameters
         ----------
-        Sentence : str
+        Sentence : Qsentence
             Input sentence.
 
         """
@@ -69,8 +69,8 @@ class DressedQuantumNet(nn.Module):
         intermediate_dimension= 20
         max_param = 5
         min_param = 1
-        self.Sentence = Sentence
-        self.QNParamWords = Sentence.GetNParamsWord()
+        self.Sentence = Qsentence
+        self.QNParamWords = Qsentence.GetNParamsWord()
         self.pre_net = nn.Linear(BertDim, intermediate_dimension)
         self.pre_net_max_params = nn.Linear(intermediate_dimension, max_param)
         self.cascade_layers = []
@@ -105,23 +105,41 @@ class DressedQuantumNet(nn.Module):
                     pre_out = self.cascade_layers[j](pre_out)
             q_in = torch.tanh(pre_out) * np.pi / 2.0  
             sentence_q_params.append(q_in)
+            
         self.qparams = torch.cat(sentence_q_params)
+        
         parameter_names = self.Sentence.tk_circuit.free_symbols()
+        
         self.parameter_names = parameter_names
+        
         param_dict = {p: q for p, q in zip(self.parameter_names, self.qparams)}
+        
         MyCirc = self.Sentence.tk_circuit
+        
         s_qubits = self.Measure_s_qubits(MyCirc)
+        print("s_qubits = ", s_qubits)
+        
         MyCirc.symbol_substitution(param_dict)
+        
         backend = AerBackend()
         #backend.get_compiled_circuits([MyCirc])
 
+        
         handle = backend.process_circuits(backend.get_compiled_circuits([MyCirc]), n_shots=2000)
+        
         counts = backend.get_result(handle[0]).get_counts()
+        print("counts = ", counts)
+        
         result_dict = self.get_norm_circuit_output(counts, s_qubits)
+        print("result_dict = ", result_dict)
+        
         all_bitstrings = self.calculate_bitstring(s_qubits)
+        print("all_bitstrings = ", all_bitstrings)
+        
         for bitstring in all_bitstrings:
             if bitstring not in result_dict.keys():
                 result_dict[bitstring] = 0
+        print("result_dict.values() = ", result_dict.values())
         return list(result_dict.values())
     
     def Measure_s_qubits(self, Circuit):
@@ -211,7 +229,7 @@ class DressedQuantumNet(nn.Module):
         return prob_result
 
     def get_norm_circuit_output(self, counts, s_qubits):
-        """Obtains normalised output of parametrised quantum circuit.
+        """Obtains normalised output of model.
 
         Parameters
         -------
@@ -227,6 +245,7 @@ class DressedQuantumNet(nn.Module):
         prob_result=dict()
         for bits in probs_from_counts(counts).keys():
             post_selected = self.satisfy_post_selection(self.Sentence.tk_circuit.post_selection, bits)
+            #print("post_selected = ",post_selected)
             if post_selected==True:
                 s_qubits_index = []
                 for qubit in s_qubits:
