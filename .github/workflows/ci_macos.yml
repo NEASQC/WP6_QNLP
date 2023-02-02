@@ -45,9 +45,9 @@ jobs:
         git push
     - name: Run unit tests
       run: |
-      cd ../../tests
-      python pip install pytest
-      pytest unit_test_sample.py
+        cd ../../tests
+        python pip install pytest
+        pytest unit_test_sample.py
 
 
 
