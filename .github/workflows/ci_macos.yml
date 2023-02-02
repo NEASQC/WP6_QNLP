@@ -21,10 +21,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      - name: Run unit ../tests
+      - name: Run unit tests
         run: |
           cd tests
-          python pip install pytest
+          python -m pip install pytest
           pytest unit_test_sample.py
       # Install the dependancies of the repo    
       - name: Install dependancies
