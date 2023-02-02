@@ -25,14 +25,12 @@ jobs:
       - name: Install dependancies
         run: |
           python -m pip install -r requirements.txt
-      # Build sphinx documentation and push 
       - name: Build and commits sphinx documentation
         run: |
           git checkout ci_cd_pipeline
           cd docs_sphinx
           make html
           cd build
-        # We use the --force --all command due to the presence of .gitignore
           git add --force --all
           git config --local user.email "p.suarez97@gmail.com"
           git commit -m 'Update sphinx docs'
@@ -46,10 +44,7 @@ jobs:
       - name: Run linter
         run: |
           python -m pip install flake8
-        # Stop the build if there are Python syntax errors or undefined names
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-        # Exit-zero treats all errors as warnings.
-        #The GitHub editor is 127 chars wide
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
 
