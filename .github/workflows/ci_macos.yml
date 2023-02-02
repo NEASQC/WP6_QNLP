@@ -35,7 +35,7 @@ jobs:
       - name: Build and commit sphinx documentation
         run: |
           git checkout ci_cd_pipeline
-          cd ../docs_sphinx
+          cd docs_sphinx
           make html
           cd build
           git add --force --all
@@ -45,7 +45,6 @@ jobs:
       # Run a basic linter    
       - name: Run linter
         run: |
-          cd ../..
           python -m pip install flake8
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
