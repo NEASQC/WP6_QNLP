@@ -25,11 +25,6 @@ jobs:
       - name: Install dependancies
         run: |
           python -m pip install -r requirements.txt
-      # Run a basic linter    
-      - name: Run linter
-        run: |
-          python -m pip install pylint
-          pylint neasqc_wp61
       # Build sphinx documentation and push 
       - name: Build and commits sphinx documentation
         run: |
@@ -46,6 +41,11 @@ jobs:
           cd ../../tests
           python pip install pytest
           pytest unit_test_sample.py
+      # Run a basic linter    
+      - name: Run linter
+        run: |
+          python -m pip install pylint
+          pylint neasqc_wp61
 
 
 
