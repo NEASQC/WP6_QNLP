@@ -21,6 +21,11 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+      - name: Run unit tests
+        run: |
+          cd tests
+          python pip install pytest
+          pytest unit_test_sample.py
       # Install the dependancies of the repo    
       - name: Install dependancies
         run: |
@@ -35,11 +40,6 @@ jobs:
           git config --local user.email "p.suarez97@gmail.com"
           git commit -m 'Update sphinx docs'
           git push
-      - name: Run unit tests
-        run: |
-          cd ../../tests
-          python pip install pytest
-          pytest unit_test_sample.py
       # Run a basic linter    
       - name: Run linter
         run: |
