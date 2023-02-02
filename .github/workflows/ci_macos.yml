@@ -24,7 +24,7 @@ jobs:
       # Install the dependancies of the repo    
       - name: Install dependancies
         run: |
-          python -m pip -r install requirements.txt
+          python -m pip install -r requirements.txt
       # Run a basic linter    
       - name: Run linter
         run: |
