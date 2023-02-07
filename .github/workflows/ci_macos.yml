@@ -25,7 +25,10 @@ jobs:
       - name: Run linter
         run: |
           python -m pip install pylint
-          find . -name '*.py' -print -exec pylint -- {} \;
+          for file in $(find -name '*.py')
+          do 
+            pylint "$file"
+          done
       # Install the dependancies of the repo
       - name: Install dependancies
         run: |
