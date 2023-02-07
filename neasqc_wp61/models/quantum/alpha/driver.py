@@ -1,6 +1,6 @@
-from module_fix_2.dataset_wrapper import *
-from module_fix_2.parametrised_quantum_circuit import *
-from module_fix_2.alpha_trainer import *
+from module.dataset_wrapper import *
+from module.parametrised_quantum_circuit import *
+from module.alpha_trainer import *
 
 from lambeq.ansatz.circuit import IQPAnsatz
 

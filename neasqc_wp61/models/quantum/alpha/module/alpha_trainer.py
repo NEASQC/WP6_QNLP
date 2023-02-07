@@ -1,5 +1,5 @@
-from module_fix_2.dataset_wrapper import *
-from module_fix_2.parametrised_quantum_circuit import *
+from module.dataset_wrapper import *
+from module.parametrised_quantum_circuit import *
 
 import torch
 from torch.autograd import Function
