@@ -17,7 +17,7 @@ import torch.nn.functional as F
 filename = "../../../data/Complete_dataset.json"
 
 ###dataset_wrapper parses the data and finds the bert embeddings for each sentence
-wrapper = dataset_wrapper(filename)
+#wrapper = dataset_wrapper(filename)
 
 ###Defining the fixed parametrised_quantum_circuit
 sentence_type = 'NOUN-IVERB-TVERB-PREP-NOUN'
@@ -25,27 +25,15 @@ sentence_type = 'NOUN-IVERB-TVERB-PREP-NOUN'
 #sentence_type = 'NOUN-IVERB-NOUN-TVERB-NOUN'
 sentence= "dog ate cat addressing audience"
 #sentence_type = "dog ate cat"
-pqc = parametrised_quantum_circuit(sentence, sentence_type)
+#pqc = parametrised_quantum_circuit(sentence, sentence_type)
 
-print(pqc.word_number_of_parameters)
-
-parameters = np.random.rand(sum(pqc.word_number_of_parameters))
-
-print(parameters)
-
-output = pqc.run_circuit(parameters)
-
-print(output)
-
-output = pqc.run_circuit(parameters)
-
-print(output)
+#parameters = np.random.rand(sum(pqc.word_number_of_parameters))
 
 ###Training the model
 
 trainer = alpha_trainer(filename, sentence, sentence_type)
 
-number_of_epochs = 5
+number_of_epochs = 3
 
 loss_array = trainer.train(number_of_epochs)
 
