@@ -115,7 +115,7 @@ def benchmarking_pipeline(
     y_stds = compute_stds(results)
 
     if save_results == True:
-        with open (path + "/" + name + ".json", "w") as file:
+        with open (path  + name + ".json", "w") as file:
             json.dump([x, y, y_stds], file)
 
     return x, y, y_stds

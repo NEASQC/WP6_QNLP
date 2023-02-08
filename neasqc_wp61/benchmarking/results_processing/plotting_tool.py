@@ -3,7 +3,7 @@ import numpy as np
 import random as rd 
 
 
-def plotting_tool(
+def plotting_function(
     x: list[list[float]], y: list[list[float]], y_stds: list[list[float]],  
     legend_size: float = 25.0, alpha: float = 0.25, 
     ymax: float = None, ymin: float = None,
@@ -114,6 +114,6 @@ def save_plot(figure: plt.figure, path: str, name: str):
     name : str
         Name to be given to the stored graph
     """
-    figure.savefig(path+f'/{name}.png')
+    figure.savefig(path+f'{name}.png')
     
     
