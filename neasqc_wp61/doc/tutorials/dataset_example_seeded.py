@@ -61,7 +61,7 @@ def pre_alpha_classifier_seeded(seed):
                                                                 #we can select just a few sentences to try out
                                                                 #the model parameters.
     par, ix = MyDict.getindexmodelparams()
-    myopt = optimizer.ClassicalOptimizer()
+    myopt = optimizer_cost_normalised.ClassicalOptimizer()
     result = myopt.optimizedataset(SentencesList, par, MyDict,
                                    tol=1e-5,
                                    options={'maxiter':500, 'rhobeg': 1},
