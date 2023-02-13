@@ -5,6 +5,7 @@ sys.path.append(current_path + "/../doc/tutorials/")
 from dataset_example_seeded import pre_alpha_classifier_seeded
 import numpy as np
 import json 
+import time 
 
 
 def compute_means(
@@ -67,7 +68,7 @@ def compute_stds(
 
 def benchmarking_pipeline(
     n_runs: int,
-    initial_seed: float = 18061997,
+    numpy_seed: int = 18061997,
     customised_seed_list: list = None,
     save_results: bool = None, 
     path: str = None, name: str = None):
@@ -82,10 +83,9 @@ def benchmarking_pipeline(
     ----------
     n_runs : int
         Number of runs to be performed
-    initial_seed : float, optional
-        Sets the random seed for the first run. The random seed will be changing 
-        over the different runs of the model, so changing the seed for the first 
-        run will also change the seeds of the subsequent runs. 
+    numpy_seed : int, optional
+        Sets the seed for the numpy random generator with which we will
+        generate the seeds for each run. 
     customised_seed : list, optional
         Sets a predefined list of seeds. Its length must match the number of 
         runs to be performed. Default is None. 
@@ -100,19 +100,25 @@ def benchmarking_pipeline(
         When save_results is set to True, specifies the name of the results 
         that are being saved.
     """
-    
+    t0 = time.time() # Set the initial timer
     if customised_seed_list != None:
         seed_list = customised_seed_list
     else:
-        seed_list =[initial_seed + i for i in range(n_runs)]
-
+        np.random.seed(numpy_seed)
+        seed_list = np.random.randint(0, 1e10, (1, n_runs))
+        # The numbers that can appear on the seed list
+        # are hardcoded in the [0, 1e10] interval
     results = []
     for i in range(n_runs):
-        results.append(pre_alpha_classifier_seeded(seed_list[i]))
+        results.append(pre_alpha_classifier_seeded(seed_list[0][i]))
 
     x = np.arange(len(results[0])).tolist() # Number of steps in optimisation   
     y = compute_means(results)
     y_stds = compute_stds(results)
+    t1 = time.time() # set the final timer
+    print(f'The total experiment time is {t1-t0}')
+    print(f'The start cost function value is {y[0]}')
+    print(f'The end cost value is {y[-1]}')
 
     if save_results == True:
         with open (path  + name + ".json", "w") as file:
