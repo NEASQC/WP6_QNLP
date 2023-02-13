@@ -6,7 +6,7 @@ import pandas as pd
 import json
 import matplotlib.pyplot as plt
 import random
-import optimizer_cost_normalisec
+import optimizer_cost_normalised
 import loader
 import circuit
 import dictionary_seeded
