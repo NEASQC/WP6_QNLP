@@ -19,7 +19,7 @@ import sentence_seeded
 def pre_alpha_classifier_seeded(seed):
     random.seed(seed)
     filename = 'dataset_vectorized_fasttext.json'
-    Dftrain, Dftest = loader.createdf(current_path +"/../../data/"+filename)#Dataframe form Json file
+    Dftrain, Dftest = loader.createdf(current_path +"/../../data/datasets/"+filename)#Dataframe form Json file
     #Several datasets are found in the Dataset folder. 
     #In the complete dataset, three types of sentences are found:
     # 
