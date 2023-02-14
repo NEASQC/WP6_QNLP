@@ -25,9 +25,10 @@ class alpha_trainer(nn.Module):
         super().__init__()
         
         #Set random seed
-        torch.manual_seed(seed)
-        np.random.seed(seed)
-        random.seed(seed)
+        self.seed = seed
+        torch.manual_seed(self.seed)
+        np.random.seed(self.seed)
+        random.seed(self.seed)
         
         ###dataset_wrapper parses the data and finds the bert embeddings for each sentence
         self.wrapper = dataset_wrapper(filename)
