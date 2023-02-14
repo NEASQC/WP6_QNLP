@@ -70,7 +70,7 @@
 <div class="viewcode-block" id="DressedQuantumNet"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet">[docs]</a><span class="k">class</span> <span class="nc">DressedQuantumNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 
 
-    <span class="sd">&quot;&quot;&quot;Neural Network Classifier with Forward Method.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Neural Network Classifier with Forward Method.</span>
 
 <span class="sd">    Defines the Dressed Quantum Neural Network Classifier for a Sentence. A feed forward step is also defined for later training along with supporting methods.</span>
 <span class="sd">    This class implements the pre processing neural network needed to reduce the dimensionality of BERT embeddings. A dimension for an intermediate representation, as well as the max and min numbers of parameters that are expected to appear in the circuits is also provided. A different number of layers will be applied depending of the numbers of parameters needed to encode that word.</span>
@@ -86,7 +86,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Sentence</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialises DressedQuantumNet.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialises DressedQuantumNet.</span>
 
 <span class="sd">        Defines a neural network implemented before the paremtrised quantum circuit.</span>
 <span class="sd">       </span>
@@ -116,7 +116,7 @@
             
             
 <div class="viewcode-block" id="DressedQuantumNet.forward"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Performs forward step in neural network.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs forward step in neural network.</span>
 
 <span class="sd">        Takes a list of sentences and find a Bert embedding for each.:</span>
 
@@ -158,7 +158,7 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">result_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
     
 <div class="viewcode-block" id="DressedQuantumNet.Measure_s_qubits"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet.Measure_s_qubits">[docs]</a>    <span class="k">def</span> <span class="nf">Measure_s_qubits</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Circuit</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Obtains unmeasured qubits meausrements.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtains unmeasured qubits meausrements.</span>
 
 <span class="sd">        In the DisCoCat pytket circuits the sentence qubits are not measured, and thus additional measurements</span>
 <span class="sd">        need to be performed. Otherwise, we will get bitsrings shorter than the number of qubits of the circuits, </span>
@@ -187,7 +187,7 @@
 
     
 <div class="viewcode-block" id="DressedQuantumNet.satisfy_post_selection"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet.satisfy_post_selection">[docs]</a>    <span class="k">def</span> <span class="nf">satisfy_post_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">post_selection</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Checks post selection criteria for circuit.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks post selection criteria for circuit.</span>
 
 <span class="sd">        This is used to tell if the output bitstrings satify the post selection conditions given by the ciruit.:</span>
 
@@ -210,7 +210,7 @@
         <span class="k">return</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="DressedQuantumNet.list2bitstring"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet.list2bitstring">[docs]</a>    <span class="k">def</span> <span class="nf">list2bitstring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">bitlist</span><span class="p">:</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Converts bit list to bit string.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts bit list to bit string.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        -------</span>
@@ -227,7 +227,7 @@
         <span class="k">return</span> <span class="n">bitstring</span></div>
 
 <div class="viewcode-block" id="DressedQuantumNet.norm_probs"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet.norm_probs">[docs]</a>    <span class="k">def</span> <span class="nf">norm_probs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">prob_result</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Normalises values in dictionary</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalises values in dictionary</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        -------</span>
@@ -244,7 +244,7 @@
         <span class="k">return</span> <span class="n">prob_result</span></div>
 
 <div class="viewcode-block" id="DressedQuantumNet.get_norm_circuit_output"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet.get_norm_circuit_output">[docs]</a>    <span class="k">def</span> <span class="nf">get_norm_circuit_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">counts</span><span class="p">,</span> <span class="n">s_qubits</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Obtains normalised output of parametrised quantum circuit.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Obtains normalised output of parametrised quantum circuit.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        -------</span>
@@ -271,7 +271,7 @@
     
 
 <div class="viewcode-block" id="DressedQuantumNet.calculate_bitstring"><a class="viewcode-back" href="../../module.html#module.DressedQuantumNet.DressedQuantumNet.calculate_bitstring">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_bitstring</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s_qubits</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Finds bitstrings for each qubit.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Finds bitstrings for each qubit.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        -------</span>
@@ -312,7 +312,6 @@
 <h3>Navigation</h3>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../README.html">Quantum Natural Language Processing : NEASQC WP6.1</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">alpha</a></li>
 </ul>
 
 <div class="relations">
@@ -351,7 +350,7 @@
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
-      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
       
     </div>
 

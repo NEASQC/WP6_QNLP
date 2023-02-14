@@ -1,0 +1,53 @@
+
+
+# Name of the workflow as it will appear in "Actions" tab. 
+name: CI/CD macos
+# Action that will trigger the workflow (in our case, push a commit)
+on:
+  push:
+    branches:
+      - ci_cd_pipeline
+# jobs groups togheter all the jobs that run in the workflow file
+jobs:
+  build:
+  # Our hosted runner will be the latest version of macos.
+    runs-on: macos-latest
+    steps:
+      # Check the repository and download it to the runner
+      - name: Check repository
+        uses: actions/checkout@v3
+      # Set up the desired Python version  
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      # Install the dependancies of the repo
+      - name: Install dependancies
+        run: |
+          python -m pip install -r requirements.txt
+      # Run a basic linter   
+      - name: Run linter
+        run: |
+          python -m pip install pylint
+          pylint --exit-zero neasqc_wp61
+      # Run unit tests
+      - name: Run unit tests
+        run: |
+          cd tests
+          python -m pip install pytest
+          pytest unit_test_sample.py
+      # Build and commit sphinx documentation
+      - name: Build and commit sphinx documentation
+        run: |
+          git checkout ci_cd_pipeline
+          cd docs_sphinx
+          make html
+          cd build
+          git add --force --all
+          git config --local user.email "p.suarez97@gmail.com"
+          git commit -m 'Update sphinx docs'
+          git push
+  
+
+
+
