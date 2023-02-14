@@ -9,6 +9,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 import numpy as np
+import random
 
 import time
 
@@ -20,35 +21,28 @@ class alpha_trainer(nn.Module):
     # -PQC change needs to hold the pqc for each sentence, we have to build this everytime anyway so we may aswell create a class with inputs pqc(sentence), then we just need the number of parameters per word
     # the training function needs to have a fixed network indpendent invariant in the feed forward.
     
-    def __init__(self,filename:str, sentence:str, sentence_type:str):
+    def __init__(self,filename:str, seed: int):
         super().__init__()
+        
+        #Set random seed
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+        random.seed(seed)
+        
         ###dataset_wrapper parses the data and finds the bert embeddings for each sentence
         self.wrapper = dataset_wrapper(filename)
         self.sentences = self.wrapper.sentences
         self.sentence_types = self.wrapper.sentence_types
         self.sentence_labels = self.wrapper.sentence_labels
         self.bert_embeddings = self.wrapper.bert_embeddings
-
-        ###Defining the fixed parametrised_quantum_circuit
-        self.sentence = sentence
-        self.sentence_type = sentence_type
-        self.pqc = parametrised_quantum_circuit(self.sentence, self.sentence_type)
-        self.word_number_of_parameters = self.pqc.word_number_of_parameters
-        self.number_of_parameters = sum(self.word_number_of_parameters)
-        
-        ### obtaining sentence type boolean arrays
-        self.sentence_type_inputs = self.get_word_order()
         
         ###Defining the network
         self.BertDim = 768
-        intermediate_dimension= 20
-        max_param = 15
-        min_param = 1
+        intermediate_dimension= 10
+        max_param = 9
+        min_param = 4
         
-        #Create a network for each word in the general sentence type
-        general_word_types = self.sentence_type.split("-")
-        self.number_of_network_elements = len(general_word_types)
-            
+        #Create a neural network    
         self.pre_net = nn.Linear(self.BertDim, intermediate_dimension)
         self.pre_net_max_params = nn.Linear(intermediate_dimension, max_param)
         self.cascade = nn.ParameterList()
@@ -86,7 +80,7 @@ class alpha_trainer(nn.Module):
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
-
+                
                 #print stats
                 running_loss += loss.item()
             
@@ -96,7 +90,7 @@ class alpha_trainer(nn.Module):
             print("Loss = ", running_loss/len(self.sentences))
             loss_array.append(running_loss/len(self.sentences))
                 
-        return loss_array
+        return np.array(loss_array)
     
     
     def forward(self, specific_sentence):
@@ -123,27 +117,6 @@ class alpha_trainer(nn.Module):
         output = pqc.run_circuit(self.qparams)
             
         return output
-    
-    def get_word_order(self):
-        word_orders = []
-        general_word_types = self.sentence_type.split("-")
-        number_of_elements = len(general_word_types)
-        for sentence_type_input in self.sentence_types:
-            word_order = [0]*number_of_elements
-            word_types = sentence_type_input.split("-")
-            word_type_index_min=0
-            for word_type in word_types:
-                order_index = 0
-                for general_word_type in general_word_types[word_type_index_min:]:
-                    if word_type == general_word_type:
-                        word_order[word_type_index_min+order_index] = 1
-                        order_index += 1
-                        word_type_index_min+=1
-                        break
-                    else:
-                        order_index += 1
-            word_orders.append(word_order)
-        return word_orders
     
 
                 
