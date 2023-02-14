@@ -63,12 +63,9 @@ class dataset_wrapper():
 
         """
         self.file=filename
-        self.n = AtomicType.NOUN
-        self.s = AtomicType.SENTENCE
-        self.p = AtomicType.PREPOSITIONAL_PHRASE
-        self.depth=1
         
         self.sentences, self.sentence_types, self.sentence_labels = self.data_parser()
+        
         self.bert_embeddings = self.data_preparation()
         
         
