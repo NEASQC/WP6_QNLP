@@ -14,14 +14,52 @@ import random
 import time
 
 class alpha_trainer(nn.Module):
+    """Trains a neural network that takes sentence BERT embeddings as input and maps them to the parameters in a parameterised quantum circuit.
+
+    ........
+
+    Attributes
+    ----------
     
-    #Changes
-    # Have one network for each sentence passing into the number of paramters required for each sentence and their respective pqc
-    # What changes do we need to make?
-    # -PQC change needs to hold the pqc for each sentence, we have to build this everytime anyway so we may aswell create a class with inputs pqc(sentence), then we just need the number of parameters per word
-    # the training function needs to have a fixed network indpendent invariant in the feed forward.
+    seed: int
+        Random seed setting
+    wrapper: dataset_wrapper
+        Generates dataset_wrapper object using filename
+    sentences: list
+        list of sentences in the dataset
+    sentence_types: list
+        list of sentence types(grammatical structures)
+    sentence_labels: list
+        list of sentence classification labels
+    bert_embeddings: list[list[floats]]
+        The BERT embeddings for each word in each sentence.
+    BertDim: int
+        Dimension of the BERT embedding vectors
+    pre_net: nn.Linear
+        Network that takes Bert Embedding input and maps it to an intermediate dimension layer.
+    pre_net_max_params: nn.Linear
+        Network that maps intermediate diimension to a layer with dimension equal to an estimated maximum number of parameters required for the paramterised quantum circuits.
+    cascade = nn.ParameterList(nn.Linear)
+        Network that maps the maximum parameters kayer to a layer with dimension equal to the number of parameters required for a particular quantum circuit.
+
+    """
     
     def __init__(self,filename:str, seed: int):
+        """Initialises alpha_trainer.
+
+        Defines the attributes in alpha_trainer, inculding the neural network.
+        
+
+        Parameters
+        ----------
+        filename : str
+            Input data json file
+        seed: int
+            Random seed setting for reproducibility
+            
+
+        """
+        
         super().__init__()
         
         #Set random seed
@@ -53,6 +91,21 @@ class alpha_trainer(nn.Module):
 
         
     def train(self, number_of_epochs):
+        """Trains model.
+
+        Uses a binary cross entropy loss criterion and stochastic gradient descent optimiser to train the model of a number of epochs.:
+
+        Parameters
+        ----------
+        number_of_epochs: int
+            the number of epochs over which you loop over the data and train the model
+        
+        Returns
+        -------
+        Dataset: np.array()
+            array of loss for each epoch
+            
+        """
         ###Training the model
         
         criterion = nn.BCELoss()
@@ -95,6 +148,18 @@ class alpha_trainer(nn.Module):
     
     
     def forward(self, specific_sentence):
+        """Performs a forward step in the model training.
+
+        Parameters
+        ----------
+        specific_sentence: str
+            sentence that the model trains on
+        
+        Returns
+        -------
+        output: list[floats]
+            [x,1-x] binary classification output.
+        """   
         #Takes in bert embeddings, assigns them to correct transformation, then outputs results for running the circuit
         # Requires pqc parameter numbers
         sentence_index = self.sentences.index(specific_sentence)
