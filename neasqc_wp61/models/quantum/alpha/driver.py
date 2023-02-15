@@ -1,5 +1,5 @@
 from module.dataset_wrapper import *
-from module.parametrised_quantum_circuit import *
+from module.parameterised_quantum_circuit import *
 from module.alpha_trainer import *
 
 from lambeq.ansatz.circuit import IQPAnsatz
