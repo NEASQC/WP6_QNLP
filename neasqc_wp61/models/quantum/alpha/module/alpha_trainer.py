@@ -99,7 +99,7 @@ class alpha_trainer(nn.Module):
         # Requires pqc parameter numbers
         sentence_index = self.sentences.index(specific_sentence)
         
-        pqc = parametrised_quantum_circuit(specific_sentence, self.sentence_types[sentence_index])
+        pqc = parametrised_quantum_circuit(specific_sentence)
         word_number_of_parameters = pqc.word_number_of_parameters
         
         counter = 0

@@ -18,15 +18,45 @@ parser = BobcatParser()
 
 
 class parametrised_quantum_circuit():
+    """Generates a parametrised quantum circuit for a given input sentence.
+
+    ........
+
+    Attributes
+    ----------
     
+    sentence: str
+        Inputted sentence 
+    ansatz: IQPansatz
+        IQPansatz for the parameterised quantum circuit.
+    tk_circuit: pytket circuit
+        pytket representation of the circuit.
+    parameters: dict
+        Parmameters in the parameterised quantum circuit
+    word_number_of_parameters: list[ints]
+        The number of parameters required for each word in the sentence respectively.
+
+    """
     
-    def __init__(self, sentence, sentence_type: str):
+    def __init__(self, sentence: str):
+        """Initialises parameterised quantum circuit.
+
+        Takes in a sentence and creates a parameterised quantum circuit that represents it's grammatical structure, using Lambeq library.
+        
+
+        Parameters
+        ----------
+        sentence : str
+            Input sentence
+            
+
+        """
         
         #Defining the sentence
         self.sentence = sentence
         
         #Defining the sentence structure
-        self.sentence_type = sentence_type
+        #self.sentence_type = sentence_type
         
         #Defining the ansatz
         n = AtomicType.NOUN
@@ -115,7 +145,7 @@ class parametrised_quantum_circuit():
         return params_per_word
     
     def Measure_s_qubits(self, Circuit):
-        """Obtains unmeasured qubits meausrements.
+        """Measures sentence qubits.
 
         In the DisCoCat pytket circuits the sentence qubits are not measured, and thus additional measurements
         need to be performed. Otherwise, we will get bitsrings shorter than the number of qubits of the circuits, 
