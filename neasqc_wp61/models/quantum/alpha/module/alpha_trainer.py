@@ -1,5 +1,5 @@
 from module.dataset_wrapper import *
-from module.parametrised_quantum_circuit import *
+from module.parameterised_quantum_circuit import *
 
 import torch
 from torch.autograd import Function
@@ -99,7 +99,7 @@ class alpha_trainer(nn.Module):
         # Requires pqc parameter numbers
         sentence_index = self.sentences.index(specific_sentence)
         
-        pqc = parametrised_quantum_circuit(specific_sentence)
+        pqc = parameterised_quantum_circuit(specific_sentence)
         word_number_of_parameters = pqc.word_number_of_parameters
         
         counter = 0
