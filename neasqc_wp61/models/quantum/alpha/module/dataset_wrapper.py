@@ -1,4 +1,3 @@
-#from module_fix.parametrised_quantum_circuit import *
 from transformers import BertTokenizer
 from transformers import BertModel
 import torch
@@ -8,7 +7,6 @@ tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertModel.from_pretrained('bert-base-uncased',
                                   output_hidden_states = True,
                                   )
-
 
 from discopy import grammar
 from pytket.circuit.display import render_circuit_jupyter
@@ -27,39 +25,37 @@ import pandas as pd
 parser = BobcatParser()
 
 class dataset_wrapper():
-    """Generates bert embeddings for each sentence. Also hold sentences, sentence_types, sentence_labels
+    """Generates BERT embeddings for each sentence. Also hold sentences, sentence_types, sentence_labels
 
     ........
 
     Attributes
     ----------
-    label : optional, list, bool, NoneType
-        Mapping of True:[1,0] and False:[0,1].
-    parameters : tk_circuit.free_symbols()
-        The parameters in the quantum circuit that correspond to the words in the sentence.
-    embeddings : list
-        The sentence embedding.
+    
+    file: str
+        Inputted file name 
+    sentences: list
+        list of sentences
+    sentence_types: list
+        list of sentence types(grammatical structures)
+    sentence_labels: list
+        list of sentence classification labels
+    bert_embeddings: list[list[floats]]
+        The BERT embeddings for each word in each sentence.
 
     """
     
     def __init__(self, filename: str):
-        """Initialises Qsentence.
+        """Initialises dataset_wrapper.
 
-        Obtains parametrised quantum circuit and word embeddings for the sentence.
+        Takes in a dataset of sentences and finds the sentences, sentence structures(types), sentence classification labels and the BERT embeddings for each word in each sentence.
         
 
         Parameters
         ----------
-        sentence_string : str
-            Input sentence.
-        n_dim : int
-            Noun dimension for PQC.
-        s_dim : int
-            Sentence dimension for PQC.
-        depth: int
-            Number of layers in the IQPansatz.
-        label: optional, bool, list
-            label classification of the sentence.
+        filename : str
+            Input data json file
+            
 
         """
         self.file=filename
@@ -76,55 +72,38 @@ class dataset_wrapper():
 
         Parameters
         ----------
-        filename : str
-            File path to the data to be prepared
-
+        
         Returns
         -------
-        Dataset: list
-            List of Qsentence types corresponding to each sentence.
-
-
+        Dataset: list[list[floats]]
+            Nested list of BERT embeddings for each word in each sentence.
+            
         """
         with open(self.file) as f:
             data = json.load(f)
+            
         dftrain = pd.DataFrame(data['train_data'])
         dftrain["truth_value"]= dftrain["truth_value"].map({True: [1,0], False: [0,1]})
         dftest = pd.DataFrame(data['test_data'])
         dftest["truth_value"]= dftest["truth_value"].map({True: [1,0], False: [0,1]})
         
-        #What do we need to extract
-        #dftrain["sentence"]
-        #dftrain["sentence_type"]
-        #dftrain["truth_value"]
-        
-
-
-        
-        #for sentence, label in zip(dftrain["sentence"], dftrain["truth_value"]):
-            #print("Sentence: ", sentence, "     label: ", label)
-            #Dataset.append(self.get_sentence_BERT_embeddings(sentence_string=sentence))
         Dataset = []  
         for sentence in self.sentences:
             Dataset.append(self.get_sentence_BERT_embeddings(sentence_string=sentence))
         return Dataset
     
     def data_parser(self):
-        """Transforms sentences into Qsentences.
+        """Parses the elements of the dataset and returns them as lists.
 
-        Takes sentence train and test data along with their repective true or false labels and transforms each sentence into a so-called Qsentence.:
+        Takes the dataset and returns a tuple of three lists, the sentences, sentence_types and sentence_labels.:
 
         Parameters
         ----------
-        filename : str
-            File path to the data to be prepared
 
         Returns
         -------
-        Dataset: list
-            List of Qsentence types corresponding to each sentence.
-
-
+        sentences, sentence_types, sentence_labels: tuple(list,list,list)
+           
         """
         with open(self.file) as f:
             data = json.load(f)
@@ -133,13 +112,6 @@ class dataset_wrapper():
         dftest = pd.DataFrame(data['test_data'])
         dftest["truth_value"]= dftest["truth_value"].map({True: [1,0], False: [0,1]})
         
-        #What do we need to extract
-        #dftrain["sentence"]
-        #dftrain["sentence_type"]
-        #dftrain["truth_value"]
-        
-
-
         sentences = []
         sentence_types = []
         sentence_labels = []
