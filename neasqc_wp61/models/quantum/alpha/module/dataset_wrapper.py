@@ -79,14 +79,7 @@ class dataset_wrapper():
             Nested list of BERT embeddings for each word in each sentence.
             
         """
-        with open(self.file) as f:
-            data = json.load(f)
-            
-        dftrain = pd.DataFrame(data['train_data'])
-        dftrain["truth_value"]= dftrain["truth_value"].map({True: [1,0], False: [0,1]})
-        dftest = pd.DataFrame(data['test_data'])
-        dftest["truth_value"]= dftest["truth_value"].map({True: [1,0], False: [0,1]})
-        
+    
         Dataset = []  
         for sentence in self.sentences:
             Dataset.append(self.get_sentence_BERT_embeddings(sentence_string=sentence))
@@ -115,7 +108,7 @@ class dataset_wrapper():
         sentences = []
         sentence_types = []
         sentence_labels = []
-        for sentence, sentence_type, label in zip(dftrain["sentence"], dftrain["sentence_type"],dftrain["truth_value"]):
+        for sentence, sentence_type, label in zip(dftrain["sentence"], dftrain["structure_tilde"],dftrain["truth_value"]):
             sentences.append(sentence)
             sentence_types.append(sentence_type)
             sentence_labels.append(label)
