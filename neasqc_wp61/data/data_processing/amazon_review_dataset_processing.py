@@ -23,7 +23,9 @@ def filter_structures(dataset : pd.DataFrame) -> pd.DataFrame:
     frames = []
     for s in selected_items:
         df = dataset.loc[
-            dataset['structure_tilde'] ==  key_list[s]
+            dataset['structure_tilde'] ==  key_list[s-1]
+            # The selected_items were written starting in number 1 ..
+            # .. instead of 0
             ]
         frames.append(df)
 
