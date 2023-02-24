@@ -40,8 +40,8 @@ def generate_dataset(dataset : pd.DataFrame) -> dict:
         df = list_dataset[i]
         for k in range(df.shape[0]):
             data_value = {}
-            data_value["sentence"] = df["sentence"].iloc[i]
-            data_value["structure_tilde"] = df["structure_tilde"].iloc[i]
+            data_value["sentence"] = df["sentence"].iloc[k]
+            data_value["structure_tilde"] = df["structure_tilde"].iloc[k]
             if df["label"].iloc[i] == 1 :
                 data_value["truth_value"] = False
             if df["label"].iloc[i] == 2:
