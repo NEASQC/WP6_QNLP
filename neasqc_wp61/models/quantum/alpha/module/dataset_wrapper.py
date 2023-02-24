@@ -62,6 +62,8 @@ class dataset_wrapper():
         
         self.sentences, self.sentence_types, self.sentence_labels = self.data_parser()
         
+        print(self.sentences)
+        
         self.bert_embeddings = self.data_preparation()
         
         
@@ -82,7 +84,9 @@ class dataset_wrapper():
     
         Dataset = []  
         for sentence in self.sentences:
+            print("Sentence = ", sentence)
             Dataset.append(self.get_sentence_BERT_embeddings(sentence_string=sentence))
+            print("BERT Embedding Obtained")
         return Dataset
     
     def data_parser(self):
@@ -108,6 +112,7 @@ class dataset_wrapper():
         sentences = []
         sentence_types = []
         sentence_labels = []
+
         for sentence, sentence_type, label in zip(dftrain["sentence"], dftrain["structure_tilde"],dftrain["truth_value"]):
             sentences.append(sentence)
             sentence_types.append(sentence_type)

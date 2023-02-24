@@ -29,7 +29,9 @@ filename = "../../../data/datasets/amazon_filtered_dataset.json"
 #Set random seed
 seed = 0
 
+print("Initialisation Begun")
 trainer = alpha_trainer(filename, seed)
+print("Initialisation Ended")
 #How many generations(epochs) to be ran?
 number_of_epochs = 2
 

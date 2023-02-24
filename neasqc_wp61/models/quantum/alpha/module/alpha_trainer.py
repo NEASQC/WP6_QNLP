@@ -78,8 +78,8 @@ class alpha_trainer(nn.Module):
         ###Defining the network
         self.BertDim = 768
         intermediate_dimension= 10
-        max_param = 9
-        min_param = 4
+        max_param = 10
+        min_param = 1
         
         #Create a neural network    
         self.pre_net = nn.Linear(self.BertDim, intermediate_dimension)
