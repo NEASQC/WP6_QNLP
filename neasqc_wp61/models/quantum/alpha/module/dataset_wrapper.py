@@ -19,6 +19,8 @@ from sympy import default_sort_key
 
 import time
 
+import re
+
 import json
 import pandas as pd
 
@@ -61,8 +63,6 @@ class dataset_wrapper():
         self.file=filename
         
         self.sentences, self.sentence_types, self.sentence_labels = self.data_parser()
-        
-        print(self.sentences)
         
         self.bert_embeddings = self.data_preparation()
         
@@ -114,6 +114,8 @@ class dataset_wrapper():
         sentence_labels = []
 
         for sentence, sentence_type, label in zip(dftrain["sentence"], dftrain["structure_tilde"],dftrain["truth_value"]):
+            if sentence == 'Borring as hell':
+                sentence = 'Boring as hell'
             sentences.append(sentence)
             sentence_types.append(sentence_type)
             sentence_labels.append(label)
@@ -131,6 +133,8 @@ class dataset_wrapper():
             List consisting of word embeddings for each sentence.
 
         """
+        ellipses = ['.'*i for i in range(1,30,1)]
+        
         SentenceList = sentence_string
         Sentences_Embeddings = []
         if type(SentenceList) == str:
@@ -139,10 +143,21 @@ class dataset_wrapper():
             tokenized_text, tokens_tensor, segments_tensors = self.bert_text_preparation(sentence, tokenizer)
             list_token_embeddings = self.get_bert_embeddings(tokens_tensor, segments_tensors, model)
             nwords = len(sentence.split(" "))
-
+            
+            print("tokenized_text = ",tokenized_text)
             word_embeddings = []
-            for word in sentence.split(" "):
-                word_index = tokenized_text.index(word.lower().replace(".",""))
+            
+            
+            #for word in sentence.split(" "):
+            for word in re.split(r' |-',sentence):
+                for ellipse in ellipses:
+                    if word==ellipse:
+                        word="."
+                if word.lower() == 'amazon.com':
+                    word = 'amazon'
+                print('-'.lower())
+                #word_index = tokenized_text.index(word.lower().replace(".",""))
+                word_index = tokenized_text.index(word.lower())
                 word_embeddings.append(list_token_embeddings[word_index])
 
             Sentences_Embeddings.append(word_embeddings)
@@ -168,7 +183,6 @@ class dataset_wrapper():
         (tokenized_text, tokens_tensor, segments_tensors): tuple  
 
         """
-
 
         marked_text = "[CLS] " + text + " [SEP]"
         tokenized_text = tokenizer.tokenize(marked_text)
