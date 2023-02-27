@@ -57,9 +57,8 @@ def pre_alpha_classifier_seeded(seed):
 
     
     SentencesList = createsentencelist(Dftrain, MyDict)
-    SentencesList = [x for x in random.sample(SentencesList, 40)]#For some dataset that may be too big,
-                                                                #we can select just a few sentences to try out
-                                                                #the model parameters.
+    # SentencesList = [x for x in random.sample(SentencesList, 40)] 
+    # We can reduce the sample size of our dataset to shorten computing times 
     par, ix = MyDict.getindexmodelparams()
     myopt = optimizer_cost_normalised.ClassicalOptimizer()
     result = myopt.optimizedataset(SentencesList, par, MyDict,
