@@ -54,7 +54,6 @@ class parameterised_quantum_circuit():
         
         #Defining the sentence
         self.sentence = sentence
-        print("specific sentence = ", self.sentence)
         
         #Defining the sentence structure
         #self.sentence_type = sentence_type

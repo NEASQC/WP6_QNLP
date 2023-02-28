@@ -14,15 +14,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 ###Choosing the dataset
-#filename = "../../../data/datasets/Complete_dataset.json"
-filename = "../../../data/datasets/amazon_filtered_dataset.json"
 
-###Defining the fixed parametrised_quantum_circuit
-#sentence_type = 'NOUN-IVERB-TVERB-PREP-NOUN'
-
-#sentence_type = 'NOUN-IVERB-NOUN-TVERB-NOUN'
-#sentence= "dog ate cat addressing audience"
-
+filename = "../../../data/datasets/Complete_dataset.json"
+#filename = "../../../data/datasets/amazon_filtered_dataset.json"
 
 ###Training the model
 

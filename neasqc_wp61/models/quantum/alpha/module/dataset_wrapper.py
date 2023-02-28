@@ -113,7 +113,8 @@ class dataset_wrapper():
         sentence_types = []
         sentence_labels = []
 
-        for sentence, sentence_type, label in zip(dftrain["sentence"], dftrain["structure_tilde"],dftrain["truth_value"]):
+        #for sentence, sentence_type, label in zip(dftrain["sentence"], dftrain["structure_tilde"],dftrain["truth_value"]):
+        for sentence, sentence_type, label in zip(dftrain["sentence"], dftrain["sentence_type"],dftrain["truth_value"]):
             if sentence == 'Borring as hell':
                 sentence = 'Boring as hell'
             sentences.append(sentence)
@@ -149,14 +150,23 @@ class dataset_wrapper():
             
             
             #for word in sentence.split(" "):
-            for word in re.split(r' |-',sentence):
+            for word in re.split(r' |-|&',sentence):
                 for ellipse in ellipses:
                     if word==ellipse:
                         word="."
                 if word.lower() == 'amazon.com':
                     word = 'amazon'
-                print('-'.lower())
+                if word.lower() == 'asp.net':
+                    word = 'asp'
+                if word.lower() == ':)':
+                    word = ':'
+                if word == "PC'd":
+                    word = 'pc'
+                if word == '':
+                    word = '-'
                 #word_index = tokenized_text.index(word.lower().replace(".",""))
+                print("word = ", word)
+                print("word.lower() = ", word.lower())
                 word_index = tokenized_text.index(word.lower())
                 word_embeddings.append(list_token_embeddings[word_index])
 
@@ -186,11 +196,14 @@ class dataset_wrapper():
 
         marked_text = "[CLS] " + text + " [SEP]"
         tokenized_text = tokenizer.tokenize(marked_text)
+        
+        ## This loop eliminates the appearance of "#" symbols in the tokenised text due to the tokenizer.tokenize() process above
         del_list = []
         for i,x in enumerate(tokenized_text):
             if x[0]=='#':
                 tokenized_text[i] = tokenized_text[i-1] + tokenized_text[i][2:]
                 del_list.append(i-1)
+                
         tokenized_text = [tokenized_text[i] for i in range(len(tokenized_text)) if i not in del_list]
         indexed_tokens = tokenizer.convert_tokens_to_ids(tokenized_text)
         segments_ids = [1]*len(indexed_tokens)
