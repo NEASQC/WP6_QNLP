@@ -7,7 +7,7 @@ import json
 current_path = os.path.dirname(os.path.abspath(__file__))
 data = pd.read_csv(
     current_path + 
-    '/../datasets/withtags_amazonreview_train.tsv', sep='\t',
+    '/../datasets/withtags_amazonreview_train.tsv', sep='\t+',
     header=None, names=['label', 'sentence', 'structure_tilde']
 )
 
@@ -23,13 +23,16 @@ def filter_structures(dataset : pd.DataFrame) -> pd.DataFrame:
     frames = []
     for s in selected_items:
         df = dataset.loc[
-            dataset['structure_tilde'] ==  key_list[s-1]
+            dataset['structure_tilde'] ==  r"{}".format(key_list[s-1])
             # The selected_items were written starting in number 1 ..
             # .. instead of 0
             ]
+
         frames.append(df)
 
+
     amazon_dataset_processed = pd.concat(frames)
+
 
     return amazon_dataset_processed
 
