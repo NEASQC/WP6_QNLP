@@ -110,6 +110,7 @@ def benchmarking_pipeline(
         # are hardcoded in the [0, 1e10] interval
     results = []
     for i in range(n_runs):
+        print(f'Run number {i+1}')
         results.append(pre_alpha_classifier_seeded(seed_list[0][i]))
 
     x = np.arange(len(results[0])).tolist() # Number of steps in optimisation   

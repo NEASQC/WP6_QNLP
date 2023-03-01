@@ -6,11 +6,10 @@ import pandas as pd
 import json
 import matplotlib.pyplot as plt
 import random
-import optimizer_cost_normalised
+import optimizer
 import loader
-import circuit
-import dictionary_seeded
-import sentence_seeded
+import dictionary
+import sentence
 ##################################################################################################################################################################
 ##################################################################################################################################################################
 ##################################################################################################################################################################
@@ -18,17 +17,15 @@ import sentence_seeded
 
 def pre_alpha_classifier_seeded(seed):
     random.seed(seed)
-    filename = 'dataset_vectorized_fasttext.json'
-    Dftrain, Dftest = loader.createdf(current_path +"/../../data/datasets/"+filename)#Dataframe form Json file
-    #Several datasets are found in the Dataset folder. 
-    #In the complete dataset, three types of sentences are found:
-    # 
-
-    Myvocab = loader.getvocabdict(Dftrain, Dftest)#A dictionary with word and categories found in dataset
-    MyDict = dictionary_seeded.QuantumDict(qn=1,#Number of qubits for noun category. 
-                                    qs=1)#Number of qubits for sentence category
+    filename = 'amazon_filtered_dataset.json'
+    Dftrain, Dftest = loader.createdf(current_path +"/../../data/datasets/"+filename)
+    Dftrain = Dftrain.iloc[:5000]
+    Dftest = Dftest.iloc[:5000]
+    Myvocab = loader.getvocabdict(Dftrain, Dftest)
+    MyDict = dictionary.QuantumDict(qn=1,
+                                    qs=1)
     MyDict.addwords(myvocab=Myvocab)
-    MyDict.setvocabparams(seed=seed)#Randomly assign params to words following and ansatz structure.
+    MyDict.setvocabparams(seed=seed)
 
 
 
@@ -41,7 +38,7 @@ def pre_alpha_classifier_seeded(seed):
     def createsentencelist(dftrain, mydict):
         sentences_list = []
         for i, DataInstance in dftrain.iterrows():
-            a_sentence = sentence_seeded.Sentence(DataInstance,
+            a_sentence = sentence.Sentence(DataInstance,
                                         dataset=True,
                                         dictionary=mydict)
 
@@ -60,10 +57,10 @@ def pre_alpha_classifier_seeded(seed):
     # SentencesList = [x for x in random.sample(SentencesList, 40)] 
     # We can reduce the sample size of our dataset to shorten computing times 
     par, ix = MyDict.getindexmodelparams()
-    myopt = optimizer_cost_normalised.ClassicalOptimizer()
+    myopt = optimizer.ClassicalOptimizer()
     result = myopt.optimizedataset(SentencesList, par, MyDict,
                                    tol=1e-5,
-                                   options={'maxiter':500, 'rhobeg': 1},
+                                   options={'maxiter':2500, 'rhobeg': 1},
                                    method="COBYLA")
     
 
