@@ -8,24 +8,27 @@ from module.dataset_wrapper import *
 from module.parameterised_quantum_circuit import *
 from module.alpha_trainer import *
 
+########################################
+#Set experiment number
 experiment = "002"
-
+#How many generations(epochs) to be ran?
+number_of_epochs = 2
+# Run the training number_of_runs times and average over the results
+number_of_runs = 2
+#Set random seed
+seed = 0
+########################################
 filename = "../../../data/datasets/Complete_dataset.json"
 #filename = "../../../data/datasets/amazon_filtered_dataset.json"
 
 ###Training the model
 
-#Set random seed
-seed = 0
+
 
 print("Initialisation Begun")
 trainer = alpha_trainer(filename, seed)
 print("Initialisation Ended")
-#How many generations(epochs) to be ran?
-number_of_epochs = 2
 
-# Run the training number_of_runs times and average over the results
-number_of_runs = 2
 for i in range(number_of_runs):
     print("run = ", i+1)
     if i==0:
@@ -44,10 +47,6 @@ epoch_array = np.arange(0,len(loss_array))
 save_array = [list(epoch_array), list(loss_array)]
 
 #Save save_array to results/raw
-
-
-
-
 jsonString = json.dumps(save_array)
 jsonFile = open(f"../../../benchmarking/results/raw/results_{experiment}.json", "w")
 jsonFile.write(jsonString)
