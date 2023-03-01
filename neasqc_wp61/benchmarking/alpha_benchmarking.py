@@ -1,19 +1,14 @@
+import sys
+import os
+current_path = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(current_path + "/../models/quantum/alpha/")
+import json
+import numpy as np
 from module.dataset_wrapper import *
 from module.parameterised_quantum_circuit import *
 from module.alpha_trainer import *
 
-#from lambeq.ansatz.circuit import IQPAnsatz
-
-import numpy as np
-
-#import torch
-#from torch.autograd import Function
-#from torchvision import datasets, transforms
-#import torch.optim as optim
-#import torch.nn as nn
-#import torch.nn.functional as F
-
-###Choosing the dataset
+experiment = "002"
 
 filename = "../../../data/datasets/Complete_dataset.json"
 #filename = "../../../data/datasets/amazon_filtered_dataset.json"
@@ -41,14 +36,19 @@ loss_array = loss_array/number_of_runs
 
 # Normalising the array
 def normalise_array(array):
-    return -array/sum(array)
+    return -array/np.sqrt(sum(array**2))
 
 loss_array = normalise_array(loss_array)
 epoch_array = np.arange(0,len(loss_array))
 
 save_array = [list(epoch_array), list(loss_array)]
 
-print(save_array)
-
 #Save save_array to results/raw
 
+
+
+
+jsonString = json.dumps(save_array)
+jsonFile = open(f"../../../benchmarking/results/raw/results_{experiment}.json", "w")
+jsonFile.write(jsonString)
+jsonFile.close()
