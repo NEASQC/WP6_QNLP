@@ -1,6 +1,5 @@
-import circuit_amazon_dataset
+import circuit
 import scipy.optimize
-import sentence_amazon_dataset
 import math
 import numpy as np
 
@@ -44,7 +43,7 @@ class ClassicalOptimizer:
     def cost(self, parameters, mySentence):
         shapedparams = self.reshapeparams(parameters, mySentence)
         mySentence.setsentenceparameters(randompar=False, params=shapedparams)
-        myCircBuilder = circuit_amazon_dataset.CircuitBuilder()
+        myCircBuilder = circuit.CircuitBuilder()
         myCircBuilder.createcircuit(mySentence)
         myCircBuilder.executecircuit()
         label=mySentence.label
@@ -80,11 +79,10 @@ class ClassicalOptimizer:
                 shapedparams.append(wordparams)
 
             mysentence.setsentenceparamsfromlist(shapedparams)
-            mycirc = circuit_amazon_dataset.CircuitBuilder()
+            mycirc = circuit.CircuitBuilder()
             mycirc.createcircuit(mysentence, dataset=True)
             mycirc.executecircuit()
             probs = [0,0]
-            #print('sentence: {}'.format(mysentence.sentence))
             for sample in mycirc.result:
                 state = sample.state.bitstring
                 postselectedqubits = ''.join(state[x] for x in range(len(state)) if x != mysentence.sentencequbit)
