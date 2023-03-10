@@ -66,7 +66,9 @@ def dataset_to_dict(dataset : pd.DataFrame,
         Our dataset as a dictionary with a structure that fits 
         on pre-alpha model. 
     """
-    train, test = train_test_split(dataset, train_size=train_size)
+    train, test = train_test_split(
+        dataset, train_size=train_size,
+        random_state = 30042021)
     list_dataset = [train, test]
     generated_dataset = {"train_data" : [], "test_data" : []}
     for i,j in enumerate(list(generated_dataset.keys())):
