@@ -1,5 +1,6 @@
 from module.dataset_wrapper import *
-from module.parameterised_quantum_circuit import *
+#from module.parameterised_quantum_circuit import *
+from module.parameterised_quantum_circuit_sentences import *
 
 import torch
 from torch.autograd import Function
@@ -78,6 +79,13 @@ class alpha_trainer(nn.Module):
         self.bert_embeddings = self.wrapper.bert_embeddings
         self.BertDim = self.wrapper.reduced_word_embedding_dimension
         
+        ###Define the noprmalisation factor for normalised cross entropy loss
+        p = (sum(np.array(self.sentence_labels)==[1,0])/len(self.sentence_labels))[0]
+        self.normalisation_factor = len(self.sentence_labels)*(p*np.log(p) +(1-p)*np.log(1-p))
+        
+        ###Initialise the circuits class
+        self.pqc_sentences = parameterised_quantum_circuit(self.sentences)
+        
         ###Defining the network
         intermediate_dimension= 20
         max_param = 10
@@ -110,7 +118,7 @@ class alpha_trainer(nn.Module):
         """
         ###Training the model
         
-        criterion = nn.BCELoss()
+        criterion = nn.CrossEntropyLoss()
         optimizer = optim.SGD(self.parameters(), lr=0.001, momentum=0.9)
         
         # generation loop
@@ -122,7 +130,7 @@ class alpha_trainer(nn.Module):
             number_of_sentences = len(self.sentences)
             running_loss = 0
             for i,specific_sentence in enumerate(self.sentences):
-                print(f"Epoch: {epoch+1}/{number_of_epochs}    Sentence: {i}/{number_of_sentences}")
+                print(f"Epoch: {epoch+1}/{number_of_epochs}    Sentence: {i}/{number_of_sentences}", end='\r')
                 sentence_index = self.sentences.index(specific_sentence)
                 sentence_label = self.sentence_labels[sentence_index]
                        
@@ -136,15 +144,17 @@ class alpha_trainer(nn.Module):
                 # 4. backward step --> updated network
                 optimizer.zero_grad()
                 loss.backward()
+
                 optimizer.step()
                 
                 #print stats
-                running_loss += loss.item()
+                running_loss -= loss.item()
             
             toc = time.perf_counter()
-            print(f"Epoch time taken: {toc - tic:0.4f} seconds")
-            print("Loss = ", running_loss/len(self.sentences))
-            loss_array.append(running_loss/len(self.sentences))
+            print("\n")
+            print(f"Epoch {epoch} time taken: {toc - tic:0.4f} seconds")
+            print("Loss = ", running_loss/self.normalisation_factor)
+            loss_array.append(running_loss/self.normalisation_factor)
                 
         return np.array(loss_array)
     
@@ -166,8 +176,10 @@ class alpha_trainer(nn.Module):
         # Requires pqc parameter numbers
         sentence_index = self.sentences.index(specific_sentence)
         
-        pqc = parameterised_quantum_circuit(specific_sentence)
-        word_number_of_parameters = pqc.word_number_of_parameters
+        circuit, parameters, word_number_of_parameters = self.pqc_sentences.create_tket_circuit(sentence_index)
+        
+        #pqc = parameterised_quantum_circuit(specific_sentence)
+        #word_number_of_parameters = pqc.word_number_of_parameters
         """
         print("specific sentence = ", specific_sentence)
         print("word_number_of_parameters = ", word_number_of_parameters)
@@ -186,9 +198,10 @@ class alpha_trainer(nn.Module):
                     pre_out = self.cascade[j](pre_out)
             q_in = torch.tanh(pre_out) * np.pi / 2.0 
             sentence_q_params.append(q_in)
-        self.qparams = torch.cat(sentence_q_params)
+        qparams = torch.cat(sentence_q_params)
         
-        output = pqc.run_circuit(self.qparams)
+        #output = pqc.run_circuit(self.qparams)
+        output = self.pqc_sentences.run_circuit(circuit, qparams)
             
         return output
     

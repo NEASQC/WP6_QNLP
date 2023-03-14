@@ -27,7 +27,7 @@ print("Initialisation Begun")
 trainer = alpha_trainer(filename, seed)
 print("Initialisation Ended")
 #How many generations(epochs) to be ran?
-number_of_epochs = 5
+number_of_epochs = 30
 
 # Run the training number_of_runs times and average over the results
 number_of_runs = 1
@@ -38,12 +38,6 @@ for i in range(number_of_runs):
     else:
         loss_array += trainer.train(number_of_epochs)
 loss_array = loss_array/number_of_runs
-
-# Normalising the array
-def normalise_array(array):
-    return -array/sum(array)
-
-loss_array = normalise_array(loss_array)
 
 #Computing the log loss
 #log_loss_array = np.log(loss_array)
