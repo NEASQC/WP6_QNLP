@@ -78,6 +78,10 @@ class alpha_trainer(nn.Module):
         self.bert_embeddings = self.wrapper.bert_embeddings
         self.BertDim = self.wrapper.reduced_word_embedding_dimension
         
+        ###Define the noprmalisation factor for normalised cross entropy loss
+        p = (sum(np.array(self.sentence_labels)==[1,0])/len(self.sentence_labels))[0]
+        self.normalisation_factor = len(self.sentence_labels)*(p*np.log(p) +(1-p)*np.log(1-p))
+        
         ###Defining the network
         intermediate_dimension= 20
         max_param = 10
@@ -110,7 +114,7 @@ class alpha_trainer(nn.Module):
         """
         ###Training the model
         
-        criterion = nn.BCELoss()
+        criterion = nn.CrossEntropyLoss()
         optimizer = optim.SGD(self.parameters(), lr=0.001, momentum=0.9)
         
         # generation loop
@@ -130,21 +134,35 @@ class alpha_trainer(nn.Module):
                 output = self.forward(specific_sentence)
                 
                 # 3. compute loss(compare output to sentence label)
+                print("output = ", output)
+                
+                """
+                if sentence_label==[1,0]:
+                    loss = -torch.log(output[0])
+                elif sentence_label==[0,1]:
+                    loss = -torch.log(1-output[1])
+                """
+                
                 loss = criterion(input=torch.Tensor(output), target=torch.Tensor(sentence_label))
+                print("ce loss = ", loss)
+                
                 loss = torch.autograd.Variable(loss, requires_grad = True)
+                print("torch autograd variable loss = ", loss)
 
                 # 4. backward step --> updated network
                 optimizer.zero_grad()
                 loss.backward()
+                print("backward loss = ", loss, "\n")
+                
                 optimizer.step()
                 
                 #print stats
-                running_loss += loss.item()
+                running_loss -= loss.item()
             
             toc = time.perf_counter()
             print(f"Epoch time taken: {toc - tic:0.4f} seconds")
-            print("Loss = ", running_loss/len(self.sentences))
-            loss_array.append(running_loss/len(self.sentences))
+            print("Loss = ", running_loss/self.normalisation_factor)
+            loss_array.append(running_loss/self.normalisation_factor)
                 
         return np.array(loss_array)
     
