@@ -15,8 +15,8 @@ import torch.nn.functional as F
 
 ###Choosing the dataset
 
-filename = "../../../data/datasets/Complete_dataset.json"
-#filename = "../../../data/datasets/amazon_filtered_dataset.json"
+#filename = "../../../data/datasets/Complete_dataset.json"
+filename = "../../../data/datasets/amazon_train_filtered_dev_bert.json"
 
 ###Training the model
 
@@ -27,10 +27,10 @@ print("Initialisation Begun")
 trainer = alpha_trainer(filename, seed)
 print("Initialisation Ended")
 #How many generations(epochs) to be ran?
-number_of_epochs = 2
+number_of_epochs = 5
 
 # Run the training number_of_runs times and average over the results
-number_of_runs = 2
+number_of_runs = 1
 for i in range(number_of_runs):
     print("run = ", i+1)
     if i==0:

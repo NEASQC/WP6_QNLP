@@ -70,6 +70,7 @@ class parameterised_quantum_circuit():
         
         #Finding the parameters of the circuit
         self.parameters = sorted(self.tk_circuit.free_symbols(), key=default_sort_key)
+        #print("\n parameter names = ", self.parameters, "\n")
         
         #Number of parameters per word
         self.word_number_of_parameters = self.GetNParamsWord()
@@ -178,7 +179,7 @@ class parameterised_quantum_circuit():
         w=0
         params_per_word=[0]
         for i, param in enumerate(self.parameters):
-
+            """
             word = param.name.split("__")[0]
             if i==0:
                 prev_word=word
@@ -188,6 +189,18 @@ class parameterised_quantum_circuit():
                 w+=1
                 params_per_word.append(1)
                 prev_word=word
+            """
+           
+            word_counter = param.name[-1]
+            if i==0:
+                params_per_word[w]+=1
+            else:
+                if word_counter=="0":
+                    w+=1
+                    params_per_word.append(1)
+                else:
+                    params_per_word[w]+=1
+           
         return params_per_word
     
     def Measure_s_qubits(self, Circuit):
