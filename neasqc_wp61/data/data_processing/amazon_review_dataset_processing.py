@@ -9,7 +9,7 @@ current_path = os.path.dirname(os.path.abspath(__file__))
 def load_data():
     data = pd.read_csv(
         current_path + 
-        '/../datasets/withtags_amazonreview_train.tsv', sep='\t+',
+        '/../datasets/amazonreview_train_filtered_train.tsv', sep='\t+',
         header=None, names=['label', 'sentence', 'structure_tilde'],
         engine='python')
     
@@ -49,8 +49,7 @@ def filter_structures(dataset : pd.DataFrame) -> pd.DataFrame:
 
     return amazon_dataset_filtered
 
-def dataset_to_dict(dataset : pd.DataFrame,
-                    train_size : float) -> dict:
+def dataset_to_dict(dataset : pd.DataFrame) -> dict:
     """
     Converts a pd.Dataframe to a dictionary with a key structure suitable
     to be run on pre-alpha mode
@@ -58,35 +57,27 @@ def dataset_to_dict(dataset : pd.DataFrame,
     ----------
     dataset : pd.DataFrame
         Dataframe we want to convert
-    train_size : float 
-        Proportion of the dataset included on the train split 
     Returns 
     -------
     generated_dataset : dict
         Our dataset as a dictionary with a structure that fits 
         on pre-alpha model. 
     """
-    train, test = train_test_split(
-        dataset, train_size=train_size,
-        random_state = 30042021)
-    list_dataset = [train, test]
-    generated_dataset = {"train_data" : [], "test_data" : []}
-    for i,j in enumerate(list(generated_dataset.keys())):
-        df = list_dataset[i]
-        for k in range(df.shape[0]):
-            data_value = {}
-            data_value["sentence"] = df["sentence"].iloc[k]
-            data_value["structure_tilde"] = df["structure_tilde"].iloc[k]
-            if df["label"].iloc[k] == 1 :
-                data_value["truth_value"] = False
-            if df["label"].iloc[k] == 2:
-                data_value["truth_value"] = True
-            generated_dataset[j].append(data_value)
+    generated_dataset = {"train_data" : []}
+    for k in range(dataset.shape[0]):
+        data_value = {}
+        data_value["sentence"] = dataset["sentence"].iloc[k]
+        data_value["structure_tilde"] = dataset["structure_tilde"].iloc[k]
+        if dataset["label"].iloc[k] == 1 :
+            data_value["truth_value"] = False
+        if dataset["label"].iloc[k] == 2:
+            data_value["truth_value"] = True
+        generated_dataset["train_data"].append(data_value)
 
     return generated_dataset
 
 
-def generate_reduced_dataset(dataset : pd.DataFrame) -> dict:
+def generate_reduced_dataset(dataset : pd.DataFrame) -> pd.DataFrame:
     """
     Selects 700 sentences for each chosen sentence structure 
     and generates a dataset with a structure that fits on pre-alpha
@@ -111,11 +102,11 @@ def generate_reduced_dataset(dataset : pd.DataFrame) -> dict:
     return reduced_dataset
 
 
-def save_dataset(
+def save_dictionary(
     dataset : dict,
     name : str, path : str):
     """
-    Saves our dataset as json file
+    Saves our dictionary as json file
     
     Parameters
     ----------
@@ -130,6 +121,25 @@ def save_dataset(
         json.dump(dataset, file)
 
 
+def save_dataset(
+        dataset : pd.DataFrame,
+        name : str, path : str):
+    """
+    Saves our dataset as tsv file
+
+    Parameters
+    ----------
+    dataset : pd.DataFrame
+        Dataset we want to save
+    name :
+        Name we want to assign to the saved file
+    path :
+        Path where we want to save the file
+    """
+    dataset.to_csv(
+        path + name + '.tsv', header = False,
+        sep = '\t', index = False
+    )
 
 
 
@@ -137,13 +147,9 @@ def save_dataset(
 def main():
 
     data = load_data()
-    filtered_dataset =  filter_structures(data)
-    filtered_dictionary = dataset_to_dict(filtered_dataset, 0.80)
-    save_dataset(filtered_dictionary, 'amazon_filtered_dictionary',
-    current_path + '/../datasets/')
-    reduced_dataset = generate_reduced_dataset(filtered_dataset)
-    reduced_dict = dataset_to_dict(reduced_dataset, 0.99)
-    save_dataset(reduced_dict, 'reduced_amazon_filtered_dictionary',
+    reduced_dataset = generate_reduced_dataset(data)
+    reduced_dict = dataset_to_dict(reduced_dataset)
+    save_dictionary(reduced_dict, 'amazonreview_reduced_train_pre_alpha',
                  current_path + '/../datasets/')
 
 
