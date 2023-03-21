@@ -1,6 +1,6 @@
 from module.dataset_wrapper import *
-#from module.parameterised_quantum_circuit import *
-from module.parameterised_quantum_circuit_sentences import *
+from module.parameterised_quantum_circuit import *
+
 
 import torch
 from torch.autograd import Function
