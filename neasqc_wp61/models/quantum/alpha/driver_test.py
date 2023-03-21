@@ -16,28 +16,31 @@ import torch.nn.functional as F
 ###Choosing the dataset
 
 #filename = "../../../data/datasets/Complete_dataset.json"
-filename = "../../../data/datasets/amazon_train_filtered_dev_bert.json"
+filename = "../../../data/datasets/amazonreview_reduced_bert_train.json"
 
 ###Training the model
 
 #Set random seed
-seed = 0
+seed = 100
 
-print("Initialisation Begun")
+print("Initialisation Begun \n")
 trainer = alpha_trainer(filename, seed)
-print("Initialisation Ended")
+print("Initialisation Ended \n")
 #How many generations(epochs) to be ran?
-number_of_epochs = 30
+number_of_epochs = 5
 
 # Run the training number_of_runs times and average over the results
 number_of_runs = 1
 for i in range(number_of_runs):
-    print("run = ", i+1)
+    print("run = ", i+1, "\n")
     if i==0:
-        loss_array = trainer.train(number_of_epochs)
+        loss_array, accuracy_array = trainer.train(number_of_epochs)
     else:
-        loss_array += trainer.train(number_of_epochs)
+        loss_temp_array, accuracy_temp_array  = trainer.train(number_of_epochs)
+        loss_array += loss_temp_array
+        accuracy_array += accuracy_temp_array 
 loss_array = loss_array/number_of_runs
+accuracy_array = accuracy_array/number_of_runs
 
 #Computing the log loss
 #log_loss_array = np.log(loss_array)
@@ -46,9 +49,11 @@ loss_array = loss_array/number_of_runs
 import matplotlib.pyplot as plt
 
 plt.figure()
-plt.plot(loss_array)
+plt.plot(loss_array, label="Loss")
+plt.plot(accuracy_array, label = "Accuracy")
 plt.xlabel("Epoch")
 plt.ylabel("Loss")
+plt.legend()
 plt.show()
 
 """
