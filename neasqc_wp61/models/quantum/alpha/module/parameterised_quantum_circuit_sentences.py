@@ -55,7 +55,6 @@ class parameterised_quantum_circuit():
         
         #Defining the sentence
         self.sentences = sentences
-        print(self.sentences[0])
         #Defining the sentence structure
         #self.sentence_type = sentence_type
         
@@ -163,15 +162,18 @@ class parameterised_quantum_circuit():
         """
         discopy_circuits = []
         for i, sentence in enumerate(self.sentences):
+            if i==62:
+                sentence = "the bees were interesting but"
             tic = time.perf_counter()
             #Sentence to diagram
             diagram = parser.sentence2diagram(sentence)
-                
+            
+            
             #Discopy circuit
             discopy_circuit = self.ansatz(diagram)
             discopy_circuits.append(discopy_circuit)
             toc = time.perf_counter()
-            print(f"Parsed and created discopy circuit for sentence {i+1}/{len(self.sentences)}     Time taken: {toc - tic:0.4f} seconds", end='\r')
+            print(f"Parsed and created discopy circuit for sentence: {i+1}/{len(self.sentences)}     Time taken: {toc - tic:0.4f} seconds", end='\r')
         print("\n")
         return discopy_circuits
         

@@ -80,8 +80,9 @@ class alpha_trainer(nn.Module):
         self.BertDim = self.wrapper.reduced_word_embedding_dimension
         
         ###Define the noprmalisation factor for normalised cross entropy loss
-        p = (sum(np.array(self.sentence_labels)==[1,0])/len(self.sentence_labels))[0]
-        self.normalisation_factor = len(self.sentence_labels)*(p*np.log(p) +(1-p)*np.log(1-p))
+        #p = (sum(np.array(self.sentence_labels)==[1,0])/len(self.sentence_labels))[0]
+        #self.normalisation_factor = len(self.sentence_labels)*(p*np.log(p) +(1-p)*np.log(1-p))
+        self.normalisation_factor = len(self.sentences)*100
         
         ###Initialise the circuits class
         self.pqc_sentences = parameterised_quantum_circuit(self.sentences)
@@ -118,7 +119,8 @@ class alpha_trainer(nn.Module):
         """
         ###Training the model
         
-        criterion = nn.CrossEntropyLoss()
+        #criterion = nn.CrossEntropyLoss()
+        criterion = nn.BCELoss()
         optimizer = optim.SGD(self.parameters(), lr=0.001, momentum=0.9)
         
         # generation loop
@@ -138,7 +140,7 @@ class alpha_trainer(nn.Module):
                 output = self.forward(specific_sentence)
                 
                 # 3. compute loss(compare output to sentence label)
-                loss = criterion(input=torch.Tensor(output), target=torch.Tensor(sentence_label))
+                loss = criterion(input=torch.Tensor([output[0]]), target=torch.Tensor([sentence_label[0]]))
                 loss = torch.autograd.Variable(loss, requires_grad = True)
 
                 # 4. backward step --> updated network
