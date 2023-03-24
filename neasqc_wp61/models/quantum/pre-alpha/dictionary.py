@@ -10,18 +10,16 @@ class PartOfSpeech:
                  cats=None):
         if cats is None:
             cats = [["n"],
-                    ["n"],
                     ["nr", "s", "nl"],
                     ["nr", "s"],
-                    ["sr", "nrr", "nr", "s", "nl"],
-                    ["n", "nr"]]
+                    ["n", "nl"],
+                    ["nr", "s", "sl", "n"]]
         if parts is None:
-            parts = ["NOUN",
-                     "PROPN",
-                     "TVERB",
-                     "IVERB",
-                     "PREP",
-                     "ADJ"]
+            parts = ["n",
+                     "nrsnl",
+                     "nrs",
+                     "nnl",
+                     "nrssln"]
         self.cats = dict()
         for i, part in enumerate(parts):
             self.cats[part] = cats[i]
@@ -77,29 +75,30 @@ class QuantumDict:
                     self.dictionary[wordstring].setwordproperties(self, myvocab=myvocab)
 
 
-    def setwordparams(self, myword, wordtype, randompar=True, parameterization='Simple', layers=1):
-            gates = []
-            if randompar:
-                if parameterization == 'Simple':  # Two rotations + C-NOT gate per layer
-                    for layer in range(layers):
-                        for qubit in range(self.dictionary[myword].nqubits[wordtype]):
-                            ry = 2 * math.pi * random.random()
-                            rz = 2 * math.pi * random.random()
-                            gates.append(dict({'Gate': 'RY', 'Angle': ry, 'Qubit': qubit}))
-                            gates.append(dict({'Gate': 'RZ', 'Angle': rz, 'Qubit': qubit}))
+    def setwordparams(self, myword, wordtype, randompar=True, parameterization='Simple', layers=1, seed=30031935):
+        random.seed(seed)
+        gates = []
+        if randompar:
+            if parameterization == 'Simple':  # Two rotations + C-NOT gate per layer
+                for layer in range(layers):
+                    for qubit in range(self.dictionary[myword].nqubits[wordtype]):
+                        ry = 2 * math.pi * random.random()
+                        rz = 2 * math.pi * random.random()
+                        gates.append(dict({'Gate': 'RY', 'Angle': ry, 'Qubit': qubit}))
+                        gates.append(dict({'Gate': 'RZ', 'Angle': rz, 'Qubit': qubit}))
 
-                        for qubit in range(self.dictionary[myword].nqubits[wordtype])[:-1]:
-                            gates.append(dict({'Gate': 'CX', 'Qubit': [qubit, qubit + 1]}))
-            return gates
+                    for qubit in range(self.dictionary[myword].nqubits[wordtype])[:-1]:
+                        gates.append(dict({'Gate': 'CX', 'Qubit': [qubit, qubit + 1]}))
+        return gates
 
-    def setvocabparams(self, randompar=True, parameterization='Simple', layers=1):
+    def setvocabparams(self, randompar=True, parameterization='Simple', layers=1, seed=30031935):
         if randompar:
             if parameterization == 'Simple':  # Two rotations + C-NOT gate per layer
                 for layer in range(layers): #This need to be refactored to use NumPy
                     for word in self.dictionary.keys():
                         self.dictionary[word].gateset = dict()
                         for wordtype in self.dictionary[word].wordtype:
-                            gates = self.setwordparams(word,wordtype)
+                            gates = self.setwordparams(word,wordtype, seed=seed)
                             self.dictionary[word].gateset[wordtype] = gates
 
 
@@ -200,17 +199,14 @@ class QuantumWord:
             mydict.dictionary[self.word].nqubits = dict()
             mydict.dictionary[self.word].category = dict()
             for wordtype in self.wordtype:
-                if (wordtype == "NOUN") or (wordtype == "PROPN"):
+                if wordtype == "n":
                     mydict.dictionary[self.word].nqubits[wordtype] = mydict.qn
-                elif wordtype == "ADJ":
-                    mydict.dictionary[self.word].nqubits[wordtype] = 2 * mydict.qn
-                elif wordtype == "PREP":
-                    mydict.dictionary[self.word].nqubits[wordtype] = 3 * mydict.qn + 2 * mydict.qs
-                elif wordtype == "TVERB":
+                elif wordtype == "nrsnl":
                     mydict.dictionary[self.word].nqubits[wordtype] = 2 * mydict.qn + mydict.qs
-                elif wordtype == "IVERB":
+                elif wordtype == "nrs":
                     mydict.dictionary[self.word].nqubits[wordtype] = mydict.qn + mydict.qs
+                elif wordtype == "nnl":
+                    mydict.dictionary[self.word].nqubits[wordtype] = 2 * mydict.qn
+                elif wordtype == "nrssln":
+                    mydict.dictionary[self.word].nqubits[wordtype] = 2 * mydict.qn + 2 * mydict.qs
                 mydict.dictionary[self.word].category[wordtype] = mydict.partsOfSpeech.cats[wordtype]
-
-
-

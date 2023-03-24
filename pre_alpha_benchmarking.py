@@ -6,6 +6,7 @@ from dataset_example_seeded import pre_alpha_classifier_seeded
 import numpy as np
 import json 
 import time 
+import pickle
 
 
 def compute_means(
@@ -71,7 +72,8 @@ def benchmarking_pipeline(
     numpy_seed: int = 18061997,
     customised_seed_list: list = None,
     save_results: bool = None, 
-    path: str = None, name: str = None):
+    path: str = None, name: str = None,
+    n_iter: int = 500):
     """
     Performs the pipeline for pre-alpha benchmarking.
     For a given number of runs and seeds for initial 
@@ -99,6 +101,8 @@ def benchmarking_pipeline(
     name : str, optional
         When save_results is set to True, specifies the name of the results 
         that are being saved.
+    n_iter : int, optional
+        Number of iterations allowed to the optimiser. 
     """
     t0 = time.time() # Set the initial timer
     if customised_seed_list != None:
@@ -110,7 +114,13 @@ def benchmarking_pipeline(
         # are hardcoded in the [0, 1e10] interval
     results = []
     for i in range(n_runs):
-        results.append(pre_alpha_classifier_seeded(seed_list[0][i]))
+        print(f'Run number {i+1}')
+        results.append(pre_alpha_classifier_seeded(seed_list[0][i], n_iter))
+        if save_results == True:
+            with open(path + name + f'iteration_{i}.pkl', 'wb') as file:
+                pickle.dump(results, file)
+
+
 
     x = np.arange(len(results[0])).tolist() # Number of steps in optimisation   
     y = compute_means(results)
@@ -123,6 +133,12 @@ def benchmarking_pipeline(
     if save_results == True:
         with open (path  + name + ".json", "w") as file:
             json.dump([x, y, y_stds], file)
+        
+        for i in range(n_runs):
+            os.remove(path + name + f'iteration_{i}.pkl')
+        # We remove the pickle files stored after having finished the optimisation
+
+
 
     return x, y, y_stds
 
