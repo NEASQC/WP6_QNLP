@@ -82,9 +82,10 @@ class dataset_wrapper():
         """
         
         pca = PCA(n_components=self.reduced_word_embedding_dimension).fit(self.word_embeddings)
-        var_ratio = pca.explained_variance_ratio_
+      
         
         """
+        var_ratio = pca.explained_variance_ratio_
         plt.figure(figsize=(10,6))
         plt.plot(np.cumsum(var_ratio))
         plt.xlabel('number of components')
@@ -145,17 +146,13 @@ class dataset_wrapper():
 
         #for sentence, sentence_type, label in zip(dftrain["sentence"], dftrain["structure_tilde"],dftrain["truth_value"]):
         for sentence, sentence_type, label, word_embedding in zip(dftrain["sentence"], dftrain["tree"],dftrain["class"],dftrain["sentence_vectorized"]):
-            if sentence == 'Borring as hell':
-                sentence = 'Boring as hell'
             sentences.append(sentence)
             sentence_types.append(sentence_type)
             sentence_labels.append(label)
             
             sentence_lengths.append(len(word_embedding))
-            reshaped_embedding = self.custom_list_reshaper(word_embedding)
+            word_embeddings = self.custom_list_reshaper(word_embedding)
             
-            for embedding in reshaped_embedding:
-                word_embeddings.append(embedding)
         return sentences, sentence_types, sentence_labels, word_embeddings, sentence_lengths
     
     def custom_list_reshaper(self, array):
