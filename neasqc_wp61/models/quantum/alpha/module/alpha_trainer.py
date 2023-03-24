@@ -69,20 +69,22 @@ class alpha_trainer(nn.Module):
         random.seed(self.seed)
         
         ###dataset_wrapper parses the data and finds the bert embeddings for each sentence
-        self.wrapper = dataset_wrapper(filename)
+        self.reduced_word_embedding_dimension = 146
+        #self.reduced_word_embedding_dimension = 22
+        self.wrapper = dataset_wrapper(filename, self.reduced_word_embedding_dimension)
         self.sentences = self.wrapper.sentences
         self.sentence_types = self.wrapper.sentence_types
         self.sentence_labels = self.wrapper.sentence_labels
         self.bert_embeddings = self.wrapper.bert_embeddings
+        self.BertDim = self.wrapper.reduced_word_embedding_dimension
         
         ###Defining the network
-        self.BertDim = 768
-        intermediate_dimension= 10
+        intermediate_dimension= 20
         max_param = 10
         min_param = 1
         
         #Create a neural network    
-        self.pre_net = nn.Linear(self.BertDim, intermediate_dimension)
+        self.pre_net = nn.Linear(self.reduced_word_embedding_dimension, intermediate_dimension)
         self.pre_net_max_params = nn.Linear(intermediate_dimension, max_param)
         self.cascade = nn.ParameterList()
         for layer in range(max_param,min_param,-1):
@@ -117,8 +119,10 @@ class alpha_trainer(nn.Module):
         for epoch in range(number_of_epochs):
             tic = time.perf_counter()
             # sentence loop
+            number_of_sentences = len(self.sentences)
             running_loss = 0
-            for specific_sentence in self.sentences:
+            for i,specific_sentence in enumerate(self.sentences):
+                print(f"Epoch: {epoch+1}/{number_of_epochs}    Sentence: {i}/{number_of_sentences}")
                 sentence_index = self.sentences.index(specific_sentence)
                 sentence_label = self.sentence_labels[sentence_index]
                        
@@ -126,7 +130,6 @@ class alpha_trainer(nn.Module):
                 output = self.forward(specific_sentence)
                 
                 # 3. compute loss(compare output to sentence label)
-                
                 loss = criterion(input=torch.Tensor(output), target=torch.Tensor(sentence_label))
                 loss = torch.autograd.Variable(loss, requires_grad = True)
 
@@ -139,7 +142,6 @@ class alpha_trainer(nn.Module):
                 running_loss += loss.item()
             
             toc = time.perf_counter()
-            print("Epoch = ", epoch+1)
             print(f"Epoch time taken: {toc - tic:0.4f} seconds")
             print("Loss = ", running_loss/len(self.sentences))
             loss_array.append(running_loss/len(self.sentences))
@@ -166,10 +168,16 @@ class alpha_trainer(nn.Module):
         
         pqc = parameterised_quantum_circuit(specific_sentence)
         word_number_of_parameters = pqc.word_number_of_parameters
-        
+        """
+        print("specific sentence = ", specific_sentence)
+        print("word_number_of_parameters = ", word_number_of_parameters)
+        print("length of word_number_of_parameters = ", len(word_number_of_parameters))
+        print("number of embeddings in sentence = ",len(self.bert_embeddings[sentence_index]), "\n \n \n")
+        """
         counter = 0
         sentence_q_params = []
-        for i, embedding in enumerate(self.bert_embeddings[sentence_index][0]):
+        for i, embedding in enumerate(self.bert_embeddings[sentence_index]):
+            embedding = list(map(float, embedding))
             pre_out = self.pre_net.float()(torch.tensor(embedding))
             pre_out = self.pre_net_max_params(pre_out)
             for j, layer in enumerate(self.cascade):
