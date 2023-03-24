@@ -1,4 +1,4 @@
-import spacy
+#import spacy
 import math
 import random
 import json
@@ -28,7 +28,7 @@ class PartOfSpeech:
 class QuantumDict:
 
     def __init__(self, qn=1, qs=1):
-        self.nlp = spacy.load('en_core_web_lg')
+        #self.nlp = spacy.load('en_core_web_lg')
         self.dictionary = dict()
         self.partsOfSpeech = PartOfSpeech()
         self.qn = qn
