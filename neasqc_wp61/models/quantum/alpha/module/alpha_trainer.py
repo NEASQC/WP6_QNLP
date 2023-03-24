@@ -73,7 +73,7 @@ class alpha_trainer(nn.Module):
         self.reduced_word_embedding_dimension = 146
         #self.reduced_word_embedding_dimension = 22
         self.wrapper = dataset_wrapper(filename, self.reduced_word_embedding_dimension)
-        self.sentences = self.wrapper.sentences
+        self.sentences = self.wrapper.sentences[0:10]
         self.sentence_types = self.wrapper.sentence_types
         self.sentence_labels = self.wrapper.sentence_labels
         self.bert_embeddings = self.wrapper.bert_embeddings
@@ -81,7 +81,8 @@ class alpha_trainer(nn.Module):
         
         ###Define the noprmalisation factor for normalised cross entropy loss
         #p = (sum(np.array(self.sentence_labels)==[1,0])/len(self.sentence_labels))[0]
-        #self.normalisation_factor = len(self.sentence_labels)*(p*np.log(p) +(1-p)*np.log(1-p))
+        #p = (sum(np.array(self.sentence_labels[0:10])==[1,0])/len(self.sentence_labels[0:10]))[0]
+        #self.normalisation_factor = len(self.sentence_labels[0:10])*(p*np.log(p) +(1-p)*np.log(1-p))
         self.normalisation_factor = len(self.sentences)*100
         
         ###Initialise the circuits class
@@ -120,19 +121,23 @@ class alpha_trainer(nn.Module):
         ###Training the model
         
         #criterion = nn.CrossEntropyLoss()
+        #def CE_loss(input,target):
+            #return target[0]*torch.log(input[0]+0.00001) + (1.0-target[0])*torch.log(1.00001-input[0])
         criterion = nn.BCELoss()
+        #criterion = CE_loss
         optimizer = optim.SGD(self.parameters(), lr=0.001, momentum=0.9)
         
         # generation loop
         loss_array = []
-        
+        accuracy_array = []
         for epoch in range(number_of_epochs):
             tic = time.perf_counter()
             # sentence loop
             number_of_sentences = len(self.sentences)
             running_loss = 0
+            accuracy=0
             for i,specific_sentence in enumerate(self.sentences):
-                print(f"Epoch: {epoch+1}/{number_of_epochs}    Sentence: {i}/{number_of_sentences}", end='\r')
+                print(f"Epoch: {epoch+1}/{number_of_epochs}    Sentence: {i+1}/{number_of_sentences}", end='\r')
                 sentence_index = self.sentences.index(specific_sentence)
                 sentence_label = self.sentence_labels[sentence_index]
                        
@@ -140,25 +145,32 @@ class alpha_trainer(nn.Module):
                 output = self.forward(specific_sentence)
                 
                 # 3. compute loss(compare output to sentence label)
-                loss = criterion(input=torch.Tensor([output[0]]), target=torch.Tensor([sentence_label[0]]))
-                loss = torch.autograd.Variable(loss, requires_grad = True)
-
+                #loss = criterion(output, target=torch.Tensor([sentence_label[0]]))
+                loss = criterion(output, target=torch.Tensor(sentence_label))
+                #print("loss = ", loss)
+                
+                accuracy += np.sqrt((output.detach().numpy()[0]-sentence_label[0])**2)
+                
+                    
                 # 4. backward step --> updated network
                 optimizer.zero_grad()
                 loss.backward()
 
+                print("list(self.parameters())[0].grad = ",list(self.parameters())[0].grad)
+                #print("list(self.parameters()) = ",list(self.parameters()), "\n \n \n")
                 optimizer.step()
                 
                 #print stats
-                running_loss -= loss.item()
+                running_loss += loss.item()
             
             toc = time.perf_counter()
             print("\n")
             print(f"Epoch {epoch} time taken: {toc - tic:0.4f} seconds")
             print("Loss = ", running_loss/self.normalisation_factor)
             loss_array.append(running_loss/self.normalisation_factor)
+            accuracy_array.append(accuracy/len(self.sentences))
                 
-        return np.array(loss_array)
+        return np.array(loss_array), np.array(accuracy_array)
     
     
     def forward(self, specific_sentence):
@@ -202,11 +214,26 @@ class alpha_trainer(nn.Module):
             sentence_q_params.append(q_in)
         qparams = torch.cat(sentence_q_params)
         
-        #output = pqc.run_circuit(self.qparams)
-        output = self.pqc_sentences.run_circuit(circuit, qparams)
-            
-        return output
+   
+        
+        circuit_output = torch.Tensor(self.pqc_sentences.run_circuit(circuit, qparams.detach().clone()))
+        
+        qparams = torch.reshape(qparams, (1,qparams.size(dim=0)))
+        circuit_output = torch.reshape(circuit_output, (1,circuit_output.size(dim=0)))
+        
+        transformation = self.linear_transformer(qparams.detach().clone(),circuit_output)
+       
+        output = qparams@transformation
+        output = torch.reshape(output, (output.size(dim=1),))
+        
+        return torch.round(output, decimals=5)
     
-
+    def linear_transformer(self,array1, array2):
+        """Finds linear transformation between two arrays as torch tensor
+        """
+        
+        transformation = torch.linalg.lstsq(array1,array2).solution
+        
+        return transformation
                 
         
