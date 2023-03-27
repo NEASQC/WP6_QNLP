@@ -1,6 +1,5 @@
 import circuit
 import scipy.optimize
-import sentence
 import math
 import numpy as np
 
@@ -75,7 +74,7 @@ class ClassicalOptimizer:
         par, ix = mydict.getindexmodelparams()
         for mysentence in SentencesList:
             shapedparams = []
-            for word, cat in zip(mysentence.sentence.split(' '), mysentence.sentencestructure.split('-')):
+            for word, cat in zip(mysentence.sentence.split(' '), mysentence.sentencestructure.split(',')):
                 wordparams =[parameters[i] for i in ix[(word, cat)]]
                 shapedparams.append(wordparams)
 
@@ -84,7 +83,6 @@ class ClassicalOptimizer:
             mycirc.createcircuit(mysentence, dataset=True)
             mycirc.executecircuit()
             probs = [0,0]
-            #print('sentence: {}'.format(mysentence.sentence))
             for sample in mycirc.result:
                 state = sample.state.bitstring
                 postselectedqubits = ''.join(state[x] for x in range(len(state)) if x != mysentence.sentencequbit)
@@ -100,12 +98,15 @@ class ClassicalOptimizer:
                          #   sample.state, sample.probability, sample.amplitude))
             prob0 = probs[0] / sum(probs)
             prob1 = probs[1] / sum(probs)
-
+            if prob0 == 1:
+                prob0 = 0.9999999999
+            if prob1 == 1:
+                prob1 == 0.9999999999
             if mysentence.label == 0:
-                cost+= -math.log(prob0)
+                cost+= -math.log(prob0)/-(math.log(prob0) + math.log(1-prob0))
                 #print(cost)
             elif mysentence.label == 1:
-                cost+= -math.log(1 - prob0)
+                cost+= -math.log(1 - prob0)/-(math.log(prob0) + math.log(1-prob0))
                 #print(cost)
 
         self.itercost.append(cost/len(SentencesList))
@@ -123,4 +124,3 @@ class ClassicalOptimizer:
                                                     options=options,
                                                     method=method)
         return result
-
