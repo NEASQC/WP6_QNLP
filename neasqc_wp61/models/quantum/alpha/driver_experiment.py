@@ -15,8 +15,8 @@ import numpy as np
 
 ###Choosing the dataset
 
-filename = "../../../data/datasets/Complete_dataset.json"
-#filename = "../../../data/datasets/amazon_filtered_dataset.json"
+#filename = "../../../data/datasets/Complete_dataset.json"
+filename = "../../../data/datasets/amazon_train_filtered_dev_bert.json"
 
 ###Training the model
 
