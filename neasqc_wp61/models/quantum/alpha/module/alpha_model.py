@@ -1,5 +1,5 @@
-from module.dataset_wrapper import *
-from module.parameterised_quantum_circuit import *
+from models.quantum.alpha.module.dataset_wrapper import *
+from models.quantum.alpha.module.parameterised_quantum_circuit import *
 
 
 import torch

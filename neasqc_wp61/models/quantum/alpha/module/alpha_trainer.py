@@ -1,6 +1,6 @@
 #from module.dataset_wrapper import *
 #from module.parameterised_quantum_circuit import *
-from module.alpha_model import *
+from models.quantum.alpha.module.alpha_model import *
 
 
 import torch
@@ -100,6 +100,7 @@ class alpha_trainer():
         # generation loop
         loss_array = []
         accuracy_array = []
+        prediction_array = []
         for epoch in range(number_of_epochs):
             tic = time.perf_counter()
             # sentence loop
@@ -134,6 +135,11 @@ class alpha_trainer():
                 optimizer.step()
  
                 running_loss += loss.item()
+                
+                ## Final prediction array
+                if epoch==number_of_epochs-1:
+                    prediction_array.append(int(np.round(output.detach().numpy()[0]))+1)
+                    
             toc = time.perf_counter()
             print("\n")
             print(f"Epoch {epoch} time taken: {(toc - tic)/60.0:0.4f} minutes")
@@ -145,7 +151,7 @@ class alpha_trainer():
             print("Accuracy Array = ", accuracy_array, "\n")
     
                 
-        return np.array(loss_array), np.array(accuracy_array)
+        return np.array(loss_array), np.array(accuracy_array), np.array(prediction_array)
     
     
     

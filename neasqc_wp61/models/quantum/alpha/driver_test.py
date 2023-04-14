@@ -34,16 +34,15 @@ number_of_runs = 1
 for i in range(number_of_runs):
     print("run = ", i+1, "\n")
     if i==0:
-        loss_array, accuracy_array = trainer.train(number_of_epochs)
+        loss_array, accuracy_array, prediction_array = trainer.train(number_of_epochs)
     else:
-        loss_temp_array, accuracy_temp_array  = trainer.train(number_of_epochs)
+        loss_temp_array, accuracy_temp_array, prediction_temp_array  = trainer.train(number_of_epochs)
         loss_array += loss_temp_array
-        accuracy_array += accuracy_temp_array 
+        accuracy_array += accuracy_temp_array
+        prediction_array += prediction_temp_array 
 loss_array = loss_array/number_of_runs
 accuracy_array = accuracy_array/number_of_runs
-
-#Computing the log loss
-#log_loss_array = np.log(loss_array)
+prediction_array = prediction_array/number_of_runs
 
 #Plotting the results
 import matplotlib.pyplot as plt
