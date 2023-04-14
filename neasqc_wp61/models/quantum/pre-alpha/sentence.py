@@ -1,4 +1,3 @@
-import spacy
 import numpy as np
 import math
 import random
@@ -7,47 +6,8 @@ import random
 class Sentence:
 
     def __init__(self, sentence, dataset=None, dictionary=None, label=None, stype=None):
-        if not dataset:
-            if type(sentence) != str:
-                raise Exception('If no dataset is provided, sentence type must be a string')
-
-            self.nlp = spacy.load('en_core_web_lg')
-            self.sentence = self.nlp(sentence)
-            self.dictionary = dictionary
-            self.dictionary.addwords(self)
-            self.qubitsarray = []
-            self.categoriesarray = []
-            self.catqubits = []
-            self.stype = stype
-            self.label = label
-            nwords = 0
-            for token in self.sentence:
-                word = token.text.strip()
-                wordcategories = self.dictionary.dictionary[word].category
-                self.categoriesarray.append(wordcategories)
-
-                if nwords < 1:
-                    qubitlist = list(np.arange(dictionary.dictionary[word].nqubits))
-                elif nwords == 1:
-                    lastqubit = qubitlist[-1]
-                    qubitlist = list(1 + lastqubit + np.arange(dictionary.dictionary[word].nqubits))
-                elif nwords > 1:
-                    lastqubit = qubitlist[-1]
-                    qubitlist = list(1 + lastqubit + np.arange(dictionary.dictionary[word].nqubits))
-                self.qubitsarray.append(qubitlist)
-                nwords += 1
-
-                wordqubits = []
-                for category in wordcategories:
-                    if category in ['nl', 'nr', 'n', 'nrr', 'nll']:
-                        wordqubits.append(dictionary.qn)
-                    elif category in ['s', 'sl', 'sr']:
-                        wordqubits.append(dictionary.qs)
-                    else:
-                        print('category not found')
-                self.catqubits.append(wordqubits)
-
-        elif dataset:
+        
+        if dataset:
             self.dictionary = dict()
             self.sentence = sentence['sentence']
             self.sentencestructure = sentence['sentence_type']
@@ -61,7 +21,7 @@ class Sentence:
                 self.label = 1
             self.stype = sentence['sentence_type_code']
             nwords = 0
-            for word, cat in zip(sentence['sentence'].split(' '), sentence['sentence_type'].split(',')):
+            for word, cat in zip(sentence['sentence'].lower().split(' '), sentence['sentence_type'].split(',')):
                 wordcategories = dictionary.dictionary[word].category[cat]
                 self.categoriesarray.append(wordcategories)
 
@@ -162,7 +122,7 @@ class Sentence:
     def setparamsfrommodel(self, mydict, ansatz = 'Simple', layers = 1):
         sentenceparams = []
         iword = 0
-        for word,cat in zip(self.sentence.split(' '), self.sentencestructure.split(',')):
+        for word,cat in zip(self.sentence.lower().split(' '), self.sentencestructure.split(',')):
             wordparams = []
             for gate in mydict.dictionary[word].gateset[cat]:
                 if (gate['Gate'] == 'RY') or (gate['Gate'] == 'RZ'):
@@ -209,16 +169,8 @@ class Sentence:
 
     def getparameters(self, dataset=False):
         sentenceparams = []
-        if not dataset:
-            for word in self.dictionary.dictionary.keys():
-                wordparams = []
-                for gate in self.dictionary.dictionary[word].gateset:
-                    if (gate['Gate'] == 'RY') or (gate['Gate'] == 'RZ'):
-                        wordparams.append(gate['Angle'])
-                sentenceparams.append(wordparams)
-            return sentenceparams
 
-        elif dataset:
+        if dataset:
             for word in self.dictionary.keys():
                 wordparams = []
                 for gate in self.dictionary[word]['gateset']:

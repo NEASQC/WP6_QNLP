@@ -74,7 +74,7 @@ class ClassicalOptimizer:
         par, ix = mydict.getindexmodelparams()
         for mysentence in SentencesList:
             shapedparams = []
-            for word, cat in zip(mysentence.sentence.split(' '), mysentence.sentencestructure.split(',')):
+            for word, cat in zip(mysentence.sentence.lower().split(' '), mysentence.sentencestructure.split(',')):
                 wordparams =[parameters[i] for i in ix[(word, cat)]]
                 shapedparams.append(wordparams)
 
