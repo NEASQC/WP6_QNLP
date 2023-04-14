@@ -78,20 +78,15 @@ class alpha_model(nn.Module):
         self.sentence_labels = self.wrapper.sentence_labels
         self.bert_embeddings = self.wrapper.bert_embeddings
         self.BertDim = self.wrapper.reduced_word_embedding_dimension
+     
         
-        ###Define the noprmalisation factor for normalised cross entropy loss
-        #p = (sum(np.array(self.sentence_labels)==[1,0])/len(self.sentence_labels))[0]
-        #p = (sum(np.array(self.sentence_labels[0:10])==[1,0])/len(self.sentence_labels[0:10]))[0]
-        #self.normalisation_factor = len(self.sentence_labels[0:10])*(p*np.log(p) +(1-p)*np.log(1-p))
-        #self.normalisation_factor = len(self.sentences)*100
-        
-        
+     
         ###Initialise the circuits class
         self.pqc_sentences = parameterised_quantum_circuit(self.sentences)
         
         ###Defining the network
-        intermediate_dimension= 20
-        max_param = 10
+        intermediate_dimension= 10
+        max_param = 5
         min_param = 1
         
         #Create a neural network    
@@ -101,7 +96,7 @@ class alpha_model(nn.Module):
         for layer in range(max_param,min_param,-1):
             self.cascade.append(nn.Linear(layer, layer-1))
         self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(p=0.1)
+        self.layer_norm = nn.LayerNorm(self.BertDim)
         
     def forward(self, specific_sentence):
         """Performs a forward step in the model training.
@@ -127,17 +122,19 @@ class alpha_model(nn.Module):
         for i, embedding in enumerate(self.bert_embeddings[sentence_index]):
             embedding = list(map(float, embedding))
             
-            pre_out = self.pre_net.float()(torch.tensor(embedding))
-            pre_out = self.dropout(pre_out)
-            pre_out = self.pre_net_max_params(pre_out)
+            pre_out = self.pre_net.float()(self.layer_norm(torch.tensor(embedding)))
             pre_out = self.relu(pre_out)
+            pre_out = self.pre_net_max_params(pre_out)
+            
             for j, layer in enumerate(self.cascade):
                 layer_n_out = layer.out_features
                 if word_number_of_parameters[i] <= layer_n_out:
                     pre_out = self.cascade[j](pre_out)
-                    pre_out = self.relu(pre_out)
-            q_in= torch.tanh(pre_out) * np.pi / 2.0
+            q_in = torch.remainder(pre_out,np.pi / 2.0)
+            q_in= self.relu(q_in)
             sentence_q_params.append(q_in)
+            
+        
         qparams = torch.cat(sentence_q_params)
         
         circuit_output = torch.Tensor(self.pqc_sentences.run_circuit(circuit, qparams.clone()))

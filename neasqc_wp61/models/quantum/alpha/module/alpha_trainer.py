@@ -15,7 +15,7 @@ import random
 
 import time
 
-class alpha_trainer(nn.Module):
+class alpha_trainer():
     """Trains a neural network that takes sentence BERT embeddings as input and maps them to the parameters in a parameterised quantum circuit.
 
     ........
@@ -66,11 +66,7 @@ class alpha_trainer(nn.Module):
         self.model = alpha_model(filename, seed)
         
         ###Define the noprmalisation factor for normalised cross entropy loss
-        #p = (sum(np.array(self.sentence_labels)==[1,0])/len(self.sentence_labels))[0]
-        #p = (sum(np.array(self.sentence_labels[0:10])==[1,0])/len(self.sentence_labels[0:10]))[0]
-        #self.normalisation_factor = len(self.sentence_labels[0:10])*(p*np.log(p) +(1-p)*np.log(1-p))
-        #self.normalisation_factor = len(self.model.sentences)*100
-        self.normalisation_factor = len(self.model.sentences)
+        self.normalisation_factor = len(self.model.sentences)*100
         
         
 
@@ -93,14 +89,13 @@ class alpha_trainer(nn.Module):
         """
         ###Training the model
         
-        #criterion = nn.CrossEntropyLoss()
         
-        def CE_loss(input,target):
-            return torch.exp(target[0]*torch.log(input[0]+0.00001) + (1.0-target[0])*torch.log(1.00001-input[0]))
-        #criterion = nn.BCELoss()
-        criterion = CE_loss
-        #optimizer = optim.SGD(self.model.parameters(), lr=0.001, momentum=0.9)
-        optimizer = optim.Adam(self.model.parameters(), lr=0.001)
+        criterion = nn.BCELoss()
+        
+        
+        learning_rate = 0.001
+        optimizer = optim.Adam(self.model.parameters(), lr=learning_rate)
+        
         
         # generation loop
         loss_array = []
@@ -116,27 +111,29 @@ class alpha_trainer(nn.Module):
                 sentence_index = self.model.sentences.index(specific_sentence)
                 sentence_label = self.model.sentence_labels[sentence_index]
                        
+                optimizer.zero_grad()
+                    
                 # 1. forward step: takes sentence embeddings and outputs input parameters to pqc --> parameters, run_circuit(parameters) --> output=[x,1-x]
                 output = self.model.forward(specific_sentence)
                 
+                
                 # 3. compute loss(compare output to sentence label)
-                loss = criterion(output, target=torch.Tensor(sentence_label))
                 
+                loss = criterion(input=output, target=torch.Tensor(sentence_label))
                 
-                accuracy += np.sqrt((output.detach().numpy()[0]-sentence_label[0])**2)
+                accuracy += 1.0-np.sqrt((output.detach().numpy()[0]-sentence_label[0])**2)
                 
                     
                 # 4. backward step --> updated network
-                optimizer.zero_grad()
+
                 loss.backward()
                 
-   
-                #print("list(self.parameters()) = ",list(self.parameters()), "\n \n \n")
-                optimizer.step()
+                ##Gradient Clipping
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=10)
                 
-                #print stats
+                optimizer.step()
+ 
                 running_loss += loss.item()
-            
             toc = time.perf_counter()
             print("\n")
             print(f"Epoch {epoch} time taken: {(toc - tic)/60.0:0.4f} minutes")
@@ -146,7 +143,9 @@ class alpha_trainer(nn.Module):
             accuracy_array.append(accuracy/len(self.model.sentences))
             print("Loss Array = ", loss_array, "\n")
             print("Accuracy Array = ", accuracy_array, "\n")
+    
                 
         return np.array(loss_array), np.array(accuracy_array)
-                
-        
+    
+    
+    

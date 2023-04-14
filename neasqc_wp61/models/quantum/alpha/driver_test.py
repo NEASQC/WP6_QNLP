@@ -27,7 +27,7 @@ print("Initialisation Begun \n")
 trainer = alpha_trainer(filename, seed)
 print("Initialisation Ended \n")
 #How many generations(epochs) to be ran?
-number_of_epochs = 1000
+number_of_epochs = 100
 
 # Run the training number_of_runs times and average over the results
 number_of_runs = 1
