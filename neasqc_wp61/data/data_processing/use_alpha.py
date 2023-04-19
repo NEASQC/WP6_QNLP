@@ -1,13 +1,15 @@
 import sys
 import os
-current_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(current_path + "../../models/quantum/alpha/module/")
+sys.path.append("./models/quantum/alpha/module/")
+import argparse
+
 import json
 import numpy as np
-import dataset_wrapper 
-import parameterised_quantum_circuit
-import alpha_trainer 
-import alpha_model 
+
+#from dataset_wrapper import *
+#from parameterised_quantum_circuit import *
+from alpha_trainer import *
+#from alpha_model import *
 ##################################################################################################################################################################
 ##################################################################################################################################################################
 ##################################################################################################################################################################
@@ -27,11 +29,11 @@ def main():
     
     ########################################
     #How many generations(epochs) to be ran?
-    number_of_epochs = args.epochs
+    number_of_epochs = int(args.epochs)
     # Run the training number_of_runs times and average over the results
-    number_of_runs = args.runs
+    number_of_runs = int(args.runs)
     #Set random seed
-    seed = args.seed
+    seed = int(args.seed)
     ########################################
     ###Training the model
     

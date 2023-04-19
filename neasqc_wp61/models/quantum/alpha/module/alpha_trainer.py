@@ -1,7 +1,7 @@
 #from module.dataset_wrapper import *
 #from module.parameterised_quantum_circuit import *
-from models.quantum.alpha.module.alpha_model import *
-
+#from models.quantum.alpha.module.alpha_model import *
+from alpha_model import *
 
 import torch
 from torch.autograd import Function

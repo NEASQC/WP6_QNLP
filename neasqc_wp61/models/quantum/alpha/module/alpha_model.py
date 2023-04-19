@@ -1,6 +1,7 @@
-from models.quantum.alpha.module.dataset_wrapper import *
-from models.quantum.alpha.module.parameterised_quantum_circuit import *
-
+#from models.quantum.alpha.module.dataset_wrapper import *
+#from models.quantum.alpha.module.parameterised_quantum_circuit import *
+from dataset_wrapper import *
+from parameterised_quantum_circuit import *
 
 import torch
 from torch.autograd import Function
@@ -137,6 +138,8 @@ class alpha_model(nn.Module):
         
         qparams = torch.cat(sentence_q_params)
         
+        ### Exit gradient tree with clone()
+        ############################
         circuit_output = torch.Tensor(self.pqc_sentences.run_circuit(circuit, qparams.clone()))
         
         #reshape arrays
@@ -145,6 +148,8 @@ class alpha_model(nn.Module):
         
         # find torch linear transformation that represents pqc transforamtion
         transformation = self.linear_transformer(qparams.clone(),circuit_output)
+        ############################
+        
         
         output = qparams@transformation
         output = torch.reshape(output, (output.size(dim=1),))
