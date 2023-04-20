@@ -12,13 +12,14 @@ from pytket.utils import probs_from_counts
 
 import itertools
 import copy
+import time
 
 parser = BobcatParser()
 
 
 
 class parameterised_quantum_circuit():
-    """Generates a parameterised quantum circuit for a given input sentence.
+    """Generates a parameterised quantum circuit for a given input sentences.
 
     ........
 
@@ -38,7 +39,7 @@ class parameterised_quantum_circuit():
 
     """
     
-    def __init__(self, sentence: str):
+    def __init__(self, sentences: list):
         """Initialises parameterised quantum circuit.
 
         Takes in a sentence and creates a parameterised quantum circuit that represents it's grammatical structure, using Lambeq library.
@@ -53,8 +54,7 @@ class parameterised_quantum_circuit():
         """
         
         #Defining the sentence
-        self.sentence = sentence
-        
+        self.sentences = sentences
         #Defining the sentence structure
         #self.sentence_type = sentence_type
         
@@ -65,17 +65,13 @@ class parameterised_quantum_circuit():
         circuit_layers=1
         self.ansatz = IQPAnsatz({n: 1, s: 1, p: 1}, n_layers=circuit_layers)
         
-        #Converting circuit to tket
-        self.tk_circuit = self.create_circuit()
+        print("Parsing and diagram generation of sentences begun")
+        #Parsing, diagram and discopy circuit generation
+        self.discopy_circuits = self.create_discopy_circuits()
+        print("Parsing and diagram generation of sentences ended \n")
         
-        #Finding the parameters of the circuit
-        self.parameters = sorted(self.tk_circuit.free_symbols(), key=default_sort_key)
-        #print("\n parameter names = ", self.parameters, "\n")
         
-        #Number of parameters per word
-        self.word_number_of_parameters = self.GetNParamsWord()
-        
-    def run_circuit(self,parameters):
+    def run_circuit(self,circuit,parameters):
         """Runs the parametrised quantum circuit and performs post processing to achieve classification output.
 
         Given a set of parameters for the parameterised quantum circuit, this function will run the circuit and return a binary classification.:
@@ -92,13 +88,14 @@ class parameterised_quantum_circuit():
             two-element list [x,1-x] that represents a binary classification.
             
         """
-        #Update parameters(Input torch tensor of parameters)
-        parameters_dict = self.update_parameters(parameters)
+        
         
         #Measure s qubits
         #circuit_temp = self.tk_circuit
         #circuit = copy.deepcopy(circuit_temp)
-        circuit = self.create_circuit()
+        
+        #Update parameters(Input torch tensor of parameters)
+        parameters_dict = self.update_parameters(circuit,parameters)
         
         s_qubits = self.Measure_s_qubits(circuit)
         
@@ -111,7 +108,7 @@ class parameterised_quantum_circuit():
 
         handle = backend.process_circuits(backend.get_compiled_circuits([circuit]), n_shots=2000)
         counts = backend.get_result(handle[0]).get_counts()
-        result_dict = self.get_norm_circuit_output(counts, s_qubits)
+        result_dict = self.get_norm_circuit_output(circuit,counts, s_qubits)
         all_bitstrings = self.calculate_bitstring(s_qubits)
         for bitstring in all_bitstrings:
             if bitstring not in result_dict.keys():
@@ -119,7 +116,7 @@ class parameterised_quantum_circuit():
         classification = list(result_dict.values())
         return classification
     
-    def create_circuit(self):
+    def create_tket_circuit(self, sentence_index):
         """Given a sentence, this creates a quantum circuit that represents the sentence grammatical structure.
 
         Uses the Lambeq library to generate a parameterised quantum circuit that represents the sentence grammtical structure:
@@ -134,18 +131,53 @@ class parameterised_quantum_circuit():
             A tket circuit representing the grammar of the sentence.
             
         """
-        #Sentence to diagram
-        diagram = parser.sentence2diagram(self.sentence)
-        
         #Discopy circuit
-        discopy_circuit = self.ansatz(diagram)
+        discopy_circuit = self.discopy_circuits[sentence_index]
         
         #Converting circuit to tket
         tk_circuit = discopy_circuit.to_tk()
         
-        return tk_circuit       
+        parameters = sorted(tk_circuit.free_symbols(), key=default_sort_key)
+        #print("\n parameter names = ", self.parameters, "\n")
         
-    def update_parameters(self,parameters):
+        #Number of parameters per word
+        word_number_of_parameters = self.GetNParamsWord(parameters)
+        
+        return tk_circuit, parameters, word_number_of_parameters  
+    
+    def create_discopy_circuits(self):
+        """Given a sentence, this creates a quantum circuit that represents the sentence grammatical structure.
+
+        Uses the Lambeq library to generate a parameterised quantum circuit that represents the sentence grammtical structure:
+
+        Parameters
+        ----------
+        
+        
+        Returns
+        -------
+        tk_circuit: pytket circuit
+            A tket circuit representing the grammar of the sentence.
+            
+        """
+        discopy_circuits = []
+        for i, sentence in enumerate(self.sentences):
+            if i==62:
+                sentence = "the bees were interesting but"
+            tic = time.perf_counter()
+            #Sentence to diagram
+            diagram = parser.sentence2diagram(sentence)
+            
+            
+            #Discopy circuit
+            discopy_circuit = self.ansatz(diagram)
+            discopy_circuits.append(discopy_circuit)
+            toc = time.perf_counter()
+            print(f"Parsed and created discopy circuit for sentence: {i+1}/{len(self.sentences)}     Time taken: {toc - tic:0.4f} seconds", end='\r')
+        print("\n")
+        return discopy_circuits
+        
+    def update_parameters(self,tk_circuit,parameters):
         """Updates the parameters of the quantum circuit.
 
         Joins the parameter names in the pqc with the inputted parameter float values in a dictionary.:
@@ -162,11 +194,11 @@ class parameterised_quantum_circuit():
             dictionary mapping parameter values to parameter names.
             
         """
-        parameter_names = self.tk_circuit.free_symbols()
+        parameter_names = tk_circuit.free_symbols()
         parameters_dict = {p: q for p, q in zip(parameter_names, parameters)}
         return parameters_dict
         
-    def GetNParamsWord(self):
+    def GetNParamsWord(self, parameters):
         """Finds the number of quantum parameters corrseponding to each word in the sentence.
 
        
@@ -178,7 +210,7 @@ class parameterised_quantum_circuit():
         """
         w=0
         params_per_word=[0]
-        for i, param in enumerate(self.parameters):
+        for i, param in enumerate(parameters):
             """
             word = param.name.split("__")[0]
             if i==0:
@@ -289,7 +321,7 @@ class parameterised_quantum_circuit():
             prob_result[bitstring]/=tot
         return prob_result
 
-    def get_norm_circuit_output(self, counts, s_qubits):
+    def get_norm_circuit_output(self, circuit,counts, s_qubits):
         """Obtains normalised output of parametrised quantum circuit.
 
         Parameters
@@ -305,7 +337,7 @@ class parameterised_quantum_circuit():
         """
         prob_result=dict()
         for bits in probs_from_counts(counts).keys():
-            post_selected = self.satisfy_post_selection(self.tk_circuit.post_selection, bits)
+            post_selected = self.satisfy_post_selection(circuit.post_selection, bits)
             if post_selected==True:
                 s_qubits_index = []
                 for qubit in s_qubits:

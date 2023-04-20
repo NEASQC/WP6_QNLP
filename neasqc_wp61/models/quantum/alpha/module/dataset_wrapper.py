@@ -151,7 +151,10 @@ class dataset_wrapper():
             sentence_labels.append(label)
             
             sentence_lengths.append(len(word_embedding))
-            word_embeddings = self.custom_list_reshaper(word_embedding)
+            reshaped_embedding = self.custom_list_reshaper(word_embedding)
+
+            for embedding in reshaped_embedding:
+                 word_embeddings.append(embedding)
             
         return sentences, sentence_types, sentence_labels, word_embeddings, sentence_lengths
     

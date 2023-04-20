@@ -1,5 +1,7 @@
-from module.dataset_wrapper import *
-from module.parameterised_quantum_circuit import *
+#from module.dataset_wrapper import *
+#from module.parameterised_quantum_circuit import *
+from models.quantum.alpha.module.alpha_model import *
+
 
 import torch
 from torch.autograd import Function
@@ -13,7 +15,7 @@ import random
 
 import time
 
-class alpha_trainer(nn.Module):
+class alpha_trainer():
     """Trains a neural network that takes sentence BERT embeddings as input and maps them to the parameters in a parameterised quantum circuit.
 
     ........
@@ -59,36 +61,13 @@ class alpha_trainer(nn.Module):
             
 
         """
-        
         super().__init__()
+        #Call alpha model class
+        self.model = alpha_model(filename, seed)
         
-        #Set random seed
-        self.seed = seed
-        torch.manual_seed(self.seed)
-        np.random.seed(self.seed)
-        random.seed(self.seed)
+        ###Define the noprmalisation factor for normalised cross entropy loss
+        self.normalisation_factor = len(self.model.sentences)*100
         
-        ###dataset_wrapper parses the data and finds the bert embeddings for each sentence
-        self.reduced_word_embedding_dimension = 146
-        #self.reduced_word_embedding_dimension = 22
-        self.wrapper = dataset_wrapper(filename, self.reduced_word_embedding_dimension)
-        self.sentences = self.wrapper.sentences
-        self.sentence_types = self.wrapper.sentence_types
-        self.sentence_labels = self.wrapper.sentence_labels
-        self.bert_embeddings = self.wrapper.bert_embeddings
-        self.BertDim = self.wrapper.reduced_word_embedding_dimension
-        
-        ###Defining the network
-        intermediate_dimension= 20
-        max_param = 10
-        min_param = 1
-        
-        #Create a neural network    
-        self.pre_net = nn.Linear(self.reduced_word_embedding_dimension, intermediate_dimension)
-        self.pre_net_max_params = nn.Linear(intermediate_dimension, max_param)
-        self.cascade = nn.ParameterList()
-        for layer in range(max_param,min_param,-1):
-            self.cascade.append(nn.Linear(layer, layer-1))
         
 
         
@@ -110,88 +89,69 @@ class alpha_trainer(nn.Module):
         """
         ###Training the model
         
+        
         criterion = nn.BCELoss()
-        optimizer = optim.SGD(self.parameters(), lr=0.001, momentum=0.9)
+        
+        
+        learning_rate = 0.001
+        optimizer = optim.Adam(self.model.parameters(), lr=learning_rate)
+        
         
         # generation loop
         loss_array = []
-        
+        accuracy_array = []
+        prediction_array = []
         for epoch in range(number_of_epochs):
             tic = time.perf_counter()
             # sentence loop
-            number_of_sentences = len(self.sentences)
+            number_of_sentences = len(self.model.sentences)
             running_loss = 0
-            for i,specific_sentence in enumerate(self.sentences):
-                print(f"Epoch: {epoch+1}/{number_of_epochs}    Sentence: {i}/{number_of_sentences}")
-                sentence_index = self.sentences.index(specific_sentence)
-                sentence_label = self.sentence_labels[sentence_index]
+            accuracy=0
+            for i,specific_sentence in enumerate(self.model.sentences):
+                print(f"Epoch: {epoch+1}/{number_of_epochs}    Sentence: {i+1}/{number_of_sentences}", end='\r')
+                sentence_index = self.model.sentences.index(specific_sentence)
+                sentence_label = self.model.sentence_labels[sentence_index]
                        
+                optimizer.zero_grad()
+                    
                 # 1. forward step: takes sentence embeddings and outputs input parameters to pqc --> parameters, run_circuit(parameters) --> output=[x,1-x]
-                output = self.forward(specific_sentence)
+                output = self.model.forward(specific_sentence)
+                
                 
                 # 3. compute loss(compare output to sentence label)
-                loss = criterion(input=torch.Tensor(output), target=torch.Tensor(sentence_label))
-                loss = torch.autograd.Variable(loss, requires_grad = True)
-
+                
+                loss = criterion(input=output, target=torch.Tensor(sentence_label))
+                
+                accuracy += 1.0-np.sqrt((output.detach().numpy()[0]-sentence_label[0])**2)
+                
+                    
                 # 4. backward step --> updated network
-                optimizer.zero_grad()
+
                 loss.backward()
+                
+                ##Gradient Clipping
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=10)
+                
                 optimizer.step()
-                
-                #print stats
+ 
                 running_loss += loss.item()
-            
+                
+                ## Final prediction array
+                if epoch==number_of_epochs-1:
+                    prediction_array.append(int(np.round(output.detach().numpy()[0]))+1)
+                    
             toc = time.perf_counter()
-            print(f"Epoch time taken: {toc - tic:0.4f} seconds")
-            print("Loss = ", running_loss/len(self.sentences))
-            loss_array.append(running_loss/len(self.sentences))
+            print("\n")
+            print(f"Epoch {epoch} time taken: {(toc - tic)/60.0:0.4f} minutes")
+            print(f"Estimated remaining time: {((number_of_epochs-epoch-1)*((toc - tic)/60.0)):0.4f} minutes")
+            print("Loss = ", running_loss/self.normalisation_factor, "\n")
+            loss_array.append(running_loss/self.normalisation_factor)
+            accuracy_array.append(accuracy/len(self.model.sentences))
+            print("Loss Array = ", loss_array, "\n")
+            print("Accuracy Array = ", accuracy_array, "\n")
+    
                 
-        return np.array(loss_array)
+        return np.array(loss_array), np.array(accuracy_array), np.array(prediction_array)
     
     
-    def forward(self, specific_sentence):
-        """Performs a forward step in the model training.
-
-        Parameters
-        ----------
-        specific_sentence: str
-            sentence that the model trains on
-        
-        Returns
-        -------
-        output: list[floats]
-            [x,1-x] binary classification output.
-        """   
-        #Takes in bert embeddings, assigns them to correct transformation, then outputs results for running the circuit
-        # Requires pqc parameter numbers
-        sentence_index = self.sentences.index(specific_sentence)
-        
-        pqc = parameterised_quantum_circuit(specific_sentence)
-        word_number_of_parameters = pqc.word_number_of_parameters
-        """
-        print("specific sentence = ", specific_sentence)
-        print("word_number_of_parameters = ", word_number_of_parameters)
-        print("length of word_number_of_parameters = ", len(word_number_of_parameters))
-        print("number of embeddings in sentence = ",len(self.bert_embeddings[sentence_index]), "\n \n \n")
-        """
-        counter = 0
-        sentence_q_params = []
-        for i, embedding in enumerate(self.bert_embeddings[sentence_index]):
-            embedding = list(map(float, embedding))
-            pre_out = self.pre_net.float()(torch.tensor(embedding))
-            pre_out = self.pre_net_max_params(pre_out)
-            for j, layer in enumerate(self.cascade):
-                layer_n_out = layer.out_features
-                if word_number_of_parameters[i] <= layer_n_out:
-                    pre_out = self.cascade[j](pre_out)
-            q_in = torch.tanh(pre_out) * np.pi / 2.0 
-            sentence_q_params.append(q_in)
-        self.qparams = torch.cat(sentence_q_params)
-        
-        output = pqc.run_circuit(self.qparams)
-            
-        return output
     
-
-                
-        
