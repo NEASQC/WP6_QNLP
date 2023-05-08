@@ -1,7 +1,7 @@
 import sys
 import os
 current_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(current_path + "/models/quantum/pre-alpha/")
+sys.path.append(current_path + "/../../models/quantum/pre-alpha/")
 import matplotlib.pyplot as plt
 import random
 import argparse
@@ -44,41 +44,30 @@ def main():
     for s in range(int(args.runs)):
         seed = seed_list[s]
         Myvocab = loader.getvocabdict(Dftrain, Dftest)
-        MyDict = dictionary.QuantumDict(qn=1,
-                                        qs=1)
+        MyDict = dictionary.QuantumDict(qn=1, qs=1)
         MyDict.addwords(myvocab=Myvocab)
         MyDict.setvocabparams(seed=seed)
-
-
-    ##################################################################################################################################################################
-    ##################################################################################################################################################################
-    ##################################################################################################################################################################    
-
 
         def createsentencelist(dftrain, mydict):
             sentences_list = []
             for i, DataInstance in dftrain.iterrows():
-                a_sentence = sentence.Sentence(DataInstance,
-                                            dataset=True,
-                                            dictionary=mydict)
+                a_sentence = sentence.Sentence(
+                    DataInstance,
+                    dataset=True,
+                    dictionary=mydict)
                 a_sentence.getqbitcontractions()
                 a_sentence.setparamsfrommodel(mydict)
                 sentences_list.append(a_sentence)
 
             return sentences_list
-
-    ##################################################################################################################################################################
-    ##################################################################################################################################################################
-    ##################################################################################################################################################################
-
         
         SentencesList = createsentencelist(Dftrain, MyDict)
         par, ix = MyDict.getindexmodelparams()
         myopt = optimizer.ClassicalOptimizer()
-        result = myopt.optimizedataset(SentencesList, par, MyDict,
-                                    tol=1e-5,
-                                    options={'maxiter': int(args.iterations), 'rhobeg': 1},
-                                    method=args.optimiser)
+        result = myopt.optimizedataset(
+            SentencesList, par, MyDict,
+            tol=1e-5, options={'maxiter': int(args.iterations), 'rhobeg': 1},
+            method=args.optimiser)
         
         MyDict.updateparams(result.x)
         SentencesTest = createsentencelist(Dftest, MyDict)
