@@ -1,4 +1,4 @@
-import spacy
+#import spacy
 import numpy as np
 import math
 import random
@@ -11,7 +11,7 @@ class Sentence:
             if type(sentence) != str:
                 raise Exception('If no dataset is provided, sentence type must be a string')
 
-            self.nlp = spacy.load('en_core_web_lg')
+            #self.nlp = spacy.load('en_core_web_lg')
             self.sentence = self.nlp(sentence)
             self.dictionary = dictionary
             self.dictionary.addwords(self)

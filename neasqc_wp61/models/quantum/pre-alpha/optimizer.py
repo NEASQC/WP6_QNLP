@@ -116,7 +116,7 @@ class ClassicalOptimizer:
         return cost/len(SentencesList)
 
 
-    def optimizedataset(self, sentencelist, params0, mydict, tol=1e-5, options={'maxiter':300, 'rhobeg': 1.5}, method="COBYLA"):
+    def optimizedataset(self, sentencelist, params0, mydict, tol=1e-5, options={'maxiter':3, 'rhobeg': 1.5}, method="COBYLA"):
         params0 = np.array(params0)
         result = scipy.optimize.minimize(self.datasetcost, params0,
                                                     args=(sentencelist,mydict),
