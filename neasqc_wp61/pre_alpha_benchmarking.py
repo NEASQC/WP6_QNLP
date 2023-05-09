@@ -1,7 +1,7 @@
 import sys 
 import os
 current_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(current_path + "/../doc/tutorials/")
+sys.path.append(current_path + "/tutorials/")
 from dataset_example_seeded import pre_alpha_classifier_seeded
 import numpy as np
 import json 

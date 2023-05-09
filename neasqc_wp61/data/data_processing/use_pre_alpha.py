@@ -1,5 +1,6 @@
 import sys
 import os
+
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_path + "/../../models/quantum/pre-alpha/")
 import matplotlib.pyplot as plt
@@ -11,7 +12,6 @@ import loader
 import dictionary
 import sentence
 import circuit
-import pickle
 ##################################################################################################################################################################
 ##################################################################################################################################################################
 ##################################################################################################################################################################
@@ -22,6 +22,7 @@ import pickle
 def main():
 
     parser = argparse.ArgumentParser()
+
     parser.add_argument(
         "-s", "--seed", help = "Seed for the initial parameters", type = int)
     parser.add_argument(
@@ -55,6 +56,7 @@ def main():
                     DataInstance,
                     dataset=True,
                     dictionary=mydict)
+
                 a_sentence.getqbitcontractions()
                 a_sentence.setparamsfrommodel(mydict)
                 sentences_list.append(a_sentence)
@@ -64,6 +66,7 @@ def main():
         SentencesList = createsentencelist(Dftrain, MyDict)
         par, ix = MyDict.getindexmodelparams()
         myopt = optimizer.ClassicalOptimizer()
+
         result = myopt.optimizedataset(
             SentencesList, par, MyDict,
             tol=1e-5, options={'maxiter': int(args.iterations), 'rhobeg': 1},
@@ -86,6 +89,7 @@ def main():
                         probs[1] = sample.probability
             prob0 = probs[0] / sum(probs)
             if prob0 >= 0.5:
+
                 predictions[i].append(1)
             else:
                 predictions[i].append(2)
@@ -96,11 +100,13 @@ def main():
             f'pre_alpha_{args.seed}_{args.optimiser}_{args.iterations}_{args.runs}_run_{s}.pickle', 'wb') as file:
             pickle.dump(predictions, file)
 
+
     predictions_majority_vote = []
     for i in range(Dftest.shape[0]):
         c = Counter(predictions[i])
         value, count = c.most_common()[0]
         predictions_majority_vote.append(value)
+
     with open(args.output + f"pre_alpha_{args.seed}_{args.optimiser}_{args.iterations}_{args.runs}.txt", "w") as output:
         for pred in predictions_majority_vote:
             output.write(f"{pred}\n")

@@ -5,8 +5,7 @@ import random
 
 class Sentence:
 
-    def __init__(self, sentence, dataset=None, dictionary=None, label=None, stype=None):
-        
+    def __init__(self, sentence, dataset=None, dictionary=None, label=None, stype=None):        
         if dataset:
             self.dictionary = dict()
             self.sentence = sentence['sentence']

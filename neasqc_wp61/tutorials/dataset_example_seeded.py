@@ -1,7 +1,7 @@
 import sys
 import os
 current_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(current_path + "/../../models/quantum/pre-alpha/")
+sys.path.append(current_path + "/../models/quantum/pre-alpha/")
 import pandas as pd
 import json
 import matplotlib.pyplot as plt
@@ -18,7 +18,7 @@ import sentence
 def pre_alpha_classifier_seeded(seed, n_iter = 500):
     random.seed(seed)
     filename = 'amazonreview_reduced_train_pre_alpha.json'
-    Dftrain = loader.createdf(current_path +"/../../data/datasets/"+filename)
+    Dftrain = loader.createdf(current_path +"/../data/datasets/"+filename)
     Myvocab = loader.getvocabdict(Dftrain)
     MyDict = dictionary.QuantumDict(qn=1,
                                     qs=1)

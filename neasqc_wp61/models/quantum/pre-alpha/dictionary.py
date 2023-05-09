@@ -1,3 +1,4 @@
+
 import math
 import random
 
@@ -26,6 +27,7 @@ class PartOfSpeech:
 class QuantumDict:
 
     def __init__(self, qn=1, qs=1):
+
         self.dictionary = dict()
         self.partsOfSpeech = PartOfSpeech()
         self.qn = qn
