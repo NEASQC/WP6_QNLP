@@ -137,7 +137,8 @@ class parameterised_quantum_circuit():
         #Converting circuit to tket
         tk_circuit = discopy_circuit.to_tk()
         
-        parameters = sorted(tk_circuit.free_symbols(), key=default_sort_key)
+        #parameters = sorted(tk_circuit.free_symbols(), key=default_sort_key)
+        parameters = tk_circuit.free_symbols()
         #print("\n parameter names = ", self.parameters, "\n")
         
         #Number of parameters per word
