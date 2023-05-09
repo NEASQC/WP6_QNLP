@@ -1,7 +1,6 @@
 import sys
 import os
-current_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(current_path + "../../models/quantum/pre-alpha/")
+sys.path.append("./models/quantum/pre-alpha/")
 import matplotlib.pyplot as plt
 import numpy as np
 import argparse

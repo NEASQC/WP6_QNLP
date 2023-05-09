@@ -28,8 +28,4 @@ echo "optimiser: $optimiser";
 echo "iterations: $iterations";
 echo "outfile: $outfile";
 
-if [ "$model"=="alpha" ]; then
-python3.10 ./data/data_processing/use_alpha.py -s ${seed} -e ${epochs} -r ${runs} -tr ${train} -te ${test} -o ${outfile}
-else
 python3.10 ./data/data_processing/use_pre_alpha.py -s ${seed} -op ${optimiser} -i ${iterations} -r ${runs} -tr ${train} -te ${test} -o ${outfile}
-fi
