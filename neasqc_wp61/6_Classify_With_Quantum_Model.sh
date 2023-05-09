@@ -14,7 +14,6 @@ do
         r) runs=${OPTARG};;
         i) iterations=${OPTARG};;
         p) optimiser=${OPTARG};;
-        i) iterations=${OPTARG};;
         o) outfile=${OPTARG};;
     esac
 done
