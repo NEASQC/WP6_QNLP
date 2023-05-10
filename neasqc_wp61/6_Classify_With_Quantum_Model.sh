@@ -3,7 +3,7 @@
 echo 'This script classifies examples using quantum classifier model.'
 
 
-while getopts t:v:s:m:e:r:i:o: flag
+while getopts t:v:s:m:e:r:i:p:o: flag
 do
     case "${flag}" in
         t) train=${OPTARG};;
