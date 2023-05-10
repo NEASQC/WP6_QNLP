@@ -1,8 +1,7 @@
-#import spacy
+
 import math
 import random
-import json
-import pandas as pd
+
 
 
 class PartOfSpeech:
@@ -28,7 +27,7 @@ class PartOfSpeech:
 class QuantumDict:
 
     def __init__(self, qn=1, qs=1):
-        #self.nlp = spacy.load('en_core_web_lg')
+
         self.dictionary = dict()
         self.partsOfSpeech = PartOfSpeech()
         self.qn = qn
@@ -57,15 +56,6 @@ class QuantumDict:
             print("sentence and vocab cannot be provided at the same time")
             raise
 
-        if mysentence is not None:
-            pos = 0
-            for token in mysentence.sentence:
-                wordstring = token.text.strip()
-                if wordstring not in self.dictionary.keys():
-                    self.dictionary[wordstring] = QuantumWord(token)
-                    self.dictionary[wordstring].setwordproperties(self, mysentence=mysentence)
-                    self.dictionary[wordstring].pos = pos
-                    pos += 1
 
         if myvocab is not None:
             for wordstring in myvocab.keys():
