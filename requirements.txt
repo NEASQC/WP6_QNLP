@@ -14,7 +14,7 @@ requests==2.28.1
 discopy==0.4.3
 ipython==8.6.0
 nltk==3.7
-lambeq==0.2.7
+lambeq==0.3.1
 pytket==1.8.0
 pytket_qiskit==0.29.0
 qiskit==0.38.0
