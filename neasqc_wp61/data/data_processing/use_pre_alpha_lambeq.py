@@ -32,16 +32,17 @@ def main():
     parser.add_argument(
         "-qn", "--qn", help = "Number of qubits per NOUN type", type = int)
     parser.add_argument(
-        "-qs", "--qs", help = "Number of qubits per SENTENCE type", type = int)
-    parser.add_argument(
         "-nl", "--n_layers", help = "Number of layers for the circuits", type = int)
     parser.add_argument(
         "-np", "--n_single_qubit_params", help = "Number of parameters per qubit", type = int)
     args = parser.parse_args()
 
+    qs = 1
+    # The number of qubits per sentence is pre-defined as we still need 
+    # to improve our model
     name_file = args.output + f"pre_alpha_lambeq_{args.seed}_{args.optimiser}_"\
         f"{args.iterations}_{args.runs}_{args.ansatz}_{args.qn}_"\
-        f"{args.qs}_{args.n_layers}_{args.n_single_qubit_params}"
+        f"{qs}_{args.n_layers}_{args.n_single_qubit_params}"
     # Name of the file to store the results. 
 
     random.seed(args.seed)
@@ -95,11 +96,11 @@ def main():
         diagrams_test = PreAlphaLambeq.create_diagrams(sentences_test)
         circuits_train = PreAlphaLambeq.create_circuits(
             diagrams_train, args.ansatz, args.qn,
-            args.qs, args.n_layers, args.n_single_qubit_params
+            qs, args.n_layers, args.n_single_qubit_params
         )
         circuits_test = PreAlphaLambeq.create_circuits(
             diagrams_test, args.ansatz, args.qn,
-            args.qs, args.n_layers, args.n_single_qubit_params
+            qs, args.n_layers, args.n_single_qubit_params
         )
         dataset_train = PreAlphaLambeq.create_dataset(
             circuits_train, labels_train)
