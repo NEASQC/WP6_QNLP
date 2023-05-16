@@ -45,7 +45,7 @@ class PreAlphaLambeq:
             else:
                 labels.append([1,0])
 
-        return sentences[:20], labels[:20]
+        return sentences, labels
 
     @staticmethod
     def create_diagrams(
