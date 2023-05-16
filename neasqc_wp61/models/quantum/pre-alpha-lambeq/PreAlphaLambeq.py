@@ -181,7 +181,7 @@ class PreAlphaLambeq:
     @staticmethod    
     def create_trainer(
         model : lambeq.PennyLaneModel, loss_function : torch.nn.functional,
-        optimizer : torch.optim.Optimizer, epochs : int,
+        optimiser : torch.optim.Optimizer, epochs : int,
         learning_rate : float = 0.001, optimizer_args : dict = None,
         seed : int = 18051967
         ) -> lambeq.QuantumTrainer:
@@ -214,7 +214,7 @@ class PreAlphaLambeq:
         model = model,
         loss_function = loss_function,
         epochs = epochs,
-        optimizer = optimizer,
+        optimizer = optimiser,
         learning_rate = learning_rate,
         optimizer_args = optimizer_args,
         seed=seed
@@ -243,12 +243,13 @@ class PreAlphaLambeq:
         post_selected_output : np.array
             Array containig the proabilities of each state 
         """
-        circuit = circuit.to_pennylane()
+        circuit = circuit.to_pennylane(
+            probabilities = True
+        )
         circuit.initialise_concrete_params(
             model.symbols, model.weights
         )
         post_selected_output = circuit.eval().detach().numpy()
-        post_selected_output = post_selected_output / np.sum(post_selected_output)
         return post_selected_output
     
     @staticmethod
@@ -268,6 +269,7 @@ class PreAlphaLambeq:
         prediction : int
             Predicted label 
         """
+        post_selected_output = post_selected_output / np.sum(post_selected_output)
         if post_selected_output[0] > 0.5:
             prediction = 0
             return prediction
