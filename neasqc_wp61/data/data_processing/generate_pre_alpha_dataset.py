@@ -11,5 +11,5 @@ dataset = Pre_alpha_dataset(directory)
 dataset.generate_train_indexes(seed, 4000, False)
 dataset.generate_test_indexes(seed, 700, False)
 dataset.save_train_test_datasets(
-    current_path + "/../datasets", "amazonreview_pre_alpha"
+    current_path + "/../datasets", "reduced_amazonreview_pre_alpha"
 )
