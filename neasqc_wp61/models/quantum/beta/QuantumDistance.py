@@ -1,6 +1,7 @@
 import numpy as np
 import qiskit 
 from qiskit_aer import AerSimulator
+import cmath
 
 class QuantumDistance:
     """
@@ -156,7 +157,7 @@ class QuantumDistance:
         else : 
             p0 = 1
     
-        dist = np.sqrt(2 - 2 * np.sqrt(2 * p0 -1))
+        dist = np.sqrt(2 - 2 * abs(cmath.sqrt(2 * p0 -1)))
         return dist
     
     
