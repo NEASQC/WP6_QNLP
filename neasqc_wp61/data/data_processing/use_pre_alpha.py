@@ -71,7 +71,7 @@ def main():
 
         result = myopt.optimizedataset(
             SentencesList, par, MyDict,
-            tol=1e-5, options={'maxiter': int(args.iterations), 'rhobeg': 1},
+            options={'maxiter': int(args.iterations), 'disp' : True},
             method=args.optimiser)
         
         MyDict.updateparams(result.x)

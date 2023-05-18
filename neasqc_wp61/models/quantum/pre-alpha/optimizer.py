@@ -111,16 +111,15 @@ class ClassicalOptimizer:
 
         self.itercost.append(cost/len(SentencesList))
         self.iteration+=1
-        if self.iteration % 10 == 0:
-            print('iteration {}'.format(self.iteration), '\n Cost: {}'.format((cost / len(SentencesList))))
+        #if self.iteration % 10 == 0:
+        #    print('iteration {}'.format(self.iteration), '\n Cost: {}'.format((cost / len(SentencesList))))
         return cost/len(SentencesList)
 
 
-    def optimizedataset(self, sentencelist, params0, mydict, tol=1e-5, options={'maxiter':3, 'rhobeg': 1.5}, method="COBYLA"):
+    def optimizedataset(self, sentencelist, params0, mydict, options={'maxiter':3}, method="COBYLA"):
         params0 = np.array(params0)
         result = scipy.optimize.minimize(self.datasetcost, params0,
                                                     args=(sentencelist,mydict),
-                                                    tol=tol,
                                                     options=options,
                                                     method=method)
         return result
