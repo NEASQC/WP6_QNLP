@@ -151,7 +151,11 @@ class QuantumDistance:
         dist : float 
             Euclidean distance computed from SWAP test
         """
-        p0 = counts['0']/ (counts['0'] + counts['1'])
+        if '1' in counts.keys():
+            p0 = counts['0']/ (counts['0'] + counts['1'])
+        else : 
+            p0 = 1
+    
         dist = np.sqrt(2 - 2 * np.sqrt(2 * p0 -1))
         return dist
     
