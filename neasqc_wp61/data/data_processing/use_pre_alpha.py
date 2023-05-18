@@ -29,8 +29,11 @@ def main():
         "-s", "--seed", help = "Seed for the initial parameters", type = int)
     parser.add_argument(
         "-op", "--optimiser", help = "Optimiser to use", type = str)
+    # The optimisers that can be used are the ones appearing in method section in 
+    # https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html
+    # with the excepction of : Newton-CG, TNC, dogleg, trust-ncg, trust-exact, trust-kyrlov
     parser.add_argument(
-        "-i", "--iterations", help = "Number of iterations of the optimiser", type = int)
+        "-i", "--iterations", help = "Maximum iterations of the optimiser", type = int)
     parser.add_argument(
         "-r", "--runs", help = "Number of runs", type = int)
     parser.add_argument(
