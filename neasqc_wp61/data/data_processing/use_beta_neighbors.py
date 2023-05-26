@@ -16,10 +16,10 @@ def main():
         type = str
     )
     parser.add_argument(
-        "-tr", "--train", help = "Directory of the training vectors", type = str
+        "-tr", "--train", help = "Path of the training vectors", type = str
     )
     parser.add_argument(
-        "-te", "--test", help = "Directory of the test vectors", type = str
+        "-te", "--test", help = "Path of the test vectors", type = str
     ) 
     parser.add_argument(
         "-k", "--k", help = "Number of K neighbors", type = int
