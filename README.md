@@ -289,3 +289,80 @@ Run
 to generate a tab-separated file containing lines of the form
 `<sentence>\t<sentence_type>\t<truth_value>` where `<truth_value>` is 1 if the sentence states a
 fact that is true and 0 otherwise, and `<sentence_type>` denotes the sentence type, e.g., `NOUN-TVERB-NOUN`.
+
+## Running Models on HPC Systems
+Here we give a brief description of how to run the different models included in this repo on an HPC cluster which uses SLURM as its workload manager. 
+
+To clone the repo on the cluster the instructions are the same as those above for cloning into a local machine. The setting up of the environment may be different however. Installing brew or Python from source require sudo permissions, which a user does not have when using a cluster. Here we outline an approach that we have followed on Kay, ICHEC's supercomputer, which should also work on similar HPC systems.
+
+### Setting Up the Environment
+We will assume that the user has a working directory with path `/path/work_dir`. 
+
+<ol>
+  <li> Assuming Conda is available as a module, load the module using 
+  <pre>
+    <code> $ module load conda </code>
+  </pre></li>
+  <li> Create a directory <code> /path/work_dir/.conda</code>. This directory will store the environment.</li>
+  <li> Create a Conda environment (example name: neasqc_env), using this path as a prefix, i.e.
+  <pre>
+    <code> $ conda create --prefix /path/work_dir/.conda/neasqc_env python=3.10 </code>
+  </pre></li>
+  <li> Once the environment has been created, activate it using 
+  <pre>
+    <code> $ conda activate /path/work_dir/.conda/neasqc_env </code>
+  </pre>
+  or, for older versions of Conda,
+  <pre>
+    <code> $ source activate /path/work_dir/.conda/neasqc_env </code>
+  </pre></li>
+  <li> Once the environment is activated, install poetry using
+  <pre>
+    <code> $ conda install -c conda-forge poetry </code>
+  </pre></li>
+  <li> Now that conda is installed, you can follow the same instructions that we gave before for installing in your local machine. <code> cd</code> into the root of the repo where the files <code>pyproject.toml</code> and <code>poetry.lock</code> are located and run the command
+  <pre>
+    <code> $ poetry install </code>
+  </pre>
+  You can add the <code>--with docs</code> flag at the end of the command as before if you wish to install the dependancies used to build sphinx documentation.</li>
+</ol>
+
+To activate the environment we do not have to use `poetry shell` because Poetry has installed the dependencies within the Conda environment, rather than within a Poetry shell. Thus, every time you want to activate the environment you must use the 
+appropriate command given above in Step 4.
+
+### Running HPC Jobs
+
+We give instructions here for submitting jobs on an HPC cluster which uses SLURM for the management and scheduling of jobs. If the system you are working on uses an alternative workload manager, please refer to its documentation for instructions on submitting jobs. 
+
+Say you want to run 3 different jobs, one with the `pre_alpha` model, one with the `pre_alpha_lambeq` model and one with the `beta_neighbours` model. Assume that you want to request a maximum walltime of 1 hour on 1 HPC node for each of these (this is currently the default option). Now say you have chosen to run the jobs with the following parameters:
+
+<ul>
+  <li> <code> pre_alpha</code> with seed=200, optimiser=COBYLA, iterations of the optimiser=1000, runs of the model=100.</li>
+  <li> <code> pre_alpha_lambeq</code> with seed=200, optimiser=AdamW, iterations of the optimiser=1000, runs of the model=100, ansatz=IQP, qubits per noun=1, qubits per sentence=1, number of circuit layers=1, number of single qubit parameters=3.</li>
+  <li> <code> beta_neighbours</code> with number of neighbours for the KNN algorithm=2, runs of the model=100. </li>
+</ul>
+
+Then:
+
+<ol>
+  <li> Create a file with the name <code>benchmark_params.txt</code> in the <code>.../benchmarking/hpc</code> directory in your local copy of the repo. If the file exists skip this step and delete its contents before proceeding.</li>
+  <li> This file is where we state our choice of models and corresponding parameters that we want to submit to the cluster. Assuming the above parameters, open the file and write the following:
+  <pre>
+    pre_alpha 200 COBYLA 1000 100
+    pre_alpha_lambeq AdamW 1000 100 IQP 1 1 1 3
+    beta_neighbours 2 100
+  </pre>
+  Note that when inputting your own parameters to the file, they must be written in the same order as above. If less/more parameters are introduced for a given model choice, this will lead to warning messages later on and the line will be skipped.</li>
+  <li> Save and close the file.</li>
+  <li> Within the same directory, and with the environment activated, run the <code>generate_slurm_scripts.py</code> script by entering the command
+  <pre>
+    <code> $ python generate_slurm_scripts.py </code>
+  </pre></li>
+  <li> This script will create 3 SLURM scripts, one for each job. The names of the generated scripts will be in the format <code>[model]_[param_1]_..._[param_n].sh</code>, with the parameters in the same order as they were stated in the <code>benchmark_params.txt</code> file. These scripts will be located in the <code>slurm_scripts</code> subdirectory.</li>
+  <li> To submit the jobs associated with a SLURM script <code>script_name.sh</code> to the HPC compute nodes, simply <code>cd</code> into the <code>slurm_scripts</code> directory where it is located and run
+  <pre>
+    <code>$ sbatch script_name.sh</code>
+  </pre>
+  </li>
+</ol>
+Please note that the scripts are generated with assuming a default of 1 node per job, 1 hour maximum walltime and ProdQ as the queue of choice (this is a queue in ICHEC's supercomputer, Kay). Currently, the only way to change these is by manually editing the SLURM scripts, so please make these edits so that they match your node number and walltime of choice, as well as a suitable queue in the HPC system you are using. We hope to offer more automated ways to alter these parameters in future updates to the repo.
