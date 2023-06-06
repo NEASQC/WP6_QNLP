@@ -93,8 +93,10 @@ def main():
     for s in range(int(args.runs)):
         seed = seed_list[s]
 
-        diagrams_train = PreAlphaLambeq.create_diagrams(sentences_train)
-        diagrams_test = PreAlphaLambeq.create_diagrams(sentences_test)
+        with open('./diagrams_reduced_amazonreview_train.pickle', 'rb') as file:
+            diagrams_train = pickle.load(file)
+        with open('./diagrams_reduced_amazonreview_test.pickle', 'rb') as file:
+            diagrams_test = pickle.load(file)
         circuits_train = PreAlphaLambeq.create_circuits(
             diagrams_train, args.ansatz, args.qn,
             qs, args.n_layers, args.n_single_qubit_params
