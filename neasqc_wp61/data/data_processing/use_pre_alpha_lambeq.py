@@ -22,11 +22,11 @@ def main():
     parser.add_argument(
         "-r", "--runs", help = "Number of runs", type = int)
     parser.add_argument(
-        "-tr", "--train", help = "Directory of the train dataset", type = str)
+        "-tr", "--train", help = "Path of the train dataset", type = str)
     parser.add_argument(
-        "-te", "--test", help = "Directory of the test datset", type = str)
+        "-te", "--test", help = "Path of the test datset", type = str)
     parser.add_argument(
-        "-o", "--output", help = "Output directory with the predictions", type = str)
+        "-o", "--output", help = "Output path with the predictions", type = str)
     parser.add_argument(
         "-an", "--ansatz", help = "Ansatz to be used in quantum circuits", type = str)
     parser.add_argument(
