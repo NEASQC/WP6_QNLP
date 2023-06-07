@@ -4,13 +4,13 @@
 #SBATCH -p DevQ
 #SBATCH -N 1
 #SBATCH -t 01:00:00
-#SBATCH --job-name=test_job
+#SBATCH --job-name=pre_alpha_lambeq_{{ s }}_{{ p }}_{{ i }}_{{ r }}_{{ an }}_{{ qn }}_{{ nl }}_{{ np }}
    
 # Charge job to my project 
 #SBATCH -A iccom018c
 
 # Write stdout+stderr to file
-#SBATCH -o tes_job_output.txt
+#SBATCH -o pre_alpha_lambeq_{{ s }}_{{ p }}_{{ i }}_{{ r }}_{{ an }}_{{ qn }}_{{ nl }}_{{ np }}.txt
 
 # Mail me on job start & end
 #SBATCH --mail-user=pablo.lauret@ichec.ie
@@ -24,21 +24,20 @@ module load conda
 
 source activate /ichec/work/iccom018c/.conda/qnlp
 
-# -tr : path of the training dataset
-# -te : path of the testing dataset
+# -t : path of the training dataset
+# -v : path of the testing dataset
 # -s : seed for the optimisers
 # -r : number of runs of the model
 # -i : number of iterations of the optmiser
 # -p : choice of optimiser
-# -an : choice of ansatz
-# -qn : number of qubits per noun type
-# -nl : number of layers in the quantum circuit
-# -np : number of parameters per qubit
-# -qs: number of qubits per sentence, currently always set to 1
+# -a : choice of ansatz
+# -q : number of qubits per noun type
+# -n: number of layers in the quantum circuit
+# -x : number of parameters per qubit
 # -o : path of output directory
 
 echo "`date +%T`"
 
-#Here call step 6 once it has been edited to include pre-alpha lambeq. Use Juja formatting.
+bash 6_Classify_With_Quantum_Model.sh -m pre_alpha_lambeq -t ./data/datasets/reduced_amazonreview_pre_alpha_train.tsv -v ./data/datasets/reduced_amazonreview_pre_alpha_test.tsv-s -s {{ s }} -p {{ p }}  -i {{ i }} -r {{ r }} -a {{ aq }} -q {{ qn }} -n {{ nl }} -x {{ np }} -o ./benchmarking/results/raw/
 
 echo "`date +%T`"

@@ -4,13 +4,13 @@
 #SBATCH -p DevQ
 #SBATCH -N 1
 #SBATCH -t 01:00:00
-#SBATCH --job-name=test_job
+#SBATCH --job-name=pre_alpha_200_COBYLA_2_2
    
 # Charge job to my project 
 #SBATCH -A iccom018c
 
 # Write stdout+stderr to file
-#SBATCH -o tes_job_output.txt
+#SBATCH -o slurm_output/pre_alpha_200_COBYLA_2_2_output.txt
 
 # Mail me on job start & end
 #SBATCH --mail-user=pablo.lauret@ichec.ie

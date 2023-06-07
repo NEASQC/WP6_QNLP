@@ -4,13 +4,13 @@
 #SBATCH -p DevQ
 #SBATCH -N 1
 #SBATCH -t 01:00:00
-#SBATCH --job-name=test_job
+#SBATCH --job-name=beta_neighbours_{{ k }}
    
 # Charge job to my project 
 #SBATCH -A iccom018c
 
 # Write stdout+stderr to file
-#SBATCH -o tes_job_output.txt
+#SBATCH -o ./benchmarking/hpc/slurm_output/beta_neighbours_{{ k }}.txt
 
 # Mail me on job start & end
 #SBATCH --mail-user=pablo.lauret@ichec.ie
@@ -25,14 +25,13 @@ module load conda
 source activate /ichec/work/iccom018c/.conda/qnlp
 
 # -l : path of dataset containing labels
-# -tr : path of the training dataset
-# -te : path of the testing dataset
+# -t : path of the training dataset
+# -v : path of the testing dataset
 # -k : number of nearest neighbours
-# -r : number of runs of the model
 # -o : path of output directory
 
 echo "`date +%T`"
 
-#Call step 6 once it has been edited using Jinja formatting
+6_Beta_Neighbours.sh -l INSERT_PATH_HERE -t ./data/datasets/reduced_amazonreview_pre_alpha_train.tsv -v ./data/datasets/reduced_amazonreview_pre_alpha_test.tsv -k {{ k }} -o ./benchmarking/results/raw/
 
 echo "`date +%T`"

@@ -1,3 +1,1 @@
 pre_alpha 200 COBYLA 2 2
-pre_alpha 200 COBYLA 3 2 40
-dummy 200 COBYLA 2 2
