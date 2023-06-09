@@ -1,6 +1,9 @@
 import sys
 import os
 import argparse
+import git 
+import time 
+import json 
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_path + "/../../models/quantum/beta/")
 from QuantumKNearestNeighbors import QuantumKNearestNeighbors as qkn
@@ -28,11 +31,45 @@ def main():
     args = parser.parse_args()
 
     name_file = args.output + f"beta_neighbors_{args.k}"
+    t1 = time.time()
     predictions = qkn(args.labels, args.train, args.test, args.k).predictions
+    t2 = time.time()
     with open(name_file + "_predictions.txt", "w") as output:
         for pred in predictions:
             output.write(f"{pred}\n")
 
+########################################################
+################ JSON output ###########################
+########################################################
+
+    output = {}
+
+    # 1. Commit HASH 
+
+    repo = git.Repo(search_parent_directories=True)
+    sha = repo.head.object.hexsha
+    output['hash'] = sha
+
+    # 2. Input arguments 
+
+    input_args = {
+        'labels' : args.labels, 'train' : args.train,
+        'test' : args.test, 'k' : args.k,
+        'output' : args.output}
+    output['input_args'] = input_args
+
+    # 3. Predictions 
+
+    output['predictions'] = predictions
+
+    # 4. Time taken 
+
+    output['time'] = t2 - t1 
+
+    # Save the results 
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    with open (args.output + f'beta_neighbors_{timestr}.json', 'w') as file:
+        json.dump(output, file)
 
 if __name__ == "__main__":
     main()
