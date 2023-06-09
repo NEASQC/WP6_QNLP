@@ -22,11 +22,11 @@ def main():
     parser.add_argument(
         "-r", "--runs", help = "Number of runs", type = int)
     parser.add_argument(
-        "-tr", "--train", help = "Directory of the train dataset", type = str)
+        "-tr", "--train", help = "Path of the train dataset", type = str)
     parser.add_argument(
-        "-te", "--test", help = "Directory of the test datset", type = str)
+        "-te", "--test", help = "Path of the test datset", type = str)
     parser.add_argument(
-        "-o", "--output", help = "Output directory with the predictions", type = str)
+        "-o", "--output", help = "Output path with the predictions", type = str)
     parser.add_argument(
         "-an", "--ansatz", help = "Ansatz to be used in quantum circuits", type = str)
     parser.add_argument(
@@ -93,8 +93,10 @@ def main():
     for s in range(int(args.runs)):
         seed = seed_list[s]
 
-        diagrams_train = PreAlphaLambeq.create_diagrams(sentences_train)
-        diagrams_test = PreAlphaLambeq.create_diagrams(sentences_test)
+        with open('./diagrams_reduced_amazonreview_train.pickle', 'rb') as file:
+            diagrams_train = pickle.load(file)
+        with open('./diagrams_reduced_amazonreview_test.pickle', 'rb') as file:
+            diagrams_test = pickle.load(file)
         circuits_train = PreAlphaLambeq.create_circuits(
             diagrams_train, args.ansatz, args.qn,
             qs, args.n_layers, args.n_single_qubit_params

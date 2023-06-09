@@ -4,6 +4,8 @@ import pytket.extensions.qiskit as pyt
 import numpy as np
 import discopy
 import torch
+torch.set_num_threads(40)
+import pickle
 
 
 class PreAlphaLambeq:
@@ -70,6 +72,25 @@ class PreAlphaLambeq:
         diagrams = [
             lambeq.remove_cups(diagram) for diagram in raw_diagrams]
         return diagrams
+    
+    def save_diagrams(
+        diagrams : list[discopy.rigid.Diagram],
+        path : str, name : str
+    ) -> None:
+        """
+        Saves the diagrams as a pickle object in a chosen path 
+
+        Parameters
+        ----------
+        diagrams : list[discopy.rigid.Diagram]
+            List with the discopy diagrams we want to save
+        path : str
+            Path where we want to save the diagrams as pickle objects
+        name : str
+            Name to give to stored diagrams
+        """
+        with open(path + name + '.pickle', 'wb') as file:
+            pickle.dump(diagrams, file)
         
     @staticmethod    
     def create_circuits(
