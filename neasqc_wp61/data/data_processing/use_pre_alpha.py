@@ -13,6 +13,10 @@ import dictionary
 import sentence
 import circuit
 import pickle
+import git 
+import time 
+import json 
+import numpy as np 
 ##########################
 ########################################################################################################################################
 ##################################################################################################################################################################
@@ -47,6 +51,8 @@ def main():
     seed_list = random.sample(range(1, 10000000000000), int(args.runs))
     Dftrain, Dftest = loader.createdf(args.train, args.test)
     predictions = [[] for i in range(Dftest.shape[0])]
+    cost = []
+    t1 = time.time()
     for s in range(int(args.runs)):
         seed = seed_list[s]
         Myvocab = loader.getvocabdict(Dftrain, Dftest)
@@ -68,16 +74,21 @@ def main():
 
             return sentences_list
         
+
+
         SentencesList = createsentencelist(Dftrain, MyDict)
         par, ix = MyDict.getindexmodelparams()
         myopt = optimizer.ClassicalOptimizer()
 
         result = myopt.optimizedataset(
             SentencesList, par, MyDict,
-            options={'maxiter': int(args.iterations), 'disp' : True},
+            options={'maxiter': int(args.iterations), 'disp' : False},
             method=args.optimiser)
+        cost.append(myopt.itercost)
         
         MyDict.updateparams(result.x)
+
+
         SentencesTest = createsentencelist(Dftest, MyDict)
         for i,a_sentence in enumerate(SentencesTest):
             mycirc = circuit.CircuitBuilder()
@@ -99,12 +110,13 @@ def main():
             else:
                 predictions[i].append(2)
 
-
         with open (
             args.output +
             f'pre_alpha_{args.seed}_{args.optimiser}_{args.iterations}_{args.runs}_run_{s}.pickle', 'wb') as file:
             pickle.dump(predictions, file)
+        ## We use pickle to store the temporary results 
 
+    t2 = time.time()
 
     predictions_majority_vote = []
     for i in range(Dftest.shape[0]):
@@ -115,10 +127,56 @@ def main():
     with open(args.output + f"pre_alpha_{args.seed}_{args.optimiser}_{args.iterations}_{args.runs}.txt", "w") as output:
         for pred in predictions_majority_vote:
             output.write(f"{pred}\n")
+    # We store the results in Tilde's format 
+
     for i in range(args.runs):
         os.remove(args.output + f"pre_alpha_{args.seed}_{args.optimiser}_{args.iterations}_{args.runs}_run_{i}.pickle")
     # We remove the pickle temporary files when comptutations 
     # are finished .
+
+    
+    ##############################################################
+    ##################### JSON output ############################
+    ##############################################################
+
+    output = {}
+
+    # 1. Commit HASH 
+
+    repo = git.Repo(search_parent_directories=True)
+    sha = repo.head.object.hexsha
+    output['hash'] = sha
+
+    # 2. Input arguments 
+
+    input_args = {
+        'seed' : args.seed, 'optimiser' : args.optimiser,
+        'iterations' : args.iterations, 'runs' : args.runs,
+        'train' : args.train, 'test' : args.test, 'output' : args.output}
+    output['input_args'] = input_args
+
+    # 3. Predictions 
+
+    output['predictions'] = predictions_majority_vote
+
+    # 4. Loss function 
+
+    arrays = [np.array(x) for x in cost]
+    mean_cost = [np.mean(k) for k in zip(*arrays)]
+    output['cost'] = mean_cost
+
+    # 5. Time taken 
+
+    output['time'] = t2 - t1
+
+    # Save the results 
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    with open (args.output + f'pre_alpha_{timestr}.json', 'w') as file:
+        json.dump(output, file)
+
+
+    
+
 
 if __name__ == "__main__":
     main()
