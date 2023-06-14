@@ -67,7 +67,6 @@ def main():
                     DataInstance,
                     dataset=True,
                     dictionary=mydict)
-
                 a_sentence.getqbitcontractions()
                 a_sentence.setparamsfrommodel(mydict)
                 sentences_list.append(a_sentence)
@@ -75,19 +74,16 @@ def main():
             return sentences_list
         
 
-
         SentencesList = createsentencelist(Dftrain, MyDict)
         par, ix = MyDict.getindexmodelparams()
         myopt = optimizer.ClassicalOptimizer()
-
         result = myopt.optimizedataset(
             SentencesList, par, MyDict,
             options={'maxiter': int(args.iterations), 'disp' : False},
             method=args.optimiser)
         cost.append(myopt.itercost)
-        
-        MyDict.updateparams(result.x)
 
+        MyDict.updateparams(result.x)
 
         SentencesTest = createsentencelist(Dftest, MyDict)
         for i,a_sentence in enumerate(SentencesTest):
@@ -168,6 +164,10 @@ def main():
     # 5. Time taken 
 
     output['time'] = t2 - t1
+
+    # 6. Parameters of the model 
+
+    output['weights'] = result.x.tolist()
 
     # Save the results 
     timestr = time.strftime("%Y%m%d-%H%M%S")
