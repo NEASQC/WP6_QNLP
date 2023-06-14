@@ -338,8 +338,8 @@ Say you want to run 3 different jobs, one with the `pre_alpha` model, one with t
 
 <ul>
   <li> <code> pre_alpha</code> with seed=200, optimiser=COBYLA, iterations of the optimiser=1000, runs of the model=100.</li>
-  <li> <code> pre_alpha_lambeq</code> with seed=200, optimiser=AdamW, iterations of the optimiser=1000, runs of the model=100, ansatz=IQP, qubits per noun=1, qubits per sentence=1, number of circuit layers=1, number of single qubit parameters=3.</li>
-  <li> <code> beta_neighbours</code> with number of neighbours for the KNN algorithm=2, runs of the model=100. </li>
+  <li> <code> pre_alpha_lambeq</code> with seed=200, optimiser=AdamW, iterations of the optimiser=1000, runs of the model=100, ansatz=IQP, qubits per noun=1, number of circuit layers=1, number of single qubit parameters=3. Note that currently we have restrcited qubits per sentence=1 as default.</li>
+  <li> <code> beta_neighbours</code> with number of neighbours for the KNN algorithm=2. </li>
 </ul>
 
 Then:
@@ -363,6 +363,16 @@ Then:
   <pre>
     <code>$ sbatch script_name.sh</code>
   </pre>
+  Alternatively, if you want to submit multiple jobs to the queue simultaenously, you can run the <code>submit_jobs.sh</code> script in <code>.../benchmarking/hpc</code> by doing
+  <pre>
+  $ ./submit_jobs.sh
+  </pre>
+  This script submits every script contained within the <code>slurm_scripts</code> directory, and moves them to the subdirectory <code>slurm_scripts/scripts_archive</code> to keep the parent directory clean and only containing scripts that are yet to be submitted. <br />
+  NOTE: if you get a permission error when trying to run the script, you can fix the permissions by running
+  <pre>
+  $ chmod submit_jobs.sh u+x
+  </pre>
+  within the directory in which the script is contained.
   </li>
 </ol>
 Please note that the scripts are generated with assuming a default of 1 node per job, 1 hour maximum walltime and ProdQ as the queue of choice (this is a queue in ICHEC's supercomputer, Kay). Currently, the only way to change these is by manually editing the SLURM scripts, so please make these edits so that they match your node number and walltime of choice, as well as a suitable queue in the HPC system you are using. We hope to offer more automated ways to alter these parameters in future updates to the repo.
