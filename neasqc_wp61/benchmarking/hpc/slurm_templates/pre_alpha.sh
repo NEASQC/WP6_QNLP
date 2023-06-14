@@ -16,7 +16,7 @@
 #SBATCH --mail-user=pablo.lauret@ichec.ie
 #SBATCH --mail-type=BEGIN,END
 
-cd $SLURM_SUBMIT_DIR
+cd /ichec/work/iccom018c
 
 cd WP6_QNLP/neasqc_wp61
 

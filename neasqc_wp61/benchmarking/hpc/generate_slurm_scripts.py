@@ -47,8 +47,8 @@ def main():
           slurm_template = "slurm_templates/pre_alpha_lambeq.sh"
           with open(slurm_template, 'r') as f1:
             template = Template(f1.read())
-          s, p, i, r, an, qn, qs, nl, np = params[1:]
-          filled_template = template.render(s=s, r=r, i=i, p=p, an=an, qn=qn, qs=qs,nl=nl,np=np)
+          s, p, i, r, an, qn, nl, np = params[1:]
+          filled_template = template.render(s=s, r=r, i=i, p=p, an=an, qn=qn,nl=nl,np=np)
           with open(f'pre_alpha_lambeq_{s}_{p}_{i}_{r}_{an}_{qn}_{nl}_{np}.sh','w') as f:
             f2.write(filled_template)
     
