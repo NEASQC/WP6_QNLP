@@ -105,6 +105,7 @@ def main():
             diagrams_test, args.ansatz, args.qn,
             qs, args.n_layers, args.n_single_qubit_params
         )
+        
         dataset_train = PreAlphaLambeq.create_dataset(
             circuits_train, labels_train)
         dataset_test = PreAlphaLambeq.create_dataset(
@@ -113,11 +114,19 @@ def main():
         all_circuits = circuits_train + circuits_test
         
         model = PreAlphaLambeq.create_model(all_circuits)
+        
+        if torch.cuda.is_available():
+            device = 0
+        else:
+            device = -1
+        
         trainer = PreAlphaLambeq.create_trainer(
             model, loss, opt, args.iterations,
-            seed = seed
+            seed = seed, device = device
         )
+        
         trainer.fit(dataset_train, dataset_test)
+        
     
         for i,circuit in enumerate(circuits_test):
             output = PreAlphaLambeq.post_selected_output(

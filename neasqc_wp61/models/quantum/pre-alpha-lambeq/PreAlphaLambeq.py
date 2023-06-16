@@ -204,7 +204,8 @@ class PreAlphaLambeq:
         model : lambeq.PennyLaneModel, loss_function : torch.nn.functional,
         optimiser : torch.optim.Optimizer, epochs : int,
         learning_rate : float = 0.001, optimizer_args : dict = None,
-        seed : int = 18051967
+        seed : int = 18051967,
+        device : int = -1
         ) -> lambeq.QuantumTrainer:
         """
         Creates a lambeq trainer 
@@ -238,7 +239,8 @@ class PreAlphaLambeq:
         optimizer = optimiser,
         learning_rate = learning_rate,
         optimizer_args = optimizer_args,
-        seed=seed
+        seed=seed,
+        device = device
         )
         return trainer
 
