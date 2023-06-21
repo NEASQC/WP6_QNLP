@@ -3,7 +3,7 @@
 echo 'This script classifies examples using quantum classifier model.'
 
 
-while getopts t:v:s:m:e:r:i:p:o:a:q:n:x: flag
+while getopts t:v:s:m:e:r:i:p:o:a:q:n:x:l:k flag
 do
     case "${flag}" in
         t) train=${OPTARG};;
@@ -18,6 +18,8 @@ do
         q) qn=${OPTARG};;
         n) nl=${OPTARG};;
         x) np=${OPTARG};;
+        l) labels=${OPTARG};;
+        k) k=${OPTARG};;
     esac
 done
 
@@ -34,6 +36,8 @@ echo "ansatz: $ansatz";
 echo "Number of qubits per noun: $qn";
 echo "number of circuit layers: $nl";
 echo ":number of single qubit parameters $np";
+echo "labels: $labels";
+echo "k: $k";
 
 
 if [[ "${model}" == "pre_alpha" ]]
@@ -44,6 +48,10 @@ elif [[ "${model}" == "pre_alpha_lambeq" ]]
 then
 echo "running pre_alpha_lambeq"
 python3.10 ./data/data_processing/use_pre_alpha_lambeq.py -s ${seed} -op ${optimiser} -i ${iterations} -r ${runs} -tr ${train} -te ${test} -o ${outfile} -an ${ansatz} -qn ${qn} -nl ${nl} -np ${np}
+elif [[ "${model}" == "beta_quantum" ]]
+then
+echo "running quantum beta neighbours"
+python3.10 ./data/data_processing/use_beta_neighbours.py -l ${labels} -tr ${train} -te ${test} -k ${k} -o ${outfile}
 else
 echo "no model ran";
 fi
