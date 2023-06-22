@@ -8,6 +8,9 @@ from collections import Counter
 import random
 import pickle
 import json
+import git 
+import time 
+import numpy as np 
 from statistics import mean
 
 def main():
@@ -22,11 +25,11 @@ def main():
     parser.add_argument(
         "-r", "--runs", help = "Number of runs", type = int)
     parser.add_argument(
-        "-tr", "--train", help = "Path of the train dataset", type = str)
+        "-tr", "--train", help = "Directory of the train dataset", type = str)
     parser.add_argument(
-        "-te", "--test", help = "Path of the test datset", type = str)
+        "-te", "--test", help = "Directory of the test datset", type = str)
     parser.add_argument(
-        "-o", "--output", help = "Output path with the predictions", type = str)
+        "-o", "--output", help = "Output directory with the predictions", type = str)
     parser.add_argument(
         "-an", "--ansatz", help = "Ansatz to be used in quantum circuits", type = str)
     parser.add_argument(
@@ -58,7 +61,9 @@ def main():
     predictions = [[] for i in range(len(sentences_test))]
     vectors_train = [[[], []] for i in range(len(sentences_train))]
     vectors_test = [[[], []] for i in range(len(sentences_test))]
-    # Lists to store the predictions and the probability vectors
+    cost = []
+    weights = []
+    # Lists to store the predictions, probability vectors and costs
 
     def loss(y_hat, y):
         return torch.nn.functional.binary_cross_entropy(
@@ -90,13 +95,12 @@ def main():
         opt = torch.optim.SGD
     # Optimisers available to be used
     
+    t1 = time.time()
     for s in range(int(args.runs)):
         seed = seed_list[s]
 
-        with open('./diagrams_reduced_amazonreview_train.pickle', 'rb') as file:
-            diagrams_train = pickle.load(file)
-        with open('./diagrams_reduced_amazonreview_test.pickle', 'rb') as file:
-            diagrams_test = pickle.load(file)
+        diagrams_train = PreAlphaLambeq.create_diagrams(sentences_train)
+        diagrams_test = PreAlphaLambeq.create_diagrams(sentences_test)
         circuits_train = PreAlphaLambeq.create_circuits(
             diagrams_train, args.ansatz, args.qn,
             qs, args.n_layers, args.n_single_qubit_params
@@ -118,6 +122,12 @@ def main():
             seed = seed
         )
         trainer.fit(dataset_train, dataset_test)
+        cost.append(trainer.train_epoch_costs)
+        weights_run = []
+        print('length model weights : ', len(model.weights))
+        for i in range(len(model.weights)):
+            weights_run.append(model.weights.__getitem__(i).tolist())
+        weights.append(weights_run)
     
         for i,circuit in enumerate(circuits_test):
             output = PreAlphaLambeq.post_selected_output(
@@ -144,7 +154,9 @@ def main():
         with open (name_file + f'_vectors_train_run_{s}.pickle', 'wb') as file:
             pickle.dump(vectors_train, file)
         # We store temporary predictions and vectors
-    
+
+        
+    t2 = time.time()
     predictions_majority_vote = []
     vectors_test_mean = [[] for i in range(len(sentences_test))]
     vectors_train_mean = [[] for i in range(len(sentences_train))]
@@ -178,6 +190,54 @@ def main():
         os.remove(name_file + f'_vectors_train_run_{i}.pickle')
     # We remove the pickle temporary files when comptutations 
     # are finished .
+
+    ############################################################
+    ############## JSON output #################################
+    ############################################################
+
+    output = {}
+
+    # 1. Commit HASH 
+
+    repo = git.Repo(search_parent_directories=True)
+    sha = repo.head.object.hexsha
+    output['hash'] = sha
+
+    # 2. Input arguments 
+
+    input_args = {
+        'seed' : args.seed, 'optimiser' : args.optimiser,
+        'iterations' : args.iterations, 'runs' : args.runs,
+        'train' : args.train, 'test' : args.test, 'output' : args.output,
+        'ansatz' : args.ansatz, 'qn' : args.qn, 'nl' : args.n_layers, 
+        'np'  :args.n_single_qubit_params
+    }
+    output['input_args'] = input_args
+
+    # 3. Predictions 
+
+    output['predictions'] = predictions_majority_vote
+
+    # 4. Loss function 
+
+    arrays = [np.array(x) for x in cost]
+    mean_cost = [np.mean(k) for k in zip(*arrays)]
+    output['cost'] = mean_cost
+
+    # 5. Time taken 
+
+    output['time'] = t2 -t1 
+
+    # 6. Model parameters 
+
+    arrays = [np.array(x) for x in weights]
+    mean_weights = [np.mean(k) for k in zip(*arrays)]
+    output['weights'] = mean_weights
+
+    # Save the results 
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    with open (args.output + f'pre_alpha_lambeq_{timestr}.json', 'w') as file:
+        json.dump(output, file) 
 
 if __name__ == "__main__":
     main()
