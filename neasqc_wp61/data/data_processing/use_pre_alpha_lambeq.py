@@ -8,10 +8,9 @@ from collections import Counter
 import random
 import pickle
 import json
-import git 
 import time 
-import numpy as np 
 from statistics import mean
+from save_json_output import save_json_output
 
 def main():
 
@@ -39,7 +38,6 @@ def main():
     parser.add_argument(
         "-np", "--n_single_qubit_params", help = "Number of parameters per qubit", type = int)
     args = parser.parse_args()
-
     qs = 1
     # The number of qubits per sentence is pre-defined as we still need 
     # to improve our model
@@ -124,7 +122,6 @@ def main():
         trainer.fit(dataset_train, dataset_test)
         cost.append(trainer.train_epoch_costs)
         weights_run = []
-        print('length model weights : ', len(model.weights))
         for i in range(len(model.weights)):
             weights_run.append(model.weights.__getitem__(i).tolist())
         weights.append(weights_run)
@@ -191,53 +188,12 @@ def main():
     # We remove the pickle temporary files when comptutations 
     # are finished .
 
-    ############################################################
-    ############## JSON output #################################
-    ############################################################
+    save_json_output(
+    'pre_alpha_lambeq', args, predictions_majority_vote,
+    t2 - t1, args.output, [cost, weights]
+    )
+    # We save the json output 
 
-    output = {}
-
-    # 1. Commit HASH 
-
-    repo = git.Repo(search_parent_directories=True)
-    sha = repo.head.object.hexsha
-    output['hash'] = sha
-
-    # 2. Input arguments 
-
-    input_args = {
-        'seed' : args.seed, 'optimiser' : args.optimiser,
-        'iterations' : args.iterations, 'runs' : args.runs,
-        'train' : args.train, 'test' : args.test, 'output' : args.output,
-        'ansatz' : args.ansatz, 'qn' : args.qn, 'nl' : args.n_layers, 
-        'np'  :args.n_single_qubit_params
-    }
-    output['input_args'] = input_args
-
-    # 3. Predictions 
-
-    output['predictions'] = predictions_majority_vote
-
-    # 4. Loss function 
-
-    arrays = [np.array(x) for x in cost]
-    mean_cost = [np.mean(k) for k in zip(*arrays)]
-    output['cost'] = mean_cost
-
-    # 5. Time taken 
-
-    output['time'] = t2 -t1 
-
-    # 6. Model parameters 
-
-    arrays = [np.array(x) for x in weights]
-    mean_weights = [np.mean(k) for k in zip(*arrays)]
-    output['weights'] = mean_weights
-
-    # Save the results 
-    timestr = time.strftime("%Y%m%d-%H%M%S")
-    with open (args.output + f'pre_alpha_lambeq_{timestr}.json', 'w') as file:
-        json.dump(output, file) 
 
 if __name__ == "__main__":
     main()
