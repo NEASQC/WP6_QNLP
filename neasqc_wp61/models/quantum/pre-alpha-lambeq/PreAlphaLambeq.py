@@ -1,6 +1,5 @@
 import pandas as pd 
 import lambeq
-import pytket.extensions.qiskit as pyt
 import numpy as np
 import discopy
 import torch
@@ -267,8 +266,11 @@ class PreAlphaLambeq:
         circuit = circuit.to_pennylane(
             probabilities = True
         )
+        symbol_weight_map = {}
+        for i,j in enumerate(model.symbols):
+            symbol_weight_map[j] = model.weights.__getitem__(i)
         circuit.initialise_concrete_params(
-            model.symbols, model.weights
+            symbol_weight_map
         )
         post_selected_output = circuit.eval().detach().numpy()
         return post_selected_output
