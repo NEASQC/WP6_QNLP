@@ -6,7 +6,7 @@ import time
 import json 
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_path + "/../../models/classical")
-from classical_k_means import ClassicalKNearestNeighbors as ckn
+from classical_k_means import ClassicalKNearestNeighbours as ckn
 
 
 def main():
@@ -32,7 +32,7 @@ def main():
 
     name_file = args.output + f"classical_beta_neighbors_{args.k}"
     t1 = time.time()
-    predictions = qkn(args.labels, args.train, args.test, args.k).predictions
+    predictions = ckn(args.labels, args.train, args.test, args.k).predictions
     t2 = time.time()
     with open(name_file + "classical_predictions.txt", "w") as output:
         for pred in predictions:
