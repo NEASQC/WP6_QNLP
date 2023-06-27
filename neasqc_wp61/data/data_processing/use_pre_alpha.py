@@ -13,6 +13,9 @@ import dictionary
 import sentence
 import circuit
 import pickle
+import time 
+from save_json_output import save_json_output
+
 ##########################
 ########################################################################################################################################
 ##################################################################################################################################################################
@@ -37,9 +40,9 @@ def main():
     parser.add_argument(
         "-r", "--runs", help = "Number of runs", type = int)
     parser.add_argument(
-        "-tr", "--train", help = "Directory of the train dataset", type = str)
+        "-tr", "--train", help = "Path of the train dataset", type = str)
     parser.add_argument(
-        "-te", "--test", help = "Directory of the test datset", type = str)
+        "-te", "--test", help = "Path of the test datset", type = str)
     parser.add_argument(
         "-o", "--output", help = "Output directory with the predictions", type = str)
     args = parser.parse_args()
@@ -47,6 +50,9 @@ def main():
     seed_list = random.sample(range(1, 10000000000000), int(args.runs))
     Dftrain, Dftest = loader.createdf(args.train, args.test)
     predictions = [[] for i in range(Dftest.shape[0])]
+    cost = []
+    weights = []
+    t1 = time.time()
     for s in range(int(args.runs)):
         seed = seed_list[s]
         Myvocab = loader.getvocabdict(Dftrain, Dftest)
@@ -61,23 +67,25 @@ def main():
                     DataInstance,
                     dataset=True,
                     dictionary=mydict)
-
                 a_sentence.getqbitcontractions()
                 a_sentence.setparamsfrommodel(mydict)
                 sentences_list.append(a_sentence)
 
             return sentences_list
         
+
         SentencesList = createsentencelist(Dftrain, MyDict)
         par, ix = MyDict.getindexmodelparams()
         myopt = optimizer.ClassicalOptimizer()
-
         result = myopt.optimizedataset(
             SentencesList, par, MyDict,
-            options={'maxiter': int(args.iterations), 'disp' : True},
+            options={'maxiter': int(args.iterations), 'disp' : False},
             method=args.optimiser)
-        
+        cost.append(myopt.itercost)
+
         MyDict.updateparams(result.x)
+        weights.append(result.x.tolist())
+
         SentencesTest = createsentencelist(Dftest, MyDict)
         for i,a_sentence in enumerate(SentencesTest):
             mycirc = circuit.CircuitBuilder()
@@ -95,16 +103,17 @@ def main():
             prob0 = probs[0] / sum(probs)
             if prob0 >= 0.5:
 
-                predictions[i].append(1)
+                predictions[i].append(0)
             else:
-                predictions[i].append(2)
-
+                predictions[i].append(1)
 
         with open (
             args.output +
             f'pre_alpha_{args.seed}_{args.optimiser}_{args.iterations}_{args.runs}_run_{s}.pickle', 'wb') as file:
             pickle.dump(predictions, file)
+        ## We use pickle to store the temporary results 
 
+    t2 = time.time()
 
     predictions_majority_vote = []
     for i in range(Dftest.shape[0]):
@@ -112,13 +121,21 @@ def main():
         value, count = c.most_common()[0]
         predictions_majority_vote.append(value)
 
-    with open(args.output + f"pre_alpha_{args.seed}_{args.optimiser}_{args.iterations}_{args.runs}.txt", "w") as output:
+    with open(args.output + f"pre_alpha_{args.seed}_{args.optimiser}_{args.iterations}_{args.runs}_predictions.txt", "w") as output:
         for pred in predictions_majority_vote:
             output.write(f"{pred}\n")
+    # We store the results in Tilde's format 
+
     for i in range(args.runs):
         os.remove(args.output + f"pre_alpha_{args.seed}_{args.optimiser}_{args.iterations}_{args.runs}_run_{i}.pickle")
     # We remove the pickle temporary files when comptutations 
     # are finished .
+
+    save_json_output(
+        'pre_alpha', args, predictions_majority_vote,
+        t2 - t1, args.output, [cost, weights]
+    )
+
 
 if __name__ == "__main__":
     main()

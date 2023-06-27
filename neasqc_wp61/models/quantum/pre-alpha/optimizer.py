@@ -78,6 +78,7 @@ class ClassicalOptimizer:
                 wordparams =[parameters[i] for i in ix[(word, cat)]]
                 shapedparams.append(wordparams)
 
+
             mysentence.setsentenceparamsfromlist(shapedparams)
             mycirc = circuit.CircuitBuilder()
             mycirc.createcircuit(mysentence, dataset=True)
@@ -108,10 +109,9 @@ class ClassicalOptimizer:
             elif mysentence.label == 1:
                 cost+= -math.log(1 - prob0)/-(math.log(prob0) + math.log(1-prob0))
                 #print(cost)
-
         self.itercost.append(cost/len(SentencesList))
         self.iteration+=1
-        #if self.iteration % 10 == 0:
+
         #    print('iteration {}'.format(self.iteration), '\n Cost: {}'.format((cost / len(SentencesList))))
         return cost/len(SentencesList)
 
