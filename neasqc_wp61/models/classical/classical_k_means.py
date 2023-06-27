@@ -44,7 +44,7 @@ class ClassicalKNearestNeighbours():
         neigh = KNeighborsClassifier(n_neighbors=self.k)
         neigh.fit(self.vectors_train, self.labels)
         
-        self.predictions = neigh.predict(self.vectors_test)
+        self.predictions = neigh.predict(self.vectors_test).tolist()
         
 
 
