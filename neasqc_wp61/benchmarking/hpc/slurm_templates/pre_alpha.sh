@@ -13,7 +13,7 @@
 #SBATCH -o ./benchmarking/hpc/slurm_output/pre_alpha_{{ s }}_{{ p }}_{{ i }}_{{ r }}_output.txt
 
 # Mail me on job start & end
-#SBATCH --mail-user=pablo.lauret@ichec.ie
+#SBATCH --mail-user=pablo.suarez@ichec.ie
 #SBATCH --mail-type=BEGIN,END
 
 cd /ichec/work/iccom018c

@@ -13,7 +13,7 @@
 #SBATCH -o ./benchmarking/hpc/slurm_output/beta_neighbours_{{ k }}.txt
 
 # Mail me on job start & end
-#SBATCH --mail-user=pablo.lauret@ichec.ie
+#SBATCH --mail-user=pablo.suarez@ichec.ie
 #SBATCH --mail-type=BEGIN,END
 
 cd /ichec/work/iccom018c
