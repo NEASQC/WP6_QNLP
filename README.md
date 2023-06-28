@@ -349,8 +349,8 @@ Then:
   <li> This file is where we state our choice of models and corresponding parameters that we want to submit to the cluster. Assuming the above parameters, open the file and write the following:
   <pre>
     pre_alpha 200 COBYLA 1000 100
-    pre_alpha_lambeq AdamW 1000 100 IQP 1 1 1 3
-    beta_neighbours 2 100
+    pre_alpha_lambeq 200 AdamW 1000 100 IQP 1 1 3
+    beta_neighbours 2
   </pre>
   Note that when inputting your own parameters to the file, they must be written in the same order as above. If less/more parameters are introduced for a given model choice, this will lead to warning messages later on and the line will be skipped.</li>
   <li> Save and close the file.</li>
@@ -370,7 +370,7 @@ Then:
   This script submits every script contained within the <code>slurm_scripts</code> directory, and moves them to the subdirectory <code>slurm_scripts/scripts_archive</code> to keep the parent directory clean and only containing scripts that are yet to be submitted. <br />
   NOTE: if you get a permission error when trying to run the script, you can fix the permissions by running
   <pre>
-  $ chmod submit_jobs.sh u+x
+  $ chmod u+x submit_jobs.sh
   </pre>
   within the directory in which the script is contained.
   </li>
