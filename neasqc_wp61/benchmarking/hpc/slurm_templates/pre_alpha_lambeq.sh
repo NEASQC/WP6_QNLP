@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Slurm flags
-#SBATCH -p DevQ
+#SBATCH -p GpuQ
 #SBATCH -N 1
 #SBATCH -t 01:00:00
 #SBATCH --job-name=pre_alpha_lambeq_{{ s }}_{{ p }}_{{ i }}_{{ r }}_{{ an }}_{{ qn }}_{{ nl }}_{{ np }}
@@ -13,7 +13,7 @@
 #SBATCH -o ./benchmarking/hpc/slurm_output/pre_alpha_lambeq_{{ s }}_{{ p }}_{{ i }}_{{ r }}_{{ an }}_{{ qn }}_{{ nl }}_{{ np }}.txt
 
 # Mail me on job start & end
-#SBATCH --mail-user=pablo.lauret@ichec.ie
+#SBATCH --mail-user=pablo.suarez@ichec.ie
 #SBATCH --mail-type=BEGIN,END
 
 cd /ichec/work/iccom018c
@@ -23,6 +23,8 @@ cd WP6_QNLP/neasqc_wp61
 module load conda
 
 source activate /ichec/work/iccom018c/.conda/qnlp
+
+module load cuda/11.4
 
 # -t : path of the training dataset
 # -v : path of the testing dataset
