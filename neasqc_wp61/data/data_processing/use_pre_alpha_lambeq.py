@@ -8,7 +8,9 @@ from collections import Counter
 import random
 import pickle
 import json
+import time 
 from statistics import mean
+from save_json_output import save_json_output
 
 def main():
 
@@ -22,11 +24,11 @@ def main():
     parser.add_argument(
         "-r", "--runs", help = "Number of runs", type = int)
     parser.add_argument(
-        "-tr", "--train", help = "Path of the train dataset", type = str)
+        "-tr", "--train", help = "Directory of the train dataset", type = str)
     parser.add_argument(
-        "-te", "--test", help = "Path of the test datset", type = str)
+        "-te", "--test", help = "Directory of the test datset", type = str)
     parser.add_argument(
-        "-o", "--output", help = "Output path with the predictions", type = str)
+        "-o", "--output", help = "Output directory with the predictions", type = str)
     parser.add_argument(
         "-an", "--ansatz", help = "Ansatz to be used in quantum circuits", type = str)
     parser.add_argument(
@@ -36,7 +38,6 @@ def main():
     parser.add_argument(
         "-np", "--n_single_qubit_params", help = "Number of parameters per qubit", type = int)
     args = parser.parse_args()
-
     qs = 1
     # The number of qubits per sentence is pre-defined as we still need 
     # to improve our model
@@ -58,7 +59,9 @@ def main():
     predictions = [[] for i in range(len(sentences_test))]
     vectors_train = [[[], []] for i in range(len(sentences_train))]
     vectors_test = [[[], []] for i in range(len(sentences_test))]
-    # Lists to store the predictions and the probability vectors
+    cost = []
+    weights = []
+    # Lists to store the predictions, probability vectors and costs
 
     def loss(y_hat, y):
         return torch.nn.functional.binary_cross_entropy(
@@ -90,13 +93,19 @@ def main():
         opt = torch.optim.SGD
     # Optimisers available to be used
     
+    t1 = time.time()
     for s in range(int(args.runs)):
         seed = seed_list[s]
 
+
+
+        #diagrams_train = PreAlphaLambeq.create_diagrams(sentences_train)
+        #diagrams_test = PreAlphaLambeq.create_diagrams(sentences_test)
         with open('./diagrams_reduced_amazonreview_train.pickle', 'rb') as file:
             diagrams_train = pickle.load(file)
         with open('./diagrams_reduced_amazonreview_test.pickle', 'rb') as file:
             diagrams_test = pickle.load(file)
+
         circuits_train = PreAlphaLambeq.create_circuits(
             diagrams_train, args.ansatz, args.qn,
             qs, args.n_layers, args.n_single_qubit_params
@@ -105,6 +114,7 @@ def main():
             diagrams_test, args.ansatz, args.qn,
             qs, args.n_layers, args.n_single_qubit_params
         )
+        
         dataset_train = PreAlphaLambeq.create_dataset(
             circuits_train, labels_train)
         dataset_test = PreAlphaLambeq.create_dataset(
@@ -113,11 +123,25 @@ def main():
         all_circuits = circuits_train + circuits_test
         
         model = PreAlphaLambeq.create_model(all_circuits)
+        
+        if torch.cuda.is_available():
+            device = 0
+        else:
+            device = -1
+        
         trainer = PreAlphaLambeq.create_trainer(
             model, loss, opt, args.iterations,
-            seed = seed
+            seed = seed, device = device
         )
+        
         trainer.fit(dataset_train, dataset_test)
+
+        cost.append(trainer.train_epoch_costs)
+        weights_run = []
+        for i in range(len(model.weights)):
+            weights_run.append(model.weights.__getitem__(i).tolist())
+        weights.append(weights_run)
+
     
         for i,circuit in enumerate(circuits_test):
             output = PreAlphaLambeq.post_selected_output(
@@ -144,7 +168,9 @@ def main():
         with open (name_file + f'_vectors_train_run_{s}.pickle', 'wb') as file:
             pickle.dump(vectors_train, file)
         # We store temporary predictions and vectors
-    
+
+        
+    t2 = time.time()
     predictions_majority_vote = []
     vectors_test_mean = [[] for i in range(len(sentences_test))]
     vectors_train_mean = [[] for i in range(len(sentences_train))]
@@ -178,6 +204,13 @@ def main():
         os.remove(name_file + f'_vectors_train_run_{i}.pickle')
     # We remove the pickle temporary files when comptutations 
     # are finished .
+
+    save_json_output(
+    'pre_alpha_lambeq', args, predictions_majority_vote,
+    t2 - t1, args.output, [cost, weights]
+    )
+    # We save the json output 
+
 
 if __name__ == "__main__":
     main()

@@ -82,13 +82,14 @@ class QuantumDict:
         return gates
 
     def setvocabparams(self, randompar=True, parameterization='Simple', layers=1, seed=30031935):
+        random.seed(seed)
         if randompar:
             if parameterization == 'Simple':  # Two rotations + C-NOT gate per layer
                 for layer in range(layers): #This need to be refactored to use NumPy
                     for word in self.dictionary.keys():
                         self.dictionary[word].gateset = dict()
                         for wordtype in self.dictionary[word].wordtype:
-                            gates = self.setwordparams(word,wordtype, seed=seed)
+                            gates = self.setwordparams(word,wordtype, seed=random.randint(0,int(1e10)))
                             self.dictionary[word].gateset[wordtype] = gates
 
 

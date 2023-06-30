@@ -1,6 +1,5 @@
 import pandas as pd 
 import lambeq
-import pytket.extensions.qiskit as pyt
 import numpy as np
 import discopy
 import torch
@@ -204,7 +203,8 @@ class PreAlphaLambeq:
         model : lambeq.PennyLaneModel, loss_function : torch.nn.functional,
         optimiser : torch.optim.Optimizer, epochs : int,
         learning_rate : float = 0.001, optimizer_args : dict = None,
-        seed : int = 18051967
+        seed : int = 18051967,
+        device : int = -1
         ) -> lambeq.QuantumTrainer:
         """
         Creates a lambeq trainer 
@@ -238,7 +238,8 @@ class PreAlphaLambeq:
         optimizer = optimiser,
         learning_rate = learning_rate,
         optimizer_args = optimizer_args,
-        seed=seed
+        seed=seed,
+        device = device
         )
         return trainer
 
@@ -267,8 +268,11 @@ class PreAlphaLambeq:
         circuit = circuit.to_pennylane(
             probabilities = True
         )
+        symbol_weight_map = {}
+        for i,j in enumerate(model.symbols):
+            symbol_weight_map[j] = model.weights.__getitem__(i)
         circuit.initialise_concrete_params(
-            model.symbols, model.weights
+            symbol_weight_map
         )
         post_selected_output = circuit.eval().detach().numpy()
         return post_selected_output
