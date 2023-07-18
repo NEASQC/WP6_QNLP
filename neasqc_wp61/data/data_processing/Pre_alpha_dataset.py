@@ -27,6 +27,7 @@ class Pre_alpha_dataset:
         self.indexes = {
             'train' : [],
             'test' : [],
+            'dev' : [],
             'pool' : np.arange(len(self.dataset['sentence'])).tolist()}
         # This dictionary stores the indexes of the sentences going into
         # train, test, or still none of them (pool)
@@ -45,7 +46,7 @@ class Pre_alpha_dataset:
         for i,s in enumerate(sentences):
             for word in s.lower().split():
                 if word not in word_dict.keys():
-                    word_dict[word] = {'train' : [], 'test' : [], 'pool' : []}
+                    word_dict[word] = {'train' : [], 'test' : [], 'dev' : [], 'pool' : []}
                     word_dict[word]['pool'].append(i)
                 else:
                     word_dict[word]['pool'].append(i)
@@ -90,9 +91,9 @@ class Pre_alpha_dataset:
             self.word_dict[word][out_set].append(idx)
 
         
-    def generate_test_indexes(
-            self, seed : int , test_size : int,
-            equal_distribution : bool = False):
+    def generate_test_dev_indexes(
+            self, seed : int , size : int,
+            type : str, equal_distribution : bool = False):
         """
         Sets the indexes of the sentences that will belong to the test dataset.
         To do so, it sequentially randomly picks sentences, and adds its indexes to the 
@@ -104,8 +105,10 @@ class Pre_alpha_dataset:
         seed : int
             Seed for the sequential random choice of sentences to
             add to the test dataset
-        test_size : int
-            Number of sentences to be added to the test dataset 
+        size : int
+            Number of sentences to be added to the test/dev dataset 
+        type : str 
+            Dictates if we are adding sentences to the test or validation dataset
         equal_distribution : bool 
             If True, will seek to place equal number of sentences
             types on the test dataset. (default False)
@@ -122,16 +125,16 @@ class Pre_alpha_dataset:
         # A dictionary that stores how many sentences of each type we have.
         # Will be used for the case equal_distribution = True. 
         rd.seed(seed)
-        while len(self.indexes['test']) < test_size:
+        while len(self.indexes[type]) < size:
             candidate_idx = rd.choice(self.indexes['train'])
             if equal_distribution == False:
                 candidate = self.good_candidate(candidate_idx)
             else:
                 candidate = self.good_candidate_equal_distribution(
-                    candidate_idx, sentence_types_test, test_size
+                    candidate_idx, sentence_types_test, size
                 )
             if candidate == True:
-                self.add_remove_indexes(candidate_idx, 'train', 'test')
+                self.add_remove_indexes(candidate_idx, 'train', type)
             count += 1
             if count == len(self.dataset['sentence']) * 100:
                 print(
@@ -262,7 +265,7 @@ class Pre_alpha_dataset:
         ]
         return dataset_train, dataset_test
 
-    def save_train_test_datasets(
+    def save_train_test_dev_datasets(
             self, path : str, name : str):
         """
         Saves the dataframe with the selected sentences as csv.
@@ -280,11 +283,18 @@ class Pre_alpha_dataset:
         dataset_test = self.dataset.iloc[
             self.indexes['test']
         ]
+        dataset_dev = self.dataset.iloc[
+            self.indexes['dev']
+        ]
         dataset_train.to_csv(
             path + '/' + name + '_train.tsv', header = False,
             sep = '\t', index = False
         )
         dataset_test.to_csv(
             path + '/' + name + '_test.tsv', header = False,
+            sep = '\t', index = False
+        )
+        dataset_dev.to_csv(
+            path + '/' + name + '_dev.tsv', header = False,
             sep = '\t', index = False
         )
