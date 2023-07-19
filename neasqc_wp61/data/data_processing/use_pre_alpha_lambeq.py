@@ -38,9 +38,15 @@ def main():
     parser.add_argument(
         "-np", "--n_single_qubit_params", help = "Number of parameters per qubit", type = int)
     args = parser.parse_args()
-    qs = 1
+    train_dataset_name = os.path.basename(args.train)
+    train_dataset_name = os.path.splitext(train_dataset_name)[0]
+    test_dataset_name = os.path.basename(args.test)
+    test_dataset_name = os.path.splitext(test_dataset_name)[0]
+    train_path = os.path.dirname(args.train)
+    test_path = os.path.dirname(args.test)
     # The number of qubits per sentence is pre-defined as we still need 
     # to improve our model
+    qs = 1 
     name_file = args.output + f"pre_alpha_lambeq_{args.seed}_{args.optimiser}_"\
         f"{args.iterations}_{args.runs}_{args.ansatz}_{args.qn}_"\
         f"{qs}_{args.n_layers}_{args.n_single_qubit_params}"
@@ -97,13 +103,9 @@ def main():
     for s in range(int(args.runs)):
         seed = seed_list[s]
 
-
-
-        #diagrams_train = PreAlphaLambeq.create_diagrams(sentences_train)
-        #diagrams_test = PreAlphaLambeq.create_diagrams(sentences_test)
-        with open('./diagrams_reduced_amazonreview_train.pickle', 'rb') as file:
+        with open(train_path + '/diagrams_' + train_dataset_name + '.pickle' , 'rb') as file:
             diagrams_train = pickle.load(file)
-        with open('./diagrams_reduced_amazonreview_test.pickle', 'rb') as file:
+        with open(test_path + '/diagrams_' + test_dataset_name + '.pickle' , 'rb') as file:
             diagrams_test = pickle.load(file)
 
         circuits_train = PreAlphaLambeq.create_circuits(
