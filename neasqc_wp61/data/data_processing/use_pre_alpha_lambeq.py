@@ -9,6 +9,7 @@ import random
 import pickle
 import json
 import time 
+import torch 
 from statistics import mean
 from save_json_output import save_json_output
 
@@ -67,12 +68,16 @@ def main():
     vectors_test = [[[], []] for i in range(len(sentences_test))]
     cost = []
     weights = []
+    accuracies = [] 
     # Lists to store the predictions, probability vectors and costs
 
     def loss(y_hat, y):
         return torch.nn.functional.binary_cross_entropy(
             y_hat, y
         )
+    def acc(y_hat, y):
+        return (torch.argmax(y_hat, dim=1) ==
+            torch.argmax(y, dim=1)).sum().item()/len(y)
     # Default loss function to use
 
     if args.optimiser == 'Adadelta':
@@ -133,12 +138,13 @@ def main():
         
         trainer = PreAlphaLambeq.create_trainer(
             model, loss, opt, args.iterations,
-            seed = seed, device = device
+            {'acc': acc}, seed = seed, device = device
         )
         
         trainer.fit(dataset_train, dataset_test)
 
         cost.append(trainer.train_epoch_costs)
+        accuracies.append(trainer.train_results['acc'])
         weights_run = []
         for i in range(len(model.weights)):
             weights_run.append(model.weights.__getitem__(i).tolist())
@@ -209,7 +215,7 @@ def main():
 
     save_json_output(
     'pre_alpha_lambeq', args, predictions_majority_vote,
-    t2 - t1, args.output, [cost, weights]
+    t2 - t1, args.output, [cost, weights, accuracies]
     )
     # We save the json output 
 
