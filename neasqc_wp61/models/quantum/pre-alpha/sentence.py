@@ -3,6 +3,19 @@ import math
 import random
 
 
+def createsentencelist(dftrain, mydict):
+    sentences_list = []
+    for i, DataInstance in dftrain.iterrows():
+        a_sentence = Sentence(
+            DataInstance,
+            dataset=True,
+            dictionary=mydict)
+        a_sentence.getqbitcontractions()
+        a_sentence.setparamsfrommodel(mydict)
+        sentences_list.append(a_sentence)
+
+    return sentences_list
+
 class Sentence:
 
     def __init__(self, sentence, dataset=None, dictionary=None, label=None, stype=None):        
