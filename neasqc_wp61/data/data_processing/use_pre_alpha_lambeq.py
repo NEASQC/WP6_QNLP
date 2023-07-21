@@ -66,10 +66,13 @@ def main():
     predictions = [[] for i in range(len(sentences_test))]
     vectors_train = [[[], []] for i in range(len(sentences_train))]
     vectors_test = [[[], []] for i in range(len(sentences_test))]
-    cost = []
+    cost_train = []
+    cost_test = []
     weights = []
-    accuracies = [] 
-    # Lists to store the predictions, probability vectors and costs
+    accuracies_train = [] 
+    accuracies_test = []
+    time_list = []
+    # Lists to store the different quantities of our output
 
     def loss(y_hat, y):
         return torch.nn.functional.binary_cross_entropy(
@@ -104,8 +107,9 @@ def main():
         opt = torch.optim.SGD
     # Optimisers available to be used
     
-    t1 = time.time()
+    
     for s in range(int(args.runs)):
+        t1 = time.time()
         seed = seed_list[s]
 
         with open(train_path + '/diagrams_' + train_dataset_name + '.pickle' , 'rb') as file:
@@ -143,8 +147,10 @@ def main():
         
         trainer.fit(dataset_train, dataset_test)
 
-        cost.append(trainer.train_epoch_costs)
-        accuracies.append(trainer.train_results['acc'])
+        cost_train.append(trainer.train_epoch_costs)
+        cost_test.append(trainer.val_costs)
+        accuracies_train.append(trainer.train_results['acc'])
+        accuracies_test.append(trainer.val_results['acc'])
         weights_run = []
         for i in range(len(model.weights)):
             weights_run.append(model.weights.__getitem__(i).tolist())
@@ -176,9 +182,21 @@ def main():
         with open (name_file + f'_vectors_train_run_{s}.pickle', 'wb') as file:
             pickle.dump(vectors_train, file)
         # We store temporary predictions and vectors
-
+        t2 = time.time()
+        time_list.append(t2 - t1)
         
-    t2 = time.time()
+
+    best_accuracy = None
+    best_run = None
+
+    for index, sublist in enumerate(accuracies_test):
+        current_max = max(sublist)
+        if best_accuracy is None or current_max > best_accuracy:
+            best_accuracy = current_max
+            best_run = index
+    # We compute the best accuracy and the best run 
+
+    
     predictions_majority_vote = []
     vectors_test_mean = [[] for i in range(len(sentences_test))]
     vectors_train_mean = [[] for i in range(len(sentences_train))]
@@ -215,8 +233,11 @@ def main():
 
     save_json_output(
     'pre_alpha_lambeq', args, predictions_majority_vote,
-    t2 - t1, args.output, [cost, weights, accuracies]
-    )
+    time_list, args.output, best_val_acc = best_accuracy,
+    best_run = best_run, seed_list = seed_list,
+    val_acc = accuracies_test, val_loss = cost_test,
+    train_acc = accuracies_train, train_loss = cost_train,
+    weights = weights)
     # We save the json output 
 
 

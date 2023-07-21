@@ -12,14 +12,18 @@ def main():
     
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-l", "--labels", help = "Path of the dataset containing the training labels",
+        "-trl", "--train_labels", help = "Path of the dataset containing the training labels",
         type = str
     )
     parser.add_argument(
-        "-tr", "--train", help = "Path of the training vectors", type = str
+        "-tel", "--test_labels", help = "Path of the dataset containing the testing labels",
+        type = str
     )
     parser.add_argument(
-        "-te", "--test", help = "Path of the test vectors", type = str
+        "-tr", "--train_vectors", help = "Path of the training vectors", type = str
+    )
+    parser.add_argument(
+        "-te", "--test_vectors", help = "Path of the test vectors", type = str
     ) 
     parser.add_argument(
         "-k", "--k", help = "Number of K neighbors", type = int
@@ -31,15 +35,23 @@ def main():
 
     name_file = args.output + f"beta_neighbors_{args.k}"
     t1 = time.time()
-    predictions = qkn(args.labels, args.train, args.test, args.k).predictions
+    predictions = qkn(
+        args.train_labels, args.train_vectors,
+        args.test_vectors, args.k).predictions
     t2 = time.time()
+    test_labels = qkn.load_labels(args.test_labels)
+    correct_predictions = 0
     with open(name_file + "_predictions.txt", "w") as output:
-        for pred in predictions:
+        for i,pred in enumerate(predictions):
             output.write(f"{pred}\n")
+            if pred == test_labels[i]:
+                correct_predictions += 1
+    accuracy = correct_predictions/len(test_labels)
 
+    
     save_json_output(
     'beta', args, predictions,
-    t2 - t1, args.output
+    t2 - t1, args.output, val_acc=accuracy
     )
     # We save the json output 
 
