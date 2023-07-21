@@ -6,8 +6,8 @@ import json
 
 def save_json_output(
     model : str, parser_args : argparse.Namespace,
-    predictions : list[int], t : float,
-    output_path : str, *args : list
+    predictions : list[int], t : list[float],
+    output_path : str, **kwargs : list
 ):
 
     json_output = {}
@@ -26,20 +26,14 @@ def save_json_output(
     # 4. Time taken 
     json_output['time'] = t
 
-    # 5. Loss function and model parameters
-    if model == 'pre_alpha' or model == 'pre_alpha_lambeq':
-        arrays_cost = [np.array(x) for x in args[0][0]]
-        mean_cost = [np.mean(k) for k in zip(*arrays_cost)]
-        json_output['cost'] = mean_cost
+    # 5. Other outputs 
+    for k,v in kwargs.items():
+        json_output[k] = v
 
-        arrays_weights = [np.array(x) for x in args[0][1]]
-        mean_weights = [np.mean(k) for k in zip(*arrays_weights)]
-        json_output['weights'] = mean_weights
-    
     # Save the results
     timestr = time.strftime("%Y%m%d-%H%M%S")
     with open (output_path + f'{model}_{timestr}.json', 'w') as file:
-        json.dump(json_output, file) 
+        json.dump(json_output, file, indent=4) 
 
     
 
