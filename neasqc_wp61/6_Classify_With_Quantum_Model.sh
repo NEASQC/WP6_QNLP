@@ -3,7 +3,7 @@
 echo 'This script classifies examples using quantum classifier model.'
 
 
-while getopts t:v:s:m:e:r:i:p:o:a:q:n:x:nq:qd:b:lr:wd:slr:g: flag
+while getopts t:v:s:m:e:r:i:p:o:a:q:n:x:u:d:b:l:w:z:g: flag
 do
     case "${flag}" in
         t) train=${OPTARG};;
@@ -19,12 +19,12 @@ do
         n) nl=${OPTARG};;
         x) np=${OPTARG};;
 
-        nq) nq=${OPTARG};;
-        qd) qd=${OPTARG};;
+        u) nq=${OPTARG};;
+        d) qd=${OPTARG};;
         b) b=${OPTARG};;
-        lr) lr=${OPTARG};;
-        wd) wd=${OPTARG};;
-        slr) slr=${OPTARG};;
+        l) lr=${OPTARG};;
+        w) wd=${OPTARG};;
+        z) slr=${OPTARG};;
         g) g=${OPTARG};;
     esac
 done
