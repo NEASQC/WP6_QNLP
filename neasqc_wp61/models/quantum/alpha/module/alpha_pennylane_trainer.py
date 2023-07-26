@@ -30,7 +30,7 @@ class Alpha_pennylane_trainer():
 
 
         self.X_train, self.X_test, self.Y_train, self.Y_test = preprocess_train_test_dataset_for_alpha_pennylane(self.train_path, self.test_path)
-        
+
 
         # initialise datasets and optimizers as in PyTorch
 
@@ -42,7 +42,7 @@ class Alpha_pennylane_trainer():
 
 
         # initialise the device
-        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
         # initialise model
@@ -54,8 +54,8 @@ class Alpha_pennylane_trainer():
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr, weight_decay=self.weight_decay)
         self.lr_scheduler = lr_scheduler.StepLR(
             self.optimizer, step_size=self.step_lr, gamma=self.gamma)
-        
-        
+	
+        self.model = nn.DataParallel(self.model)
         self.model.to(self.device)
         self.criterion.to(self.device)
 
