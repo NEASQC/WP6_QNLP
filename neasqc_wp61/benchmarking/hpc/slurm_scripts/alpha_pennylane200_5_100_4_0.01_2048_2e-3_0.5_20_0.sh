@@ -4,13 +4,13 @@
 #SBATCH -p GpuQ
 #SBATCH -N 1
 #SBATCH -t 01:00:00
-#SBATCH --job-name=alpha_pennylane{{ s }}_{{ r }}_{{ i }}_{{ nq }}_{{ qd }}_{{ sb }}_{{ lr }}_{{ wd }}_{{ slr }}_{{ g }}
+#SBATCH --job-name=alpha_pennylane200_5_100_4_0.01_2048_2e-3_0.5_20_0
    
 # Charge job to my project 
 #SBATCH -A iccom018c
 
 # Write stdout+stderr to file
-#SBATCH -o ./benchmarking/hpc/slurm_output/alpha_pennylane{{ s }}_{{ r }}_{{ i }}_{{ nq }}_{{ qd }}_{{ sb }}_{{ lr }}_{{ wd }}_{{ slr }}_{{ g }}.txt
+#SBATCH -o ./benchmarking/hpc/slurm_output/alpha_pennylane200_5_100_4_0.01_2048_2e-3_0.5_20_0.txt
 
 # Mail me on job start & end
 #SBATCH --mail-user=yanis.lalou@ichec.ie
@@ -42,5 +42,5 @@ module load cuda/11.4
 
 echo "`date +%T`"
 
-bash 6_Classify_With_Quantum_Model.sh -m alpha_pennylane -t ./data/toy_dataset/toy_dataset_bert_sentence_embedding_train.csv -v ./data/toy_dataset/toy_dataset_bert_sentence_embedding_test.csv -s {{ s }} -r {{ r }} -i {{ i }} -u {{ nq }} -d {{ qd }} -b {{ sb }} -l {{ lr }} -w {{ wd }} -z {{ slr }} -g {{ g }} -o ./benchmarking/results/raw/
+bash 6_Classify_With_Quantum_Model.sh -m alpha_pennylane -t ./data/toy_dataset/toy_dataset_bert_sentence_embedding_train.csv -v ./data/toy_dataset/toy_dataset_bert_sentence_embedding_test.csv -s 200 -r 5 -i 100 -u 4 -d 0.01 -b 2048 -l 2e-3 -w 0.5 -z 20 -g 0 -o ./benchmarking/results/raw/
 echo "`date +%T`"
