@@ -89,8 +89,25 @@ def main():
           with open(f'slurm_scripts/alpha_pennylane{s}_{r}_{i}_{nq}_{qd}_{sb}_{lr}_{wd}_{slr}_{g}.sh','w') as f2:
             f2.write(filled_template)
 
+      elif params[0] == 'alpha_lambeq':
+        if len(params) != 16: 
+          print("WARNING: line " + str(j) + " in your text file has the wrong number of parameters for the chosen model. This line will be skipped.")
+          continue
+        else:
+          '''
+          If model is alpha lambeq, create a SLURM script whose name is in the format
+          alpha_lambeq[seed]_[runs]_[iterations]_[version]_[pca]_[ansatz]_[qn]_[qs]_[nl]_[np]_[batch_size]_[learning_rate]_[weight_decay]_[step_lr]_[gamma].sh
+          '''
+          slurm_template = "slurm_templates/alpha_lambeq.sh"
+          with open(slurm_template, 'r') as f1:
+            template = Template(f1.read())
+          s, r, i, v, pca, an, qn, qs, nl, np, sb, lr, wd, slr, g = params[1:]
+          filled_template = template.render(s=s, r=r, i=i, v=v, pca=pca, an=an, qn=qn, qs=qs, nl=nl, np=np, sb=sb, lr=lr, wd=wd, slr=slr, g=g)
+          with open(f'slurm_scripts/alpha_lambeq{s}_{r}_{i}_{v}_{pca}_{an}_{qn}_{qs}_{nl}_{np}_{sb}_{lr}_{wd}_{slr}_{g}.sh','w') as f2:
+            f2.write(filled_template)
 
-      else: print("WARNING: The model " + params[0] + " specified in line " + str(j) + " is not a valid model. Only pre_alpha, pre_alpha_lambeq, alpha_pennylane and beta_neighbours are currently supported. This line will be skipped.")
+
+      else: print("WARNING: The model " + params[0] + " specified in line " + str(j) + " is not a valid model. Only pre_alpha, pre_alpha_lambeq, alpha_pennylane, alpha_lambeq and beta_neighbours are currently supported. This line will be skipped.")
 
   params_input.close()
 

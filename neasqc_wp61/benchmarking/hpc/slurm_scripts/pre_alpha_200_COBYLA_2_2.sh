@@ -10,13 +10,13 @@
 #SBATCH -A iccom018c
 
 # Write stdout+stderr to file
-#SBATCH -o slurm_output/pre_alpha_200_COBYLA_2_2_output.txt
+#SBATCH -o ./benchmarking/hpc/slurm_output/pre_alpha_200_COBYLA_2_2_output.txt
 
 # Mail me on job start & end
-#SBATCH --mail-user=pablo.lauret@ichec.ie
+#SBATCH --mail-user=pablo.suarez@ichec.ie
 #SBATCH --mail-type=BEGIN,END
 
-cd $SLURM_SUBMIT_DIR
+cd /ichec/work/iccom018c
 
 cd WP6_QNLP/neasqc_wp61
 
@@ -34,6 +34,6 @@ source activate /ichec/work/iccom018c/.conda/qnlp
 
 echo "`date +%T`"
 
-bash 6_Classify_With_Quantum_Model.sh -t ./data/datasets/reduced_amazonreview_pre_alpha_train.tsv -v ./data/datasets/reduced_amazonreview_pre_alpha_test.tsv -s 200 -r 2 -i 2 -p COBYLA -o ./benchmarking/results/raw/
+bash 6_Classify_With_Quantum_Model.sh -m pre_alpha -t ./data/datasets/reduced_amazonreview_pre_alpha_train.tsv -v ./data/datasets/reduced_amazonreview_pre_alpha_test.tsv -s 200 -r 2 -i 2 -p COBYLA -o ./benchmarking/results/raw/
 
 echo "`date +%T`"

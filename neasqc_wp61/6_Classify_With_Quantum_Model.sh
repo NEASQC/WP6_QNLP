@@ -3,7 +3,7 @@
 echo 'This script classifies examples using quantum classifier model.'
 
 
-while getopts t:v:s:m:e:r:i:p:o:a:q:n:x:u:d:b:l:w:z:g: flag
+while getopts t:v:s:m:e:r:i:p:o:a:q:n:x:u:d:b:l:w:z:g:y:c:e flag
 do
     case "${flag}" in
         t) train=${OPTARG};;
@@ -26,6 +26,10 @@ do
         w) wd=${OPTARG};;
         z) slr=${OPTARG};;
         g) g=${OPTARG};;
+
+        y) version=${OPTARG};;
+        c) pca=${OPTARG};;
+        e) qs=${OPTARG};;
     esac
 done
 
@@ -51,19 +55,10 @@ echo "Weight decay: $wd";
 echo "Step size for the learning rate scheduler: $slr";
 echo "Gamma for the learning rate scheduler: $g";
 
-# -s : 
-# -i : 
-# -r : 
-# -tr : -t
-# -te : -v
-# -o : 
-# -nq : Number of qubits in our circuit
-# -qd : Initial spread of the parameters
-# -b : Batch size
-# -lr : Learning rate
-# -wd : Weight decay
-# -slr : Step size for the learning rate scheduler
-# -g : Gamma for the learning rate scheduler
+echo "Version between alpha_pennylane_lambeq and alpha_pennylane_lambeq_original: $version";
+echo "Reduced dimension for the word embeddings: $pca";
+echo "Number of qubits per SENTENCE type: $qs";
+
 
 
 if [[ "${model}" == "pre_alpha" ]]
@@ -81,7 +76,9 @@ python3.10 ./data/data_processing/use_alpha_pennylane.py -s ${seed} -i ${iterati
 elif [[ "${model}" == "alpha_lambeq" ]]
 then
 echo "running alpha_lambeq"
-python3.10 ./data/data_processing/use_alpha_lambeq.py -s ${seed} -op ${optimiser} -i ${iterations} -r ${runs} -tr ${train} -te ${test} -o ${outfile} -an ${ansatz} -qn ${qn} -nl ${nl} -np ${np}
+python3.10 ./data/data_processing/use_alpha_lambeq.py -s ${seed} -i ${iterations} -r ${runs} -v ${version} -pca ${pca} -tr ${train} -te ${test} -o ${outfile} -an ${ansatz} -qn ${qn} -qs ${qs} -nl ${nl} -np ${np} -b ${b} -lr ${lr} -wd ${wd} -slr ${slr} -g ${g}
+elif [[ "${model}" == "alpha_pennylane_lambeq" ]]
+then
 else
 echo "no model ran";
 fi
