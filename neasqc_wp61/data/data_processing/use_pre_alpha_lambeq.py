@@ -64,8 +64,8 @@ def main():
     # Load sentences and labels
     
     predictions = [[] for i in range(len(sentences_test))]
-    vectors_train = [[[], []] for i in range(len(sentences_train))]
-    vectors_test = [[[], []] for i in range(len(sentences_test))]
+    vectors_train_list = []
+    vectors_test_list = []
     cost_train = []
     cost_test = []
     weights = []
@@ -156,13 +156,14 @@ def main():
             weights_run.append(model.weights.__getitem__(i).tolist())
         weights.append(weights_run)
 
-    
+        vectors_train = []
+        vectors_test = []
         for i,circuit in enumerate(circuits_test):
             output = PreAlphaLambeq.post_selected_output(
             circuit, model
             )
-            vectors_test[i][0].append(float(output[0]))
-            vectors_test[i][1].append(float(output[1]))
+            vector = output.flatten().tolist()
+            vectors_test.append(vector)
             predictions[i].append(
                 PreAlphaLambeq.predicted_label(output)
             )
@@ -170,18 +171,17 @@ def main():
             output = PreAlphaLambeq.post_selected_output(
             circuit, model
             )
-            vectors_train[i][0].append(float(output[0]))
-            vectors_train[i][1].append(float(output[1]))
+            vector = output.flatten().tolist()
+            vectors_train.append(vector)
         # We compute the class predictions for the test dataset 
         # and the vectors for both training and test datatset
 
         with open (name_file + f'_predictions_run_{s}.pickle', 'wb') as file:
             pickle.dump(predictions, file)
-        with open (name_file + f'_vectors_test_run_{s}.pickle', 'wb') as file:
-            pickle.dump(vectors_test, file)
-        with open (name_file + f'_vectors_train_run_{s}.pickle', 'wb') as file:
-            pickle.dump(vectors_train, file)
         # We store temporary predictions and vectors
+
+        vectors_train_list.append(vectors_train)
+        vectors_test_list.append(vectors_test)
         t2 = time.time()
         time_list.append(t2 - t1)
         
@@ -198,36 +198,25 @@ def main():
 
     
     predictions_majority_vote = []
-    vectors_test_mean = [[] for i in range(len(sentences_test))]
-    vectors_train_mean = [[] for i in range(len(sentences_train))]
+
 
 
     for i in range(len(sentences_test)):
         c = Counter(predictions[i])
         value, count = c.most_common()[0]
         predictions_majority_vote.append(value)
-        vectors_test_mean[i].append(mean(vectors_test[i][0]))
-        vectors_test_mean[i].append(mean(vectors_test[i][1]))
-    
-    for i in range(len(sentences_train)):
-        vectors_train_mean[i].append(mean(vectors_train[i][0]))
-        vectors_train_mean[i].append(mean(vectors_train[i][1]))        
+
     
     with open(name_file + "_predictions.txt", "w") as output:
             for pred in predictions_majority_vote:
                 output.write(f"{pred}\n")
-    with open (name_file + '_vectors_test.json', 'w') as file:
-            json.dump(vectors_test_mean, file)
-    with open (name_file + '_vectors_train.json', 'w') as file:
-            json.dump(vectors_train_mean, file)
     # We store the final results of our experiments. 
     # The predictions will be selected with majority vote.
     # For the probability vectors we will use the mean values
 
     for i in range(args.runs):
         os.remove(name_file + f'_predictions_run_{i}.pickle')
-        os.remove(name_file + f'_vectors_test_run_{i}.pickle')
-        os.remove(name_file + f'_vectors_train_run_{i}.pickle')
+
     # We remove the pickle temporary files when comptutations 
     # are finished .
 
@@ -237,7 +226,8 @@ def main():
     best_run = best_run, seed_list = seed_list,
     val_acc = accuracies_test, val_loss = cost_test,
     train_acc = accuracies_train, train_loss = cost_train,
-    weights = weights)
+    weights = weights, vectors_train = vectors_train_list,
+    vectors_test = vectors_test_list)
     # We save the json output 
 
 
