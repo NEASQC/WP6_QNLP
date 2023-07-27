@@ -3,7 +3,7 @@
 echo 'This script classifies examples using quantum classifier model.'
 
 
-while getopts t:v:s:m:e:r:i:p:o:a:q:n:x:u:d:b:l:w:z:g:y:c:e flag
+while getopts t:v:s:m:r:i:p:o:a:q:n:x:u:d:b:l:w:z:g:y:c:e: flag
 do
     case "${flag}" in
         t) train=${OPTARG};;
@@ -77,8 +77,6 @@ elif [[ "${model}" == "alpha_lambeq" ]]
 then
 echo "running alpha_lambeq"
 python3.10 ./data/data_processing/use_alpha_lambeq.py -s ${seed} -i ${iterations} -r ${runs} -v ${version} -pca ${pca} -tr ${train} -te ${test} -o ${outfile} -an ${ansatz} -qn ${qn} -qs ${qs} -nl ${nl} -np ${np} -b ${b} -lr ${lr} -wd ${wd} -slr ${slr} -g ${g}
-elif [[ "${model}" == "alpha_pennylane_lambeq" ]]
-then
 else
 echo "no model ran";
 fi
