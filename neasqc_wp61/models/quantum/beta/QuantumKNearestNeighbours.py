@@ -5,7 +5,7 @@ from collections import Counter
 import numpy as np 
 
 
-class QuantumKNearestNeighbors:
+class QuantumKNearestNeighbours:
     """
     Class for implementing the K Nearest Neighbors algorithm 
     using the quantum distance

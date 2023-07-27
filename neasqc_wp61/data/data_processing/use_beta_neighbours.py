@@ -5,7 +5,7 @@ import time
 import json
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_path + "/../../models/quantum/beta/")
-from QuantumKNearestNeighbors import QuantumKNearestNeighbors as qkn
+from QuantumKNearestNeighbours import QuantumKNearestNeighbours as qkn
 from save_json_output import save_json_output
 from collections import Counter
 
@@ -49,7 +49,7 @@ def main():
         accuracies_test.append(correct_pred/len(test_labels))
         t2 = time.time()
         time_list.append(t2 - t1)
-    print(predictions_list)
+
     predictions_majority_vote = []
     for i in range(len(test_labels)):
         c = Counter(predictions_list[i])
