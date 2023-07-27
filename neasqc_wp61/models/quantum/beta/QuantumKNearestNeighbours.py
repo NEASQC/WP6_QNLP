@@ -12,8 +12,8 @@ class QuantumKNearestNeighbors:
     """
     
     def __init__(
-            self, dataset_dir : str, vectors_train_dir :str,
-            vectors_test_dir : str, k : int
+            self, dataset_dir : str, train_vectors :list,
+            test_vectors : list, k : int
         )-> None:
         """
         Initialises the class. 
@@ -24,20 +24,18 @@ class QuantumKNearestNeighbors:
             Directory where the dataset with the
             training  labels is stored
         vectors_train_dir : str
-            Directory containing the vectors for training
+            List containig the vectors for training
         vectors_test_dir : str
-            Directory containing the vectors for testing
+            List containing the vectors for testing
         k : int
             Number of neighbors of the algorithm
         """
         self.labels = self.load_labels(dataset_dir)
-        with open (vectors_train_dir) as file:
-            self.vectors_train = json.load(file)
-        with open(vectors_test_dir) as file:
-            self.vectors_test = json.load(file)
+        self.train_vectors = train_vectors
+        self.test_vectors = test_vectors
         self.k = k
         self.predictions = []
-        for i in self.vectors_test:
+        for i in self.test_vectors:
             distances = self.compute_distances(i)
             closest_indexes = self.compute_minimum_distances(distances, self.k)
             pred = self.labels_majority_vote(closest_indexes)
@@ -95,7 +93,7 @@ class QuantumKNearestNeighbors:
             training dataset
         """
         distances = []
-        for vector in(self.vectors_train):
+        for vector in(self.train_vectors):
             distances.append(qd(sample, vector).dist)
         return distances
 
