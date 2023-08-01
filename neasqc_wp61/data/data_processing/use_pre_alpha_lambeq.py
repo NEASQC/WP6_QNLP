@@ -151,8 +151,8 @@ def main():
 
         cost_train.append(trainer.train_epoch_costs)
         cost_test.append(trainer.val_costs)
-        accuracies_train.append(trainer.train_results['acc'])
-        accuracies_test.append(trainer.val_results['acc'])
+        accuracies_train.append(trainer.train_eval_results['acc'])
+        accuracies_test.append(trainer.val_eval_results['acc'])
         weights_run = []
         for i in range(len(model.weights)):
             weights_run.append(model.weights.__getitem__(i).tolist())
