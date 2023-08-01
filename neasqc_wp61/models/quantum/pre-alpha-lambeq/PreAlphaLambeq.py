@@ -155,7 +155,7 @@ class PreAlphaLambeq:
     @staticmethod
     def create_dataset(
         circuits : list[discopy.quantum.circuit.Circuit],
-        labels : list[list[int]]
+        labels : list[list[int]], batch_size : int
     ) -> lambeq.Dataset:
         """
         Creates a Dataset class for the training of the lambeq model
@@ -166,14 +166,15 @@ class PreAlphaLambeq:
             List containing quantum circuits
         labels : list[list[int]]
             List containing our labels
-
+        batch_size : int
+            batch size to be used in fitting 
         Returns
         -------
         dataset : lambeq.Dataset
             A lambeq dataset that can be used for training 
         """
         dataset = lambeq.Dataset(
-            circuits, labels
+            circuits, labels, batch_size
         )
         return dataset
    

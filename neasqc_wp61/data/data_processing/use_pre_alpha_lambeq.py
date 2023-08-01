@@ -38,6 +38,8 @@ def main():
         "-nl", "--n_layers", help = "Number of layers for the circuits", type = int)
     parser.add_argument(
         "-np", "--n_single_qubit_params", help = "Number of parameters per qubit", type = int)
+    parser.add_argument(
+        "-b", "--batch_size", help = "Batch size used for traininig the model", type = int)
     args = parser.parse_args()
     train_dataset_name = os.path.basename(args.train)
     train_dataset_name = os.path.splitext(train_dataset_name)[0]
@@ -50,7 +52,7 @@ def main():
     qs = 1 
     name_file = args.output + f"pre_alpha_lambeq_{args.seed}_{args.optimiser}_"\
         f"{args.iterations}_{args.runs}_{args.ansatz}_{args.qn}_"\
-        f"{qs}_{args.n_layers}_{args.n_single_qubit_params}"
+        f"{qs}_{args.n_layers}_{args.n_single_qubit_params}_{args.batch_size}"
     # Name of the file to store the results. 
 
     random.seed(args.seed)
@@ -127,9 +129,9 @@ def main():
         )
         
         dataset_train = PreAlphaLambeq.create_dataset(
-            circuits_train, labels_train)
+            circuits_train, labels_train, args.batch_size)
         dataset_test = PreAlphaLambeq.create_dataset(
-            circuits_test, labels_test
+            circuits_test, labels_test, args.batch_size
         )
         all_circuits = circuits_train + circuits_test
         
