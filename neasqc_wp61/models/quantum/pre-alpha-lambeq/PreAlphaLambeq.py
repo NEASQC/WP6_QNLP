@@ -245,65 +245,9 @@ class PreAlphaLambeq:
         )
         return trainer
 
+
     @staticmethod
     def post_selected_output(
-        circuit : discopy.quantum.circuit.Circuit,
-        model : lambeq.PennyLaneModel
-    ) -> np.array:
-        """
-        For a given circuit, outputs the normalised
-        probabilities of each state of the postselected qubits
-
-        Parameters
-        ----------
-        circuit : discopy.quantum.circuit.Circuit
-            Quantum Circuit we want to analyse
-        model : lambeq.PennyLaneModel
-            A lambeq model storing the quantum parameters
-            assigned per word. 
-
-        Returns 
-        -------
-        post_selected_output : np.array
-            Array containig the proabilities of each state 
-        """
-        circuit = circuit.to_pennylane(
-            probabilities = True
-        )
-        symbol_weight_map = {}
-        for i,j in enumerate(model.symbols):
-            symbol_weight_map[j] = model.weights.__getitem__(i)
-        circuit.initialise_concrete_params(
-            symbol_weight_map
-        )
-        post_selected_output = circuit.eval().detach().numpy()
-        return post_selected_output
-    @staticmethod
-    def post_selected_output_new(
         model, circuits):
         return model.get_diagram_output(circuits)
     
-    @staticmethod
-    def predicted_label(
-        post_selected_output : np.array
-    ) -> int:
-        """
-        Assigns a label depeding on the probabilities of the post-selected output
-
-        Parameters
-        ----------
-        post_selected_output : np.array
-            Array containing the probabilities of each state
-        
-        Returns
-        -------
-        prediction : int
-            Predicted label 
-        """
-        post_selected_output = post_selected_output / np.sum(post_selected_output)
-        if post_selected_output[0] > 0.5:
-            prediction = 0
-            return prediction
-        else : 
-            prediction = 1
-            return prediction
