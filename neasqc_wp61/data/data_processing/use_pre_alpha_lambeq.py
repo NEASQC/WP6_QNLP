@@ -158,9 +158,9 @@ def main():
             weights_run.append(model.weights.__getitem__(i).tolist())
         weights.append(weights_run)
 
-        vectors_train = PreAlphaLambeq.post_selected_output_new(
+        vectors_train = PreAlphaLambeq.post_selected_output(
             model, all_circuits)[:len(labels_train)].tolist()
-        vectors_test = PreAlphaLambeq.post_selected_output_new(
+        vectors_test = PreAlphaLambeq.post_selected_output(
             model, all_circuits)[-len(labels_test):].tolist()
         for i,v in enumerate(vectors_test):
             if v[0]>0.5:
