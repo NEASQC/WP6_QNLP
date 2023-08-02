@@ -278,6 +278,10 @@ class PreAlphaLambeq:
         )
         post_selected_output = circuit.eval().detach().numpy()
         return post_selected_output
+    @staticmethod
+    def post_selected_output_new(
+        model, circuits):
+        return model.get_diagram_output(circuits)
     
     @staticmethod
     def predicted_label(

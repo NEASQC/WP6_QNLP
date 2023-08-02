@@ -146,7 +146,7 @@ def main():
             model, loss, opt, args.iterations,
             {'acc': acc}, seed = seed, device = device
         )
-        
+
         trainer.fit(dataset_train, dataset_test)
 
         cost_train.append(trainer.train_epoch_costs)
@@ -158,25 +158,15 @@ def main():
             weights_run.append(model.weights.__getitem__(i).tolist())
         weights.append(weights_run)
 
-        vectors_train = []
-        vectors_test = []
-        for i,circuit in enumerate(circuits_test):
-            output = PreAlphaLambeq.post_selected_output(
-            circuit, model
-            )
-            vector = output.flatten().tolist()
-            vectors_test.append(vector)
-            predictions[i].append(
-                PreAlphaLambeq.predicted_label(output)
-            )
-        for i,circuit in enumerate(circuits_train):
-            output = PreAlphaLambeq.post_selected_output(
-            circuit, model
-            )
-            vector = output.flatten().tolist()
-            vectors_train.append(vector)
-        # We compute the class predictions for the test dataset 
-        # and the vectors for both training and test datatset
+        vectors_train = PreAlphaLambeq.post_selected_output_new(
+            model, all_circuits)[:len(labels_train)].tolist()
+        vectors_test = PreAlphaLambeq.post_selected_output_new(
+            model, all_circuits)[-len(labels_test):].tolist()
+        for i,v in enumerate(vectors_test):
+            if v[0]>0.5:
+                predictions[i].append(0)
+            else:
+                predictions[i].append(1)
 
         with open (name_file + f'_predictions_run_{s}.pickle', 'wb') as file:
             pickle.dump(predictions, file)
