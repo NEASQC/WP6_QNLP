@@ -9,6 +9,7 @@ import random
 import pickle
 import json
 import time 
+import torch 
 from statistics import mean
 from save_json_output import save_json_output
 
@@ -37,13 +38,21 @@ def main():
         "-nl", "--n_layers", help = "Number of layers for the circuits", type = int)
     parser.add_argument(
         "-np", "--n_single_qubit_params", help = "Number of parameters per qubit", type = int)
+    parser.add_argument(
+        "-b", "--batch_size", help = "Batch size used for traininig the model", type = int)
     args = parser.parse_args()
-    qs = 1
+    train_dataset_name = os.path.basename(args.train)
+    train_dataset_name = os.path.splitext(train_dataset_name)[0]
+    test_dataset_name = os.path.basename(args.test)
+    test_dataset_name = os.path.splitext(test_dataset_name)[0]
+    train_path = os.path.dirname(args.train)
+    test_path = os.path.dirname(args.test)
     # The number of qubits per sentence is pre-defined as we still need 
     # to improve our model
+    qs = 1 
     name_file = args.output + f"pre_alpha_lambeq_{args.seed}_{args.optimiser}_"\
         f"{args.iterations}_{args.runs}_{args.ansatz}_{args.qn}_"\
-        f"{qs}_{args.n_layers}_{args.n_single_qubit_params}"
+        f"{qs}_{args.n_layers}_{args.n_single_qubit_params}_{args.batch_size}"
     # Name of the file to store the results. 
 
     random.seed(args.seed)
@@ -57,16 +66,23 @@ def main():
     # Load sentences and labels
     
     predictions = [[] for i in range(len(sentences_test))]
-    vectors_train = [[[], []] for i in range(len(sentences_train))]
-    vectors_test = [[[], []] for i in range(len(sentences_test))]
-    cost = []
+    vectors_train_list = []
+    vectors_test_list = []
+    cost_train = []
+    cost_test = []
     weights = []
-    # Lists to store the predictions, probability vectors and costs
+    accuracies_train = [] 
+    accuracies_test = []
+    time_list = []
+    # Lists to store the different quantities of our output
 
     def loss(y_hat, y):
         return torch.nn.functional.binary_cross_entropy(
             y_hat, y
         )
+    def acc(y_hat, y):
+        return (torch.argmax(y_hat, dim=1) ==
+            torch.argmax(y, dim=1)).sum().item()/len(y)
     # Default loss function to use
 
     if args.optimiser == 'Adadelta':
@@ -93,17 +109,14 @@ def main():
         opt = torch.optim.SGD
     # Optimisers available to be used
     
-    t1 = time.time()
+    
     for s in range(int(args.runs)):
+        t1 = time.time()
         seed = seed_list[s]
 
-
-
-        #diagrams_train = PreAlphaLambeq.create_diagrams(sentences_train)
-        #diagrams_test = PreAlphaLambeq.create_diagrams(sentences_test)
-        with open('./diagrams_reduced_amazonreview_train.pickle', 'rb') as file:
+        with open(train_path + '/diagrams_' + train_dataset_name + '.pickle' , 'rb') as file:
             diagrams_train = pickle.load(file)
-        with open('./diagrams_reduced_amazonreview_test.pickle', 'rb') as file:
+        with open(test_path + '/diagrams_' + test_dataset_name + '.pickle' , 'rb') as file:
             diagrams_test = pickle.load(file)
 
         circuits_train = PreAlphaLambeq.create_circuits(
@@ -116,9 +129,9 @@ def main():
         )
         
         dataset_train = PreAlphaLambeq.create_dataset(
-            circuits_train, labels_train)
+            circuits_train, labels_train, args.batch_size)
         dataset_test = PreAlphaLambeq.create_dataset(
-            circuits_test, labels_test
+            circuits_test, labels_test, args.batch_size
         )
         all_circuits = circuits_train + circuits_test
         
@@ -131,84 +144,82 @@ def main():
         
         trainer = PreAlphaLambeq.create_trainer(
             model, loss, opt, args.iterations,
-            seed = seed, device = device
+            {'acc': acc}, seed = seed, device = device
         )
-        
+
         trainer.fit(dataset_train, dataset_test)
 
-        cost.append(trainer.train_epoch_costs)
+        cost_train.append(trainer.train_epoch_costs)
+        cost_test.append(trainer.val_costs)
+        accuracies_train.append(trainer.train_eval_results['acc'])
+        accuracies_test.append(trainer.val_eval_results['acc'])
         weights_run = []
         for i in range(len(model.weights)):
             weights_run.append(model.weights.__getitem__(i).tolist())
         weights.append(weights_run)
 
-    
-        for i,circuit in enumerate(circuits_test):
-            output = PreAlphaLambeq.post_selected_output(
-            circuit, model
-            )
-            vectors_test[i][0].append(float(output[0]))
-            vectors_test[i][1].append(float(output[1]))
-            predictions[i].append(
-                PreAlphaLambeq.predicted_label(output)
-            )
-        for i,circuit in enumerate(circuits_train):
-            output = PreAlphaLambeq.post_selected_output(
-            circuit, model
-            )
-            vectors_train[i][0].append(float(output[0]))
-            vectors_train[i][1].append(float(output[1]))
-        # We compute the class predictions for the test dataset 
-        # and the vectors for both training and test datatset
+        vectors_train = PreAlphaLambeq.post_selected_output(
+            model, all_circuits)[:len(labels_train)].tolist()
+        vectors_test = PreAlphaLambeq.post_selected_output(
+            model, all_circuits)[-len(labels_test):].tolist()
+        for i,v in enumerate(vectors_test):
+            if v[0]>0.5:
+                predictions[i].append(0)
+            else:
+                predictions[i].append(1)
 
         with open (name_file + f'_predictions_run_{s}.pickle', 'wb') as file:
             pickle.dump(predictions, file)
-        with open (name_file + f'_vectors_test_run_{s}.pickle', 'wb') as file:
-            pickle.dump(vectors_test, file)
-        with open (name_file + f'_vectors_train_run_{s}.pickle', 'wb') as file:
-            pickle.dump(vectors_train, file)
         # We store temporary predictions and vectors
 
+        vectors_train_list.append(vectors_train)
+        vectors_test_list.append(vectors_test)
+        t2 = time.time()
+        time_list.append(t2 - t1)
         
-    t2 = time.time()
+
+    best_accuracy = None
+    best_run = None
+
+    for index, sublist in enumerate(accuracies_test):
+        current_max = max(sublist)
+        if best_accuracy is None or current_max > best_accuracy:
+            best_accuracy = current_max
+            best_run = index
+    # We compute the best accuracy and the best run 
+
+    
     predictions_majority_vote = []
-    vectors_test_mean = [[] for i in range(len(sentences_test))]
-    vectors_train_mean = [[] for i in range(len(sentences_train))]
+
 
 
     for i in range(len(sentences_test)):
         c = Counter(predictions[i])
         value, count = c.most_common()[0]
         predictions_majority_vote.append(value)
-        vectors_test_mean[i].append(mean(vectors_test[i][0]))
-        vectors_test_mean[i].append(mean(vectors_test[i][1]))
-    
-    for i in range(len(sentences_train)):
-        vectors_train_mean[i].append(mean(vectors_train[i][0]))
-        vectors_train_mean[i].append(mean(vectors_train[i][1]))        
+
     
     with open(name_file + "_predictions.txt", "w") as output:
             for pred in predictions_majority_vote:
                 output.write(f"{pred}\n")
-    with open (name_file + '_vectors_test.json', 'w') as file:
-            json.dump(vectors_test_mean, file)
-    with open (name_file + '_vectors_train.json', 'w') as file:
-            json.dump(vectors_train_mean, file)
     # We store the final results of our experiments. 
     # The predictions will be selected with majority vote.
     # For the probability vectors we will use the mean values
 
     for i in range(args.runs):
         os.remove(name_file + f'_predictions_run_{i}.pickle')
-        os.remove(name_file + f'_vectors_test_run_{i}.pickle')
-        os.remove(name_file + f'_vectors_train_run_{i}.pickle')
+
     # We remove the pickle temporary files when comptutations 
     # are finished .
 
     save_json_output(
     'pre_alpha_lambeq', args, predictions_majority_vote,
-    t2 - t1, args.output, [cost, weights]
-    )
+    time_list, args.output, best_val_acc = best_accuracy,
+    best_run = best_run, seed_list = seed_list,
+    val_acc = accuracies_test, val_loss = cost_test,
+    train_acc = accuracies_train, train_loss = cost_train,
+    weights = weights, vectors_train = vectors_train_list,
+    vectors_test = vectors_test_list)
     # We save the json output 
 
 

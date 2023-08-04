@@ -2,6 +2,30 @@ import circuit
 import scipy.optimize
 import math
 import numpy as np
+from sentence import createsentencelist
+
+def compute_predictions(Sentences):
+    predictions = []
+    for i,a_sentence in enumerate(Sentences):
+        mycirc = circuit.CircuitBuilder()
+        mycirc.createcircuit(a_sentence, dataset=True)
+        mycirc.executecircuit()
+        probs = [0, 0]
+        for sample in mycirc.result:
+            state = sample.state.bitstring
+            postselectedqubits = ''.join(state[x] for x in range(len(state)) if x != a_sentence.sentencequbit)
+            if postselectedqubits == '0' * (mycirc.qlmprogram.qbit_count - 1):
+                if state[a_sentence.sentencequbit] == '0':
+                    probs[0] = sample.probability
+                elif state[a_sentence.sentencequbit] == '1':
+                    probs[1] = sample.probability
+        prob0 = probs[0] / sum(probs)
+        if prob0 >= 0.5:
+            predictions.append(0)
+        else:
+            predictions.append(1)
+    return predictions
+
 
 
 class ClassicalOptimizer:
@@ -23,6 +47,7 @@ class ClassicalOptimizer:
                                                     method=method)
         return result
 
+
     def reshapeparams(self, parameters, mySentence):
         originalparams = mySentence.getparameters()
         shapedparams = []
@@ -39,37 +64,8 @@ class ClassicalOptimizer:
 
 
 
-
-    def cost(self, parameters, mySentence):
-        shapedparams = self.reshapeparams(parameters, mySentence)
-        mySentence.setsentenceparameters(randompar=False, params=shapedparams)
-        myCircBuilder = circuit.CircuitBuilder()
-        myCircBuilder.createcircuit(mySentence)
-        myCircBuilder.executecircuit()
-        label=mySentence.label
-        probs = []
-        for sample in myCircBuilder.result:
-            state = sample.state.bitstring
-            postselectedqubits = ''.join(state[x] for x in range(len(state)) if x != mySentence.sentencequbit)
-            if postselectedqubits == '0' * (myCircBuilder.qlmprogram.qbit_count - 1):
-                probs.append(sample.probability)
-                #print("State %s: probability %s, amplitude %s" % (sample.state, sample.probability, sample.amplitude))
-        prob0 = probs[0] / sum(probs)
-        prob1 = probs[1] / sum(probs)
-        if label==0:
-            costval = -math.log(prob0)
-        elif label==1:
-            costval = -math.log(1-prob0)
-        self.iteration += 1
-        if self.iteration % 10 == 0:
-            print('iteration {}'.format(self.iteration), '\n Cost: {}'.format(costval))
-        self.itercost.append(costval)
-        return costval
-
-
-
-
-    def datasetcost(self, parameters, SentencesList, mydict):
+    def datasetcost(
+            self, parameters, SentencesList, mydict):
         cost=0
         par, ix = mydict.getindexmodelparams()
         for mysentence in SentencesList:

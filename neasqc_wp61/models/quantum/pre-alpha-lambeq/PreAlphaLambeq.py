@@ -155,7 +155,7 @@ class PreAlphaLambeq:
     @staticmethod
     def create_dataset(
         circuits : list[discopy.quantum.circuit.Circuit],
-        labels : list[list[int]]
+        labels : list[list[int]], batch_size : int
     ) -> lambeq.Dataset:
         """
         Creates a Dataset class for the training of the lambeq model
@@ -166,14 +166,15 @@ class PreAlphaLambeq:
             List containing quantum circuits
         labels : list[list[int]]
             List containing our labels
-
+        batch_size : int
+            batch size to be used in fitting 
         Returns
         -------
         dataset : lambeq.Dataset
             A lambeq dataset that can be used for training 
         """
         dataset = lambeq.Dataset(
-            circuits, labels
+            circuits, labels, batch_size
         )
         return dataset
    
@@ -202,8 +203,8 @@ class PreAlphaLambeq:
     def create_trainer(
         model : lambeq.PennyLaneModel, loss_function : torch.nn.functional,
         optimiser : torch.optim.Optimizer, epochs : int,
-        learning_rate : float = 0.001, optimizer_args : dict = None,
-        seed : int = 18051967,
+        evaluate_functions : dict ,learning_rate : float = 0.001,
+        optimizer_args : dict = None, seed : int = 18051967,
         device : int = -1
         ) -> lambeq.QuantumTrainer:
         """
@@ -235,6 +236,7 @@ class PreAlphaLambeq:
         model = model,
         loss_function = loss_function,
         epochs = epochs,
+        evaluate_functions = evaluate_functions , 
         optimizer = optimiser,
         learning_rate = learning_rate,
         optimizer_args = optimizer_args,
@@ -243,61 +245,9 @@ class PreAlphaLambeq:
         )
         return trainer
 
+
     @staticmethod
     def post_selected_output(
-        circuit : discopy.quantum.circuit.Circuit,
-        model : lambeq.PennyLaneModel
-    ) -> np.array:
-        """
-        For a given circuit, outputs the normalised
-        probabilities of each state of the postselected qubits
-
-        Parameters
-        ----------
-        circuit : discopy.quantum.circuit.Circuit
-            Quantum Circuit we want to analyse
-        model : lambeq.PennyLaneModel
-            A lambeq model storing the quantum parameters
-            assigned per word. 
-
-        Returns 
-        -------
-        post_selected_output : np.array
-            Array containig the proabilities of each state 
-        """
-        circuit = circuit.to_pennylane(
-            probabilities = True
-        )
-        symbol_weight_map = {}
-        for i,j in enumerate(model.symbols):
-            symbol_weight_map[j] = model.weights.__getitem__(i)
-        circuit.initialise_concrete_params(
-            symbol_weight_map
-        )
-        post_selected_output = circuit.eval().detach().numpy()
-        return post_selected_output
+        model, circuits):
+        return model.get_diagram_output(circuits)
     
-    @staticmethod
-    def predicted_label(
-        post_selected_output : np.array
-    ) -> int:
-        """
-        Assigns a label depeding on the probabilities of the post-selected output
-
-        Parameters
-        ----------
-        post_selected_output : np.array
-            Array containing the probabilities of each state
-        
-        Returns
-        -------
-        prediction : int
-            Predicted label 
-        """
-        post_selected_output = post_selected_output / np.sum(post_selected_output)
-        if post_selected_output[0] > 0.5:
-            prediction = 0
-            return prediction
-        else : 
-            prediction = 1
-            return prediction

@@ -10,7 +10,8 @@ from collections import Counter
 import optimizer
 import loader
 import dictionary
-import sentence
+from sentence import createsentencelist
+from optimizer import compute_predictions
 import circuit
 import pickle
 import time 
@@ -49,29 +50,23 @@ def main():
     random.seed(int(args.seed))
     seed_list = random.sample(range(1, 10000000000000), int(args.runs))
     Dftrain, Dftest = loader.createdf(args.train, args.test)
+    train_truth_value = Dftrain['truth_value'].tolist()
+    test_truth_value = Dftest['truth_value'].tolist()
     predictions = [[] for i in range(Dftest.shape[0])]
     cost = []
+    accuracies_train = [] 
+    accuracies_test = [] 
     weights = []
-    t1 = time.time()
+    times_list = []
+
     for s in range(int(args.runs)):
+        t1 = time.time()
         seed = seed_list[s]
         Myvocab = loader.getvocabdict(Dftrain, Dftest)
         MyDict = dictionary.QuantumDict(qn=1, qs=1)
         MyDict.addwords(myvocab=Myvocab)
         MyDict.setvocabparams(seed=seed)
 
-        def createsentencelist(dftrain, mydict):
-            sentences_list = []
-            for i, DataInstance in dftrain.iterrows():
-                a_sentence = sentence.Sentence(
-                    DataInstance,
-                    dataset=True,
-                    dictionary=mydict)
-                a_sentence.getqbitcontractions()
-                a_sentence.setparamsfrommodel(mydict)
-                sentences_list.append(a_sentence)
-
-            return sentences_list
         
 
         SentencesList = createsentencelist(Dftrain, MyDict)
@@ -87,34 +82,30 @@ def main():
         weights.append(result.x.tolist())
 
         SentencesTest = createsentencelist(Dftest, MyDict)
-        for i,a_sentence in enumerate(SentencesTest):
-            mycirc = circuit.CircuitBuilder()
-            mycirc.createcircuit(a_sentence, dataset=True)
-            mycirc.executecircuit()
-            probs = [0, 0]
-            for sample in mycirc.result:
-                state = sample.state.bitstring
-                postselectedqubits = ''.join(state[x] for x in range(len(state)) if x != a_sentence.sentencequbit)
-                if postselectedqubits == '0' * (mycirc.qlmprogram.qbit_count - 1):
-                    if state[a_sentence.sentencequbit] == '0':
-                        probs[0] = sample.probability
-                    elif state[a_sentence.sentencequbit] == '1':
-                        probs[1] = sample.probability
-            prob0 = probs[0] / sum(probs)
-            if prob0 >= 0.5:
-
-                predictions[i].append(0)
-            else:
-                predictions[i].append(1)
-
+        SentencesTrain = createsentencelist(Dftrain, MyDict)
+        predictions_iteration_test = compute_predictions(SentencesTest)
+        predictions_iteration_train = compute_predictions(SentencesTrain)
+        true_values_train = 0 
+        true_values_test = 0
+        for i,pred in enumerate(predictions_iteration_test):
+            predictions[i].append(pred)
+            if pred == test_truth_value[i]:
+                true_values_test += 1
+        for i,pred in enumerate(predictions_iteration_train):
+            if pred == train_truth_value[i]:
+                true_values_train += 1
+        
+        accuracies_test.append(true_values_test/len(predictions_iteration_test))
+        accuracies_train.append(true_values_train/len(predictions_iteration_train))
         with open (
             args.output +
             f'pre_alpha_{args.seed}_{args.optimiser}_{args.iterations}_{args.runs}_run_{s}.pickle', 'wb') as file:
             pickle.dump(predictions, file)
         ## We use pickle to store the temporary results 
-
-    t2 = time.time()
-
+        t2 = time.time()
+        times_list.append(t2 - t1)
+    best_final_accuracy = max(accuracies_train)
+    best_run = accuracies_train.index(best_final_accuracy)
     predictions_majority_vote = []
     for i in range(Dftest.shape[0]):
         c = Counter(predictions[i])
@@ -133,7 +124,10 @@ def main():
 
     save_json_output(
         'pre_alpha', args, predictions_majority_vote,
-        t2 - t1, args.output, [cost, weights]
+        t2 - t1, args.output, best_final_val_acc = best_final_accuracy,
+        best_run = best_run, seed_list = seed_list, 
+        final_val_acc = accuracies_test, final_train_acc = accuracies_train,
+        train_loss = cost, weights = weights
     )
 
 

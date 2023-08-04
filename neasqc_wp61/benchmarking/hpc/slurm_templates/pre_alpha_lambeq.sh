@@ -1,5 +1,6 @@
 #!/bin/sh
 
+
 # Slurm flags
 #SBATCH -p GpuQ
 #SBATCH -N 1
@@ -10,7 +11,7 @@
 #SBATCH -A iccom018c
 
 # Write stdout+stderr to file
-#SBATCH -o ./benchmarking/hpc/slurm_output/pre_alpha_lambeq_{{ s }}_{{ p }}_{{ i }}_{{ r }}_{{ an }}_{{ qn }}_{{ nl }}_{{ np }}.txt
+#SBATCH -o slurm_output/pre_alpha_lambeq_{{ s }}_{{ p }}_{{ i }}_{{ r }}_{{ an }}_{{ qn }}_{{ nl }}_{{ np }}.txt
 
 # Mail me on job start & end
 #SBATCH --mail-user=pablo.suarez@ichec.ie
@@ -20,9 +21,9 @@ cd /ichec/work/iccom018c
 
 cd WP6_QNLP/neasqc_wp61
 
-module load conda
+module load conda 
 
-source activate /ichec/work/iccom018c/.conda/qnlp
+source activate /ichec/work/iccom018c/.conda/env_pre_alpha_lambeq 
 
 module load cuda/11.4
 
@@ -40,6 +41,6 @@ module load cuda/11.4
 
 echo "`date +%T`"
 
-bash 6_Classify_With_Quantum_Model.sh -m pre_alpha_lambeq -t ./data/datasets/reduced_amazonreview_pre_alpha_train.tsv -v ./data/datasets/reduced_amazonreview_pre_alpha_test.tsv -s {{ s }} -p {{ p }}  -i {{ i }} -r {{ r }} -a {{ aq }} -q {{ qn }} -n {{ nl }} -x {{ np }} -o ./benchmarking/results/raw/
+bash 6_Classify_With_Quantum_Model.sh -m pre_alpha_lambeq -t ./data/datasets/reduced_amazonreview_pre_alpha_train.tsv -v ./data/datasets/reduced_amazonreview_pre_alpha_test.tsv -s {{ s }} -p {{ p }}  -i {{ i }} -r {{ r }} -a {{ an }} -q {{ qn }} -n {{ nl }} -x {{ np }} -o ./benchmarking/results/raw/
 
 echo "`date +%T`"
