@@ -76,6 +76,7 @@ class Alpha_pennylane_trainer():
             running_corrects = 0
 
             self.model.train()
+            #with torch.enable_grad():
             #for circuits, embeddings, labels in train_dataloader:
             for inputs, labels in self.training_dataloader:
                 batch_size_ = len(inputs)
@@ -83,11 +84,21 @@ class Alpha_pennylane_trainer():
                 labels = labels.to(self.device)
 
                 self.optimizer.zero_grad()
-
                 outputs = self.model(inputs)
+
+                
                 _, preds = torch.max(outputs, 1)
                 loss = self.criterion(outputs, labels)
                 loss.backward()
+
+                print('-'*20)
+                #print the grad values of the model
+                # for name, param in self.model.named_parameters():
+                #     print(name, param.grad)
+                # print('-'*20)
+
+                # raise Exception('stop')
+            
                 self.optimizer.step()
 
                 # Print iteration results
