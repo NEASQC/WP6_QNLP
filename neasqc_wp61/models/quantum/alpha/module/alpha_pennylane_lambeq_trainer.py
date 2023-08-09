@@ -43,9 +43,13 @@ class Alpha_pennylane_lambeq_trainer():
         else:
             self.X_train, self.X_test, self.Y_train, self.Y_test = preprocess_train_test_dataset(self.train_path, self.test_path)
 
-        self.train_diagrams, self.train_labels = self.create_diagrams(self.X_train, self.Y_train)
-        self.test_diagrams, self.test_labels = self.create_diagrams(self.X_test, self.Y_test)
+        self.train_diagrams, self.train_label, self.X_train ,self.Y_train = self.create_diagrams(self.X_train, self.Y_train)
+        self.test_diagrams, self.test_labels, self.X_test, self.Y_test = self.create_diagrams(self.X_test, self.Y_test)
 
+        print("Number of training diagrams: ", len(self.train_diagrams))
+        print("Number of test diagrams: ", len(self.test_diagrams))
+        print("Number of training labels: ", len(self.Y_train))
+        print("Number of test labels: ", len(self.Y_test))
 
         train_circuits = self.create_circuits(self.train_diagrams, self.ansatz, self.n_layers, self.n_single_qubit_params, self.qn, self.qs)
         val_circuits = self.create_circuits(self.test_diagrams, self.ansatz, self.n_layers, self.n_single_qubit_params, self.qn, self.qs)
@@ -230,8 +234,12 @@ class Alpha_pennylane_lambeq_trainer():
                 raw_diagrams_rewrited.append(rewriter(diagram))
                 y_rewrited.append(Y.iloc[index])
             except TypeError:
-                print(index)
                 print("Error in rewriting diagram: ", diagram)
+                print("Sentence: ", X['sentence'].iloc[index])
+                print("Index: ", index)
+                print('-----')
+
+                X.drop(X.index[index])
 
 
         raw_diagrams = raw_diagrams_rewrited
@@ -247,7 +255,7 @@ class Alpha_pennylane_lambeq_trainer():
             in zip(diagrams, Y)
             if diagram is not None]
 
-        return diagrams, labels
+        return diagrams, labels, X, Y
 
     
     def create_circuits(self, diagrams: list, ansatz: CircuitAnsatz, n_layers: int, n_single_qubit_params: int, qn: int, qs: list):
