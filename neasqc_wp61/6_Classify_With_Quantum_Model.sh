@@ -68,7 +68,7 @@ python3.10 ./data/data_processing/use_pre_alpha.py -s ${seed} -op ${optimiser} -
 elif [[ "${model}" == "pre_alpha_lambeq" ]]
 then
 echo "running pre_alpha_lambeq"
-python3.10 ./data/data_processing/use_pre_alpha_lambeq.py -s ${seed} -op ${optimiser} -i ${iterations} -r ${runs} -tr ${train} -te ${test} -o ${outfile} -an ${ansatz} -qn ${qn} -nl ${nl} -np ${np}
+python3.10 ./data/data_processing/use_pre_alpha_lambeq.py -s ${seed} -op ${optimiser} -i ${iterations} -r ${runs} -tr ${train} -te ${test} -o ${outfile} -an ${ansatz} -qn ${qn} -nl ${nl} -np ${np} -b ${b}
 elif [[ "${model}" == "alpha_pennylane" ]]
 then
 echo "running alpha_pennylane"
