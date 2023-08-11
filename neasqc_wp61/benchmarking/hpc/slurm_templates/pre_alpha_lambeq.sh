@@ -33,7 +33,7 @@ module load cuda/11.4
 # -r : number of runs of the model
 # -i : number of iterations of the optmiser
 # -p : choice of optimiser
-# -b : batch size for GPU processing 
+# -b : batch size for GPU processing (set to 0 for default or when using CPU)
 # -a : choice of ansatz
 # -q : number of qubits per noun type
 # -n: number of layers in the quantum circuit
