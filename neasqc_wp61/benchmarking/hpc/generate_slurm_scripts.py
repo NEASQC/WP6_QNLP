@@ -36,20 +36,20 @@ def main():
             f2.write(filled_template)
           
       elif params[0] == 'pre_alpha_lambeq':
-        if len(params) != 9: 
+        if len(params) != 10: 
           print("WARNING: line " + str(j) + " in your text file has the wrong number of parameters for the chosen model. This line will be skipped.")
           continue
         else:
           '''
           If model is pre-alpha lambeq, create a SLURM script whose name is in the format
-          pre_alpha_lambeq_[seed]_[optimiser]_[iterations]_[runs]_[ansatz]_[qubits per noun]_[number of circuit layers]_[number of single qubit params].sh
+          pre_alpha_lambeq_[seed]_[optimiser]_[iterations]_[runs]_[ansatz]_[qubits per noun]_[number of circuit layers]_[number of single qubit params]_[batch size].sh
           '''
           slurm_template = "slurm_templates/pre_alpha_lambeq.sh"
           with open(slurm_template, 'r') as f1:
             template = Template(f1.read())
-          s, p, i, r, an, qn, nl, np = params[1:]
-          filled_template = template.render(s=s, r=r, i=i, p=p, an=an, qn=qn,nl=nl,np=np)
-          with open(f'slurm_scripts/pre_alpha_lambeq_{s}_{p}_{i}_{r}_{an}_{qn}_{nl}_{np}.sh','w') as f2:
+          s, p, i, r, an, qn, nl, np, b = params[1:]
+          filled_template = template.render(s=s, r=r, i=i, p=p, an=an, qn=qn,nl=nl,np=np, b=b)
+          with open(f'slurm_scripts/pre_alpha_lambeq_{s}_{p}_{i}_{r}_{an}_{qn}_{nl}_{np}_{b}.sh','w') as f2:
             f2.write(filled_template)
     
       #elif params[0] = 'alpha'
