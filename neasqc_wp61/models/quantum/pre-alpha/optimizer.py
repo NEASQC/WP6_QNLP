@@ -116,8 +116,16 @@ class ClassicalOptimizer:
             # Compute the cost
             # prob0 + prob1 = 1 normally, to check if its the case
             epsilon = 1e-7 # to avoid log(0)
+
+            # BCE Loss
             #cost += -(mysentence.label * math.log(prob1+epsilon) + (1 - mysentence.label) * math.log(prob0+epsilon))
-            cost+= -(mysentence.label * math.log(prob1+epsilon) + (1 - mysentence.label) * math.log(prob0+epsilon))/-(math.log(prob0+epsilon) + math.log(1-prob0+epsilon))
+
+            #Normalized BCE Loss
+            # From https://stats.stackexchange.com/questions/499423/normalized-cross-entropy
+            # Here p = 0.5 for a balanced dataset
+            # So we can simplify the formula
+            p = 0.5
+            cost+= -(mysentence.label * math.log(prob1+epsilon) + (1 - mysentence.label) * math.log(prob0+epsilon))/-(math.log(p))
 
             # Compute the accuracy
             # prob0 + prob1 = 1 normally, to check if its the case
@@ -186,8 +194,16 @@ class ClassicalOptimizer:
             # Compute the cost
             # prob0 + prob1 = 1 normally, to check if its the case
             epsilon = 1e-7 # to avoid log(0)
+
+            # BCE Loss
             #cost += -(mysentence.label * math.log(prob1+epsilon) + (1 - mysentence.label) * math.log(prob0+epsilon))
-            cost+= -(mysentence.label * math.log(prob1+epsilon) + (1 - mysentence.label) * math.log(prob0+epsilon))/-(math.log(prob0+epsilon) + math.log(1-prob0+epsilon))
+
+            #Normalized BCE Loss
+            # From https://stats.stackexchange.com/questions/499423/normalized-cross-entropy
+            # Here p = 0.5 for a balanced dataset
+            # So we can simplify the formula
+            p = 0.5
+            cost+= -(mysentence.label * math.log(prob1+epsilon) + (1 - mysentence.label) * math.log(prob0+epsilon))/-(math.log(p))
 
             # Compute the accuracy
             # prob0 + prob1 = 1 normally, to check if its the case
