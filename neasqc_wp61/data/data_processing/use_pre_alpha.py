@@ -59,6 +59,10 @@ def main():
     weights = []
     times_list = []
 
+    test_loss_list = []
+    test_acc_list = []
+    train_acc_list = []
+
     for s in range(int(args.runs)):
         t1 = time.time()
         seed = seed_list[s]
@@ -70,13 +74,19 @@ def main():
         
 
         SentencesList = createsentencelist(Dftrain, MyDict)
+        SentencesTest = createsentencelist(Dftest, MyDict)
+
         par, ix = MyDict.getindexmodelparams()
         myopt = optimizer.ClassicalOptimizer()
         result = myopt.optimizedataset(
-            SentencesList, par, MyDict,
+            SentencesList, SentencesTest, par, MyDict,
             options={'maxiter': int(args.iterations), 'disp' : False},
             method=args.optimiser)
         cost.append(myopt.itercost)
+
+        test_loss_list.append(myopt.test_loss_list)
+        test_acc_list.append(myopt.test_acc_list)
+        train_acc_list.append(myopt.train_acc_list)
 
         MyDict.updateparams(result.x)
         weights.append(result.x.tolist())
@@ -122,13 +132,18 @@ def main():
     # We remove the pickle temporary files when comptutations 
     # are finished .
 
+
     save_json_output(
         'pre_alpha', args, predictions_majority_vote,
         t2 - t1, args.output, best_final_val_acc = best_final_accuracy,
         best_run = best_run, seed_list = seed_list, 
         final_val_acc = accuracies_test, final_train_acc = accuracies_train,
-        train_loss = cost, weights = weights
+        train_loss = cost, weights = weights,
+
+        train_acc = train_acc_list, val_acc = test_acc_list,
+        val_loss = test_loss_list
     )
+
 
 
 if __name__ == "__main__":

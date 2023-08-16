@@ -63,8 +63,13 @@ def plot_experiment_results(json_file):
         std_train_losses = np.std(train_losses, axis=0)
 
     # Extract the mean time
-    for i in range(experiment_count):
-        times.append(data['time'][i])
+    if isinstance(data['time'], list):
+        # We have a list of values
+        for i in range(experiment_count):
+            times.append(data['time'][i])
+    else:
+        # We have a single value
+        times.append(data['time'])
 
 
 
@@ -75,7 +80,14 @@ def plot_experiment_results(json_file):
     print(summary)
     print('\n')
 
-    result_keys = ['best_val_acc', 'best_run']
+    if data.get('best_val_acc') is not None:
+        #Alpha runs
+        result_keys = ['best_val_acc', 'best_run']
+
+    else:
+        #Pre_alpha and Beta runs
+        result_keys = ['best_final_val_acc', 'best_run']
+
     summary_results_dict = {key: data[key] for key in result_keys}
     summary_results_dict['mean_time'] = np.mean(times)
 
@@ -85,7 +97,8 @@ def plot_experiment_results(json_file):
     summary = summary.replace("\n", "<br>")
     summary_results = summary_results.replace("\n", "<br>")
 
-
+    print(len(mean_train_losses))
+    print(len(list(range(1, iterations + 1)) ))
     # We have 3 case scenarios:
     # 1. We have all the data
     # 2. We have only the accuracy data
