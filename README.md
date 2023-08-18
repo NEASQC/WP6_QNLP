@@ -368,12 +368,26 @@ bash 6_Classify_With_Quantum_Model.sh -t
 -s 1 -m "pre_alpha" -r 1 -i 1 -p "COBYLA" -o "test.txt"
 ```
 #### Pre-Alpha-Lambeq
-
+```
+bash 6_Classify_With_Quantum_Model.sh -t
+"data/datasets/reduced_amazonreview_pre_alpha_train.tsv" -v
+"data/datasets/reduced_amazonreview_pre_alpha_test.tsv" -s 1
+-m "pre_alpha_lambeq" -r 1 -i 1 -p "COBYLA"
+-o "test.txt" -a "IQP" -q 1 -n 1 -x 3 -b 100
+```
 #### Alpha-Original
 
 #### Alpha-Pennylane
 
 #### Alpha-Pennylane-Lambeq
+
+#### Plotting Results
+
+Navigate to neasqc_wp61/benchmarking/results_processing/. Then run the following command for a given output.json file located in neasqc_wp61/benchmarking/results/raw/.
+
+```
+python3.10 plot_single_experiments_results.py ../results/raw/output.json
+```
 
 ### Running HPC Jobs
 
