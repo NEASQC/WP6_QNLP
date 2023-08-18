@@ -362,7 +362,10 @@ appropriate command given above in Step 4.
 
 #### Pre-Alpha
 ```
-bash 6_Classify_With_Quantum_Model.sh -t "data/datasets/reduced_amazonreview_pre_alpha_train.tsv" -v "data/datasets/reduced_amazonreview_pre_alpha_test.tsv" -s 1 -m "pre_alpha" -r 1 -i 1 -p "COBYLA" -o "test.txt"
+bash 6_Classify_With_Quantum_Model.sh -t 
+"data/datasets/reduced_amazonreview_pre_alpha_train.tsv" 
+-v "data/datasets/reduced_amazonreview_pre_alpha_test.tsv" 
+-s 1 -m "pre_alpha" -r 1 -i 1 -p "COBYLA" -o "test.txt"
 ```
 #### Pre-Alpha-Lambeq
 
