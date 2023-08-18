@@ -330,6 +330,48 @@ We will assume that the user has a working directory with path `/path/work_dir`.
 To activate the environment we do not have to use `poetry shell` because Poetry has installed the dependencies within the Conda environment, rather than within a Poetry shell. Thus, every time you want to activate the environment you must use the 
 appropriate command given above in Step 4.
 
+### Run Models on the Command Line
+
+#### Parameter Descriptions
+
+
+| Parameter | Command Line Tag |
+|-----------|------------------|
+| Train   | t |
+| Test   | v |
+| Seed  | s |
+| Model  | m |
+| Runs  | r |
+| Optimiser   | p |
+| Iterations  | i |
+| Outfile  | o |
+| Ansatz   | a |
+| Number of qubits per noun   | q |
+| number of circuit layers   | n |
+| number of single qubit parameters  | x |
+| Number of qubits in our circuit  | u |
+| Initial spread of the parameters   | d |
+| Batch size  | b |
+| Learning rate   | l |
+| Weight decay  | w |
+| Step size for the learning rate scheduler  | z |
+| Gamma for the learning rate scheduler  | g |
+| Version between alpha-pennylane-lambeq and alpha-pennylane-lambeq-original   | y |
+| Reduced dimension for the word embeddings | c |
+| Number of qubits per SENTENCE type  | e |
+
+#### Pre-Alpha
+```
+bash 6_Classify_With_Quantum_Model.sh -t "data/datasets/reduced_amazonreview_pre_alpha_train.tsv" -v "data/datasets/reduced_amazonreview_pre_alpha_test.tsv" -s 1 -m "pre_alpha" -r 1 -i 1 -p "COBYLA" -o "test.txt"
+```
+#### Pre-Alpha-Lambeq
+
+#### Alpha-Original
+
+#### Alpha-Pennylane
+
+#### Alpha-Pennylane-Lambeq
+
 ### Running HPC Jobs
 
 We give instructions here for submitting jobs on an HPC cluster which uses SLURM for the management and scheduling of jobs. If the system you are working on uses an alternative workload manager, please refer to its documentation for instructions on submitting jobs. 
