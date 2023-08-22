@@ -19,6 +19,9 @@ class Alpha_pennylane_lambeq_model(PennyLaneModel):
         
         self.post_qc = nn.Sequential(nn.Linear(2, 1),
                                 nn.Sigmoid())
+        
+        print('version original value MODEL: ', self.version_original) 
+
 
     
     # To be called after the model is initialized
@@ -101,11 +104,26 @@ class Alpha_pennylane_lambeq_model(PennyLaneModel):
             # Here we have a list of embeddings for each sentence
             embedding_out = self.pre_qc(bert_embeddings)
 
+        #import pdb
+        #pdb.set_trace()
         # update the corresponding weights of the model
-        param_indexes_list = [self.param_indexes_dict[diagram] for diagram in diagrams]
+        #param_indexes_list = [self.param_indexes_dict[diagram] for diagram in diagrams]
 
         # update the weights of the model
-        [self.update_weights_from_embedding(param_indexes, embedding) for param_indexes, embedding in zip(param_indexes_list, embedding_out)]
+        #[self.update_weights_from_embedding(param_indexes, embedding) for param_indexes, embedding in zip(param_indexes_list, embedding_out)]
+
+
+        #What about overlapping sentences? (sentences with a common symbol --> will modify the same weight)
+        #Solution: Execute each circuit individually just after modifying its weights ?
+        #           --> Will become even slower than right now
+        
+        for diagram, embedding in zip(diagrams, embedding_out):
+            diagram_symbols = self.circuit_map[diagram]._symbols
+
+            for symbol, value in zip(diagram_symbols, embedding):
+            
+                self.symbol_weight_map[symbol] = torch.nn.Parameter(torch.tensor(value))
+
 
         # evaluate the circuits
         qc_output = self.get_diagram_output(diagrams)

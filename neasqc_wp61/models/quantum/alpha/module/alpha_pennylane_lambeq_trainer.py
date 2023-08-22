@@ -36,6 +36,7 @@ class Alpha_pennylane_lambeq_trainer():
         # seed everything
         seed_everything(self.seed)
 
+        print('version original value: ', self.version_original) 
 
         # load the dataset
         if version_original:
@@ -66,6 +67,8 @@ class Alpha_pennylane_lambeq_trainer():
             self.valid_dataset = Dataset(list(zip(val_circuits, self.X_test['sentence_vectorized'].values.tolist())),
                                     self.Y_test,
                                     batch_size=self.batch_size)
+            print('version original value IF: ', self.version_original) 
+
         else:
             self.train_dataset = Dataset(list(zip(train_circuits, np.vstack(self.X_train['sentence_embedding'].apply(np.array)))),
                                     self.Y_train,
@@ -74,6 +77,7 @@ class Alpha_pennylane_lambeq_trainer():
             self.valid_dataset = Dataset(list(zip(val_circuits, np.vstack(self.X_test['sentence_embedding'].apply(np.array)))),
                                     self.Y_test,
                                     batch_size=self.batch_size)
+            print('version original value ELSE: ', self.version_original) 
         
 
         # initialise model
@@ -82,7 +86,7 @@ class Alpha_pennylane_lambeq_trainer():
         # initialise our model by pas sing in the diagrams, so that we have trainable parameters for each token
         self.model.initialise_weights()
         self.model.update_pre_qc_output_size()
-        self.model.find_param_indexes_from_diagram_dict(self.all_circuits)
+        #self.model.find_param_indexes_from_diagram_dict(self.all_circuits)
         self.model = self.model.double()
 
         # initialise loss and optimizer
@@ -120,10 +124,12 @@ class Alpha_pennylane_lambeq_trainer():
                 self.optimizer.zero_grad()
 
                 if self.version_original:
+                    print('version original value IF train loop: ', self.version_original) 
                     # Word version
                     embedding_list = [torch.tensor(embedding) for embedding in embeddings]
                     predicted = self.model(circuits, embedding_list)
                 else:
+                    print('version original value ELSE train loop: ', self.version_original) 
                     # Sentence version
                     predicted = self.model(circuits, torch.from_numpy(np.vstack(embeddings)))
 
