@@ -11,7 +11,7 @@ We here detail the procedure to be followed for cloning.
 
 <ol>
   <li>Open the code repository in your browser.</li>
-  <li>Open the drop-down menu on the leftClick on the 'Switch branches/tags' button to select v0.3 branch.</li>
+  <li>Open the drop-down menu on the left. Click on the 'Switch branches/tags' button to select v0.3 branch.</li>
   <li>Click on the green code button and choose the cloning method you want to use, GitHub provides detailes steps for each method (HTTPS, SSH, etc).</li>
   <li>Open a terminal on your computer and navigate to the directory you wish to clone the repository into. </li>
   <li>Run the following command in your terminal:
@@ -99,7 +99,7 @@ Some of the tools used in the module require a language model to be donwloaded b
 The language model will be stored in the created virtual environment. 
 
 ## Running the notebooks
-We can use jupyter notebook to run the jupyter notebooks that appear on the repository. To do so, we can run the following command:
+We can use Jupyter Notebooks to run the notebooks that appear on the repository. To do so, we can run the following command:
  <pre>
   <code>
     $ python3.10 -m ipykernel install --user --name  &ltenvironment_name&gt --display-name "&ltkernel_name&gt"
@@ -165,7 +165,7 @@ We will give now instructions for running each one of the notebooks, depending o
 
 
 ## Pre-alpha Functionalities
-The main scope of the pre-alpha model is to build a variational quantum algorithm that makes sentence classification in categories True or False. The structure of the analyzed sentences will be: 
+The main scope of the pre-alpha model is to build a variational quantum algorithm that performs sentence classification with categories True or False. The structure of the analyzed sentences will be: 
 <ul>
   <li>NOUN-TRANSITIVE VERB-NOUN</li>
   <li>NOUN-INTRANSITIVE VERB</li>
@@ -176,16 +176,16 @@ The main scope of the pre-alpha model is to build a variational quantum algorith
 
 Some classical classifiers are implemented in order to have a reference against which to compare our quantum solution.
 <ul>
-  <li>K-nearest neighbors classifier from sklearn package applied to BERT embeddings.</li>
-  <li>A feedforward neural network classifier from tensorflow package applied to BERT embeddings.</li>
-  <li>A convolutional neural network classifier from tensorflow package applied to fasttext embeddings.</li>
+  <li>K-nearest neighbors classifier from the scikit-learn package applied to BERT embeddings.</li>
+  <li>A feedforward neural network classifier from the tensorflow package applied to BERT embeddings.</li>
+  <li>A convolutional neural network classifier from the tensorflow package applied to fasttext embeddings.</li>
 </ul>
 
 After the models are trained we compute and compare their accuracies on the training and test dataset. 
 
 ### Variational quantum circuit classfier
 
-A variational quantum circuit is built with initial random parameters. In the circuit, only one qubit is measured (post-selection), and the variational parameters will be optimized using the labeled sentences in dataset so that the state obtained when measuring the qubit coincides with the value of the sentence (FALSE=0, TRUE=1). 
+A variational quantum circuit is built with initial random parameters. In the circuit, only one qubit is measured (post-selection), and the variational parameters will be optimized using the labelled sentences in the dataset so that the state obtained when measuring the qubit coincides with the value of the sentence (FALSE=0, TRUE=1). 
 
 After the variational circuit is trained, the accuracy over the training and test dataset will be measured and compared. 
 
@@ -198,9 +198,9 @@ Let's briefly describe how the functionalities explained above are implemented.
 
 The classical classifiers are implemented in the notebook [Classical classifiers.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/doc/tutorials/Classical_classifiers.ipynb). The file [NNClassifier.py](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/classical/NNClassifier.py) contains the class and functions used to prepare the data, build and train the convolutional and feedforward networks. 
 
-Regarding the variational quantum circuit, in the notebook [Single_sentence_example.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/doc/tutorials/Single_sentence_example.ipynb) we can find an example where the circuit parameters are optimized based on only one sentence. In the notebook [Dataset_example.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/doc/tutorials/Dataset_example.ipynb), we can find an example on the variational algorithm trained with a whole dataset of sentences. We also can see there the implementation of a function to guess a missing word in a sentence. 
+Regarding the variational quantum circuit, in the notebook [Single_sentence_example.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/doc/tutorials/Single_sentence_example.ipynb) we can find an example where the circuit parameters are optimized based on only one sentence. In the notebook [Dataset_example.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/doc/tutorials/Dataset_example.ipynb), we can find an example on the variational algorithm trained with a whole dataset of sentences. There, one can also find the implementation of a function to guess a missing word in a sentence. 
 
-The functions and classes used to implement the variational quantum circuit are taken from different files. In [dictionary.py](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/quantum/pre-alpha/dictionary.py) we define classes that allow us to store the words than can appear on a sentence in dictionaries. Functions are defined that allow us to get and update the variational parameters associated to each word in the quantum circuit. Some of these functions are used in [sentence.py](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/quantum/pre-alpha/sentence.py), which provides the required tools to build the structure of the circuit that represents the sentence depending on its type and in some user-defined parameters. [ciruit.py](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/quantum/pre-alpha/circuit.py) contains functions that build, simplify (by qubit contractions) and execute the variational circuit. A class to optimize the variational parameters of the circuit with respect to a sentence or dataset of sentences can be found on [optimizer.py](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/quantum/pre-alpha/optimizer.py). Finally, in [loader.py](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/quantum/pre-alpha/loader.py) we can find functions that help in the processing of the datasets. 
+The functions and classes used to implement the variational quantum circuit are taken from different files. In [dictionary.py](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/quantum/pre-alpha/dictionary.py) we define classes that allow us to store the words than can appear on a sentence in dictionaries. Functions are defined that allow us to get and update the variational parameters associated to each word in the quantum circuit. Some of these functions are used in [sentence.py](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/quantum/pre-alpha/sentence.py), which provides the required tools to build the structure of the circuit that represents the sentence depending on its type and on some user-defined parameters. [ciruit.py](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/quantum/pre-alpha/circuit.py) contains functions that build, simplify (by qubit contractions) and execute the variational circuit. A class to optimize the variational parameters of the circuit with respect to a sentence or dataset of sentences can be found on [optimizer.py](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/quantum/pre-alpha/optimizer.py). Finally, in [loader.py](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/quantum/pre-alpha/loader.py) we can find functions that help in the processing of the datasets. 
 
 ## Alpha Functionalities
 
@@ -220,7 +220,7 @@ Using the lambeq package, a tket parametrised quantum circuit is generated for e
 
 The dressed quantum circuit forms our trainable PyTorch neural network. Initially the sentence embedding dimensionality is reduced to be compatible with the dimension of their respective parameters within the parametrised quantum circuits. This is achieved using sequential, cascasding linear transformations. Next the quantum circuit is run, after which the measurement outcomes are fed into a post-processing neural network which ultimately classifies the sentence as true or false.
 
-### Torch OPtimisation
+### Torch Optimisation
 
 The dressed quantum circuit model is trained using Torch.
   
@@ -228,7 +228,7 @@ The dressed quantum circuit model is trained using Torch.
 
 The alpha is currently implemented in one single jupyter notebook, [Dressed_QNLP_demo.ipynb](https://github.com/NEASQC/WP6_QNLP/blob/v0.3/neasqc_wp61/models/quantum/alpha/Dressed_QNLP_demo.ipynb). The beginning of the notebook contains a demonstration of how BERT sentence embeddings and parametrised quantum circuits can be generated using a small number of sample sentences. After this demonstration, and below the "Dressed Quantum Circuits" heading, two classes are defined which can be used in a pipeline that takes in our sentence dataset and generates a trainable model. After this generation, the model is trained using PyTorch. 
 
-WARNING: You must run the initial demonstration as many of the functions and imports are used in the definition of the actual model, later in the notebook.
+WARNING: You must run the initial demonstration, as many of the functions and imports are used in the definition of the actual model later in the notebook.
 
 ### Alpha Discussion
 
@@ -247,8 +247,8 @@ Some benefits and issues of this approach are:
 
 #### Issues
 <ul>
-  <li>Pytket loses the tensor nature of parameters, giving an output consisting of a list of floats or simply counts -> Differentiable circuits in Pennylane could be a solution.</li>
-  <li>It is not clear if we gain any quantum advantage with this methods, as a classical NN has to be trained.</li>
+  <li>Pytket loses the tensor nature of parameters, giving an output consisting of a list of floats or simply counts. Differentiable circuits in Pennylane could be a solution.</li>
+  <li>It is not clear if we gain any quantum advantage with this method, as a classical NN has to be trained.</li>
 </ul>
 
 ## Classical NLP
@@ -290,6 +290,115 @@ to generate a tab-separated file containing lines of the form
 `<sentence>\t<sentence_type>\t<truth_value>` where `<truth_value>` is 1 if the sentence states a
 fact that is true and 0 otherwise, and `<sentence_type>` denotes the sentence type, e.g., `NOUN-TVERB-NOUN`.
 
+### Run Models on the Command Line
+
+#### Parameter Descriptions
+
+##### Pre Alpha Models
+
+O = Pre Alpha Original, L = Pre Alpha Lambeq
+
+| Parameter | Command Line Tag | Model Version |
+|-----------|------------------|---------------|
+| Train   | t | O, L |
+| Test   | v | O, L |
+| Seed  | s | O, L |
+| Model  | m | O, L |
+| Runs  | r | O, L |
+| Optimiser   | p | O, L |
+| Iterations  | i | O, L |
+| Outfile  | o | O, L |
+| Ansatz   | a | L |
+| Number of qubits per noun   | q | L |
+| Number of circuit layers   | n | L |
+| Number of single qubit parameters  | x | L |
+| Batch size | b | L |
+
+##### Alpha Models 
+
+O = Alpha Original, L = Alpha Lambeq 
+, P = Alpha Pennylane
+
+| Parameter | Command Line Tag | Model Version | 
+|-----------|------------------|---------------|
+| Train   | t | O, L, P |
+| Test   | v | O, L, P |
+| Seed  | s | O, L, P |
+| Model  | m | O, L, P |
+| Runs  | r | O, L, P |
+| Optimiser   | p | - |
+| Iterations  | i | O, L, P |
+| Outfile  | o | O, L, P |
+| Ansatz   | a | O, L, P |
+| Number of qubits per noun   | q | O, L, P |
+| number of circuit layers   | n | O, L, P |
+| number of single qubit parameters  | x | O, L, P |
+| Number of qubits in our circuit  | u | P |
+| Initial spread of the parameters   | d | P |
+| Batch size  | b | O, L, P |
+| Learning rate   | l | O, L, P |
+| Weight decay  | w | O, L, P |
+| Step size for the learning rate scheduler  | z | O, L, P |
+| Gamma for the learning rate scheduler  | g | O, L, P |
+| Version between alpha-pennylane-lambeq and alpha-pennylane-lambeq-original   | y | O, L |
+| Reduced dimension for the word embeddings | c | O, L |
+| Number of qubits per SENTENCE type  | e | O, L |
+
+##### Beta Models
+
+K = QKNN
+
+| Parameter | Command Line Tag | Model Version |
+|-----------|------------------|---------------|
+| Input   | i | K |
+| Number of clusters   | k | K |
+| Outfile  | o | K |
+
+#### Command Line Examples
+
+##### Pre-Alpha
+```
+bash 6_Classify_With_Quantum_Model.sh -t 
+"data/datasets/reduced_amazonreview_pre_alpha_train.tsv" 
+-v "data/datasets/reduced_amazonreview_pre_alpha_test.tsv" 
+-s 1 -m "pre_alpha" -r 1 -i 1 -p "COBYLA" -o "test.txt"
+```
+##### Pre-Alpha-Lambeq
+```
+bash 6_Classify_With_Quantum_Model.sh -t
+"data/datasets/reduced_amazonreview_pre_alpha_train.tsv" -v
+"data/datasets/reduced_amazonreview_pre_alpha_test.tsv" -s 1
+-m "pre_alpha_lambeq" -r 1 -i 1 -p "COBYLA"
+-o "test.txt" -a "IQP" -q 1 -n 1 -x 3 -b 100
+```
+##### Alpha-Original
+```
+bash 6_Classify_With_Quantum_Model.sh -t ./data/datasets/alpha_report_datasets/amazonreview_train_filtered_word_train.csv  -v ./data/datasets/alpha_report_datasets/amazonreview_train_filtered_word_test.csv  -s 200 -m alpha_lambeq -r 1 -i 100 -b 4096 -l 2e-1 -w 0 -z 20 -g 0 -y alpha_pennylane_lambeq_original -c 22 -e 1 -a IQP -q 1 -n 1 -x 3 -o ./benchmarking/results/raw/
+```
+
+##### Alpha-Lambeq
+```
+bash 6_Classify_With_Quantum_Model.sh -t ./data/datasets/alpha_report_datasets/amazonreview_train_filtered_sentence_train.csv  -v ./data/datasets/alpha_report_datasets/amazonreview_train_filtered_sentence_test.csv  -s 200 -m alpha_lambeq -r 1 -i 100 -b 4096 -l 2e-1 -w 0 -z 20 -g 0 -y alpha_pennylane_lambeq -c 22 -e 1 -a IQP -q 1 -n 1 -x 3 -o ./benchmarking/results/raw/
+```
+
+##### Alpha-Pennylane
+```
+bash 6_Classify_With_Quantum_Model.sh -m alpha_pennylane -t ./data/datasets/alpha_report_datasets/amazonreview_train_filtered_sentence_train.csv -v ./data/datasets/alpha_report_datasets/amazonreview_train_filtered_sentence_test.csv -s 200 -r 5 -i 100 -o ./benchmarking/results/raw/ -u 3 -d 0.01 -b 4096 -l 2e-1 -w 0 -z 20 -g 0.5
+```
+
+##### Beta QKNN
+'''
+Bash needs modifying first!
+'''
+
+#### Plotting Results
+
+Navigate to neasqc_wp61/benchmarking/results_processing/. Then run the following command for a given output.json file located in neasqc_wp61/benchmarking/results/raw/.
+
+```
+python3.10 plot_single_experiments_results.py ../results/raw/output.json
+```
+
 ## Running Models on HPC Systems
 Here we give a brief description of how to run the different models included in this repo on an HPC cluster which uses SLURM as its workload manager. 
 
@@ -330,64 +439,6 @@ We will assume that the user has a working directory with path `/path/work_dir`.
 To activate the environment we do not have to use `poetry shell` because Poetry has installed the dependencies within the Conda environment, rather than within a Poetry shell. Thus, every time you want to activate the environment you must use the 
 appropriate command given above in Step 4.
 
-### Run Models on the Command Line
-
-#### Parameter Descriptions
-
-
-| Parameter | Command Line Tag |
-|-----------|------------------|
-| Train   | t |
-| Test   | v |
-| Seed  | s |
-| Model  | m |
-| Runs  | r |
-| Optimiser   | p |
-| Iterations  | i |
-| Outfile  | o |
-| Ansatz   | a |
-| Number of qubits per noun   | q |
-| number of circuit layers   | n |
-| number of single qubit parameters  | x |
-| Number of qubits in our circuit  | u |
-| Initial spread of the parameters   | d |
-| Batch size  | b |
-| Learning rate   | l |
-| Weight decay  | w |
-| Step size for the learning rate scheduler  | z |
-| Gamma for the learning rate scheduler  | g |
-| Version between alpha-pennylane-lambeq and alpha-pennylane-lambeq-original   | y |
-| Reduced dimension for the word embeddings | c |
-| Number of qubits per SENTENCE type  | e |
-
-#### Pre-Alpha
-```
-bash 6_Classify_With_Quantum_Model.sh -t 
-"data/datasets/reduced_amazonreview_pre_alpha_train.tsv" 
--v "data/datasets/reduced_amazonreview_pre_alpha_test.tsv" 
--s 1 -m "pre_alpha" -r 1 -i 1 -p "COBYLA" -o "test.txt"
-```
-#### Pre-Alpha-Lambeq
-```
-bash 6_Classify_With_Quantum_Model.sh -t
-"data/datasets/reduced_amazonreview_pre_alpha_train.tsv" -v
-"data/datasets/reduced_amazonreview_pre_alpha_test.tsv" -s 1
--m "pre_alpha_lambeq" -r 1 -i 1 -p "COBYLA"
--o "test.txt" -a "IQP" -q 1 -n 1 -x 3 -b 100
-```
-#### Alpha-Original
-
-#### Alpha-Pennylane
-
-#### Alpha-Pennylane-Lambeq
-
-#### Plotting Results
-
-Navigate to neasqc_wp61/benchmarking/results_processing/. Then run the following command for a given output.json file located in neasqc_wp61/benchmarking/results/raw/.
-
-```
-python3.10 plot_single_experiments_results.py ../results/raw/output.json
-```
 
 ### Running HPC Jobs
 
