@@ -40,6 +40,7 @@ class Alpha_pennylane_lambeq_model(PennyLaneModel):
 
         self.pre_qc = nn.Sequential(nn.Linear(pre_qc_input_size, self.pre_qc_output_size),
                                     nn.LeakyReLU(0.01))
+        
 
     def find_pre_qc_output_size(self):
         """
@@ -88,6 +89,7 @@ class Alpha_pennylane_lambeq_model(PennyLaneModel):
         ## Here we go through lists of diagrams and bert embeddings because the Pytorch dataloader returns lists (uses batch)
         # pass the embedding through a simple neural network
 
+
         #TODO: Maybe can accelerate this by flattening to a 2D vector the list of embeddings and then passing it through the pre_qc
         #     and then reshaping it to a 3D vector
         if self.version_original:
@@ -116,17 +118,35 @@ class Alpha_pennylane_lambeq_model(PennyLaneModel):
         #What about overlapping sentences? (sentences with a common symbol --> will modify the same weight)
         #Solution: Execute each circuit individually just after modifying its weights ?
         #           --> Will become even slower than right now
-        
+
+        #embedding_out.requires_grad = True
+
+
+        #embedding_out.retain_grad()
         for diagram, embedding in zip(diagrams, embedding_out):
             diagram_symbols = self.circuit_map[diagram]._symbols
 
             for symbol, value in zip(diagram_symbols, embedding):
-            
                 self.symbol_weight_map[symbol] = torch.nn.Parameter(torch.tensor(value))
+        
+        self.weights = torch.nn.ParameterList(list(self.symbol_weight_map.values()))
 
+        
+
+
+        
+
+        #Get all the values of the dict
+        # self.weights = torch.nn.ParameterList(
+        #     [torch.nn.Parameter(weight)
+        #      for weight in list(self.symbol_weight_map.values())]
+        # )
 
         # evaluate the circuits
         qc_output = self.get_diagram_output(diagrams)
+
+
+
         
         # pass the concatenated results through a simple neural network
-        return self.post_qc(qc_output)
+        return self.post_qc(qc_output), embedding_out
