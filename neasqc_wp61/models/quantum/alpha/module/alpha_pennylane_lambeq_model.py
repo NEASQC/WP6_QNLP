@@ -89,7 +89,6 @@ class Alpha_pennylane_lambeq_model(PennyLaneModel):
         ## Here we go through lists of diagrams and bert embeddings because the Pytorch dataloader returns lists (uses batch)
         # pass the embedding through a simple neural network
 
-
         #TODO: Maybe can accelerate this by flattening to a 2D vector the list of embeddings and then passing it through the pre_qc
         #     and then reshaping it to a 3D vector
         if self.version_original:
