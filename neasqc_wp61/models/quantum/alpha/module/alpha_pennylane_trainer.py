@@ -37,8 +37,9 @@ class Alpha_pennylane_trainer():
         self.train_dataset = BertEmbeddingDataset(self.X_train, self.Y_train)
         self.training_dataloader = DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True)
 
+        # Shuffle is set to False for the validation dataset because in the predict function we need to keep the order of the predictions
         self.validation_dataset = BertEmbeddingDataset(self.X_test, self.Y_test)
-        self.validation_dataloader = DataLoader(self.validation_dataset, batch_size=self.batch_size, shuffle=True)
+        self.validation_dataloader = DataLoader(self.validation_dataset, batch_size=self.batch_size, shuffle=False)
 
 
         # initialise the device
