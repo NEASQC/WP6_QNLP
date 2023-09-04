@@ -19,6 +19,8 @@ class Alpha_pennylane_lambeq_model(PennyLaneModel):
         
         self.post_qc = nn.Sequential(nn.Linear(2, 1),
                                 nn.Sigmoid())
+        
+        print('version original value MODEL: ', self.version_original) 
 
     
     # To be called after the model is initialized
@@ -37,6 +39,7 @@ class Alpha_pennylane_lambeq_model(PennyLaneModel):
 
         self.pre_qc = nn.Sequential(nn.Linear(pre_qc_input_size, self.pre_qc_output_size),
                                     nn.LeakyReLU(0.01))
+        
 
     def find_pre_qc_output_size(self):
         """
@@ -50,35 +53,7 @@ class Alpha_pennylane_lambeq_model(PennyLaneModel):
 
         return max_number_of_params
     
-    def find_param_indexes_from_diagram_dict(self, diagrams):
-        """
-        Given a diagram, find the indexes of the parameters in the model.
-        Do it once and for all in the init function
-        Return a dictionary with the diagram as key and the list of indexes as value.
-        """
-        for diagram in diagrams:
-            diagram_symbols = self.circuit_map[diagram]._symbols
-            model_symbols = self.symbols
-
-            param_indexes = []
-
-            for symbol in diagram_symbols:
-                try:
-                    param_indexes.append(model_symbols.index(symbol))
-                except ValueError:
-                    print(f"Symbol {symbol} not found in model symbols")
-                    return None
-                
-            self.param_indexes_dict[diagram] = param_indexes
     ##############################################################################################################    
-    
-
-    def update_weights_from_embedding(self, param_indexes, param_values):
-        """
-        Given a list of indexes and a list of values, update the weights of the model
-        """
-        for index, value in zip(param_indexes, param_values):
-            self.weights[index] = torch.nn.Parameter(torch.tensor(value))
 
 
     def forward(self, diagrams, bert_embeddings):
@@ -101,14 +76,22 @@ class Alpha_pennylane_lambeq_model(PennyLaneModel):
             # Here we have a list of embeddings for each sentence
             embedding_out = self.pre_qc(bert_embeddings)
 
-        # update the corresponding weights of the model
-        param_indexes_list = [self.param_indexes_dict[diagram] for diagram in diagrams]
 
-        # update the weights of the model
-        [self.update_weights_from_embedding(param_indexes, embedding) for param_indexes, embedding in zip(param_indexes_list, embedding_out)]
+        #TODO: What about overlapping sentences? (sentences with a common symbol --> will modify the same weight)
+        #Solution: Execute each circuit individually just after modifying its weights ?
+        #           --> Will become even slower than right now
+
+
+        for diagram, embedding in zip(diagrams, embedding_out):
+            diagram_symbols = self.circuit_map[diagram]._symbols
+
+            for symbol, value in zip(diagram_symbols, embedding):
+                self.symbol_weight_map[symbol] = value
+
+        self.weights = torch.nn.ParameterList(list(self.symbol_weight_map.values()))
 
         # evaluate the circuits
         qc_output = self.get_diagram_output(diagrams)
-        
+
         # pass the concatenated results through a simple neural network
         return self.post_qc(qc_output)

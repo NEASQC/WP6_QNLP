@@ -36,6 +36,7 @@ class Alpha_pennylane_lambeq_trainer():
         # seed everything
         seed_everything(self.seed)
 
+        print('version original value: ', self.version_original) 
 
         # load the dataset
         if version_original:
@@ -58,6 +59,7 @@ class Alpha_pennylane_lambeq_trainer():
 
 
         # initialise datasets and optimizers as in PyTorch
+        # Shuffle is set to False for the validation dataset because in the predict function we need to keep the order of the predictions
         if version_original:
             self.train_dataset = Dataset(list(zip(train_circuits, self.X_train['sentence_vectorized'].values.tolist())),
                                     self.Y_train,
@@ -65,7 +67,9 @@ class Alpha_pennylane_lambeq_trainer():
 
             self.valid_dataset = Dataset(list(zip(val_circuits, self.X_test['sentence_vectorized'].values.tolist())),
                                     self.Y_test,
-                                    batch_size=self.batch_size)
+                                    batch_size=self.batch_size,
+                                    shuffle=False)
+
         else:
             self.train_dataset = Dataset(list(zip(train_circuits, np.vstack(self.X_train['sentence_embedding'].apply(np.array)))),
                                     self.Y_train,
@@ -73,7 +77,8 @@ class Alpha_pennylane_lambeq_trainer():
 
             self.valid_dataset = Dataset(list(zip(val_circuits, np.vstack(self.X_test['sentence_embedding'].apply(np.array)))),
                                     self.Y_test,
-                                    batch_size=self.batch_size)
+                                    batch_size=self.batch_size,
+                                    shuffle=False)
         
 
         # initialise model
@@ -82,14 +87,13 @@ class Alpha_pennylane_lambeq_trainer():
         # initialise our model by pas sing in the diagrams, so that we have trainable parameters for each token
         self.model.initialise_weights()
         self.model.update_pre_qc_output_size()
-        self.model.find_param_indexes_from_diagram_dict(self.all_circuits)
         self.model = self.model.double()
 
         # initialise loss and optimizer
         self.criterion = nn.BCELoss()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr, weight_decay=self.weight_decay)
         self.lr_scheduler = lr_scheduler.StepLR(
-            self.optimizer, step_size=self.step_lr, gamma=self.gamma)
+            self.optimizer, step_size=self.step_lr, gamma=self.gamma, verbose=True)
         
         # initialise the device
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -125,19 +129,18 @@ class Alpha_pennylane_lambeq_trainer():
                     predicted = self.model(circuits, embedding_list)
                 else:
                     # Sentence version
-                    predicted = self.model(circuits, torch.from_numpy(np.vstack(embeddings)))
+                    embeddings_tensor = torch.stack([torch.tensor(embedding) for embedding in embeddings])
+                    predicted = self.model(circuits, embeddings_tensor)
 
                 # use BCELoss as our outputs are probabilities, and labels are binary
                 loss = self.criterion(torch.flatten(predicted), torch.DoubleTensor(labels))
-                #running_loss += loss.item()
                 running_loss += loss.item()*batch_size_
                 loss.backward()
+
                 self.optimizer.step()
 
                 batch_corrects = (torch.round(torch.flatten(predicted)) == torch.DoubleTensor(labels)).sum().item()
                 running_corrects += batch_corrects
-                
-
 
             # Print epoch results
             train_loss = running_loss / len(self.train_dataset)
@@ -163,7 +166,8 @@ class Alpha_pennylane_lambeq_trainer():
                         predicted = self.model(circuits, embedding_list)
                     else:
                         # Sentence version
-                        predicted = self.model(circuits, torch.from_numpy(np.vstack(embeddings)))
+                        embeddings_tensor = torch.stack([torch.tensor(embedding) for embedding in embeddings])
+                        predicted = self.model(circuits, embeddings_tensor)
 
                     loss = self.criterion(torch.flatten(predicted), torch.DoubleTensor(labels))
                     running_loss += loss.item()*batch_size_
@@ -210,7 +214,8 @@ class Alpha_pennylane_lambeq_trainer():
                     predicted = self.model(circuits, embedding_list)
                 else:
                     # Sentence version
-                    predicted = self.model(circuits, torch.from_numpy(np.vstack(embeddings)))
+                    embeddings_tensor = torch.stack([torch.tensor(embedding) for embedding in embeddings])
+                    predicted = self.model(circuits, embeddings_tensor)
 
                 prediction_list = torch.cat((prediction_list, torch.round(torch.flatten(predicted))))
 
