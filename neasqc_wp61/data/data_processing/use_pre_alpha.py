@@ -102,8 +102,8 @@ def main():
             seed_list = seed_list, 
             train_loss = myopt.cobyla_train_loss,
             train_acc = myopt.cobyla_train_accuracy, val_loss = val_loss,
-            val_acc = val_accuracy, test_loss=test_loss,
-            test_acc = test_accuracy, weights = myopt.results_weights
+            val_acc = val_accuracy,
+            test_acc = test_accuracy[-1], weights = myopt.results_weights
         )
 
 
