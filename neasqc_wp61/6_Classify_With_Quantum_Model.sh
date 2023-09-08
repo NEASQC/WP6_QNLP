@@ -78,7 +78,7 @@ python3.10 ./data/data_processing/use_alpha_pennylane.py -s ${seed} -i ${iterati
 elif [[ "${model}" == "alpha_lambeq" ]]
 then
 echo "running alpha_lambeq"
-python3.10 ./data/data_processing/use_alpha_lambeq.py -s ${seed} -i ${iterations} -r ${runs} -v ${version} -pca ${pca} -tr ${train} -te ${test} -val -val ${validation} -o ${outfile} -an ${ansatz} -qn ${qn} -qs ${qs} -nl ${nl} -np ${np} -b ${b} -lr ${lr} -wd ${wd} -slr ${slr} -g ${g}
+python3.10 ./data/data_processing/use_alpha_lambeq.py -s ${seed} -i ${iterations} -r ${runs} -v ${version} -pca ${pca} -tr ${train} -te ${test} -val ${validation} -o ${outfile} -an ${ansatz} -qn ${qn} -qs ${qs} -nl ${nl} -np ${np} -b ${b} -lr ${lr} -wd ${wd} -slr ${slr} -g ${g}
 else
 echo "no model ran";
 fi

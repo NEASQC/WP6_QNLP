@@ -20,4 +20,4 @@ echo "output: $output";
 
 echo "running beta neighbours"
 
-python3.10 ./data/data_processing/use_beta_neighbours.py -tr ${train} -te ${test} -k ${k} -o ${outfile}
+python3.10 ./data/data_processing/use_beta_neighbours.py -tr ${train} -te ${test} -k ${k} -o ${output}
