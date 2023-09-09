@@ -11,11 +11,10 @@ import optimizer
 import loader
 import dictionary
 from sentence import createsentencelist
-from optimizer import compute_predictions
 import circuit
 import pickle
 import time 
-from save_json_output import save_json_output
+from save_json_output import JsonOutputer
 
 ##########################
 ########################################################################################################################################
@@ -43,106 +42,71 @@ def main():
     parser.add_argument(
         "-tr", "--train", help = "Path of the train dataset", type = str)
     parser.add_argument(
-        "-te", "--test", help = "Path of the test datset", type = str)
+        "-val", "--validation", help = "Path of the validation dataset", type = str)
+    parser.add_argument(
+        "-te", "--test", help = "Path of the test dataset", type = str)
     parser.add_argument(
         "-o", "--output", help = "Output directory with the predictions", type = str)
     args = parser.parse_args()
     random.seed(int(args.seed))
-    seed_list = random.sample(range(1, 10000000000000), int(args.runs))
-    Dftrain, Dftest = loader.createdf(args.train, args.test)
-    train_truth_value = Dftrain['truth_value'].tolist()
-    test_truth_value = Dftest['truth_value'].tolist()
-    predictions = [[] for i in range(Dftest.shape[0])]
-    cost = []
-    accuracies_train = [] 
-    accuracies_test = [] 
-    weights = []
-    times_list = []
+    seed_list = random.sample(range(1, int(2**32 -1)), int(args.runs))
+    Dftrain, Dfval, Dftest = loader.createdf(args.train, args.validation, args.test)
 
-    test_loss_list = []
-    test_acc_list = []
-    train_acc_list = []
+
+    validation_accuracy_list = []
+    best_val_accuracy = None
+    best_val_run = None
+    model_name = 'pre_alpha'
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    json_outputer = JsonOutputer(model_name, timestr, args.output)
 
     for s in range(int(args.runs)):
         t1 = time.time()
         seed = seed_list[s]
-        Myvocab = loader.getvocabdict(Dftrain, Dftest)
+        Myvocab = loader.getvocabdict(Dftrain, Dfval, Dftest)
         MyDict = dictionary.QuantumDict(qn=1, qs=1)
         MyDict.addwords(myvocab=Myvocab)
         MyDict.setvocabparams(seed=seed)
 
-        
-
-        SentencesList = createsentencelist(Dftrain, MyDict)
+    
+        SentencesTrain = createsentencelist(Dftrain, MyDict)
+        SentencesVal = createsentencelist(Dfval, MyDict)
         SentencesTest = createsentencelist(Dftest, MyDict)
 
         par, ix = MyDict.getindexmodelparams()
         myopt = optimizer.ClassicalOptimizer()
         result = myopt.optimizedataset(
-            SentencesList, SentencesTest, par, MyDict,
+            SentencesTrain, par, MyDict,
             options={'maxiter': int(args.iterations), 'disp' : False},
             method=args.optimiser)
-        cost.append(myopt.itercost)
 
-        test_loss_list.append(myopt.test_loss_list)
-        test_acc_list.append(myopt.test_acc_list)
-        train_acc_list.append(myopt.train_acc_list)
-
-        MyDict.updateparams(result.x)
-        weights.append(result.x.tolist())
-
-        SentencesTest = createsentencelist(Dftest, MyDict)
-        SentencesTrain = createsentencelist(Dftrain, MyDict)
-        predictions_iteration_test = compute_predictions(SentencesTest)
-        predictions_iteration_train = compute_predictions(SentencesTrain)
-        true_values_train = 0 
-        true_values_test = 0
-        for i,pred in enumerate(predictions_iteration_test):
-            predictions[i].append(pred)
-            if pred == test_truth_value[i]:
-                true_values_test += 1
-        for i,pred in enumerate(predictions_iteration_train):
-            if pred == train_truth_value[i]:
-                true_values_train += 1
-        
-        accuracies_test.append(true_values_test/len(predictions_iteration_test))
-        accuracies_train.append(true_values_train/len(predictions_iteration_train))
-        with open (
-            args.output +
-            f'pre_alpha_{args.seed}_{args.optimiser}_{args.iterations}_{args.runs}_run_{s}.pickle', 'wb') as file:
-            pickle.dump(predictions, file)
-        ## We use pickle to store the temporary results 
+        val_loss, val_accuracy = myopt.compute_loss_accuracy_iterations(MyDict, SentencesVal)[:2]
+        validation_accuracy_list.append(val_accuracy)
+        test_loss, test_accuracy, prediction_list = myopt.compute_loss_accuracy_iterations(MyDict, SentencesTest)
         t2 = time.time()
-        times_list.append(t2 - t1)
-    best_final_accuracy = max(accuracies_train)
-    best_run = accuracies_train.index(best_final_accuracy)
-    predictions_majority_vote = []
-    for i in range(Dftest.shape[0]):
-        c = Counter(predictions[i])
-        value, count = c.most_common()[0]
-        predictions_majority_vote.append(value)
-
-    with open(args.output + f"pre_alpha_{args.seed}_{args.optimiser}_{args.iterations}_{args.runs}_predictions.txt", "w") as output:
-        for pred in predictions_majority_vote:
-            output.write(f"{pred}\n")
-    # We store the results in Tilde's format 
-
-    for i in range(args.runs):
-        os.remove(args.output + f"pre_alpha_{args.seed}_{args.optimiser}_{args.iterations}_{args.runs}_run_{i}.pickle")
-    # We remove the pickle temporary files when comptutations 
-    # are finished .
+        time_taken = t2 - t1
 
 
-    save_json_output(
-        'pre_alpha', args, predictions_majority_vote,
-        t2 - t1, args.output, best_final_val_acc = best_final_accuracy,
-        best_run = best_run, seed_list = seed_list, 
-        final_val_acc = accuracies_test, final_train_acc = accuracies_train,
-        train_loss = cost, weights = weights,
+        for index, sublist in enumerate(validation_accuracy_list):
+            current_max = max(sublist)
+            if best_val_accuracy is None or current_max > best_val_accuracy:
+                best_val_accuracy = current_max 
+                best_val_run = index
+                iteration_best_val_accuracy = sublist.index(max(sublist))
 
-        train_acc = train_acc_list, val_acc = test_acc_list,
-        val_loss = test_loss_list
-    )
+
+        json_outputer.save_json_output_run_by_run(
+            args, prediction_list, time_taken, 
+            best_val_acc = best_val_accuracy, best_run = best_val_run,
+            iteration_best_val_accuracy = iteration_best_val_accuracy,
+            seed_list = seed_list, 
+            train_loss = myopt.cobyla_train_loss,
+            train_acc = myopt.cobyla_train_accuracy, val_loss = val_loss,
+            val_acc = val_accuracy,
+            test_acc = test_accuracy[-1], weights = myopt.results_weights
+        )
+
+
 
 
 

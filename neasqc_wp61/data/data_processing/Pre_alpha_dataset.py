@@ -26,8 +26,8 @@ class Pre_alpha_dataset:
         self.word_dict = self.create_word_dict()
         self.indexes = {
             'train' : [],
+            'validation' : [],
             'test' : [],
-            'dev' : [],
             'pool' : np.arange(len(self.dataset['sentence'])).tolist()}
         # This dictionary stores the indexes of the sentences going into
         # train, test, or still none of them (pool)
@@ -46,7 +46,7 @@ class Pre_alpha_dataset:
         for i,s in enumerate(sentences):
             for word in s.lower().split():
                 if word not in word_dict.keys():
-                    word_dict[word] = {'train' : [], 'test' : [], 'dev' : [], 'pool' : []}
+                    word_dict[word] = {'train' : [], 'validation' : [], 'test' : [], 'pool' : []}
                     word_dict[word]['pool'].append(i)
                 else:
                     word_dict[word]['pool'].append(i)
@@ -91,7 +91,7 @@ class Pre_alpha_dataset:
             self.word_dict[word][out_set].append(idx)
 
         
-    def generate_test_dev_indexes(
+    def generate_val_test_indexes(
             self, seed : int , size : int,
             type : str, equal_distribution : bool = False):
         """
@@ -247,7 +247,7 @@ class Pre_alpha_dataset:
                     self.add_remove_indexes(candidate_idx, 'pool', 'train')
                     sentence_types_test[sentence_type].append(candidate_idx)
                     
-    def get_train_test_datasets(self) -> list[pd.DataFrame, pd.DataFrame]:
+    def get_train_val_test_datasets(self) -> list[pd.DataFrame, pd.DataFrame]:
         """
         Returns the dataframes with the selected sentences for train
         and test
@@ -260,12 +260,15 @@ class Pre_alpha_dataset:
         dataset_train = self.dataset.iloc[
             self.indexes['train']
         ]
+        dataset_validation = self.dataset.iloc[
+            self.indexes['validation']
+        ]
         dataset_test = self.dataset.iloc[
             self.indexes['test']
         ]
-        return dataset_train, dataset_test
+        return dataset_train, dataset_validation, dataset_test
 
-    def save_train_test_dev_datasets(
+    def save_train_val_test_datasets(
             self, path : str, name : str):
         """
         Saves the dataframe with the selected sentences as csv.
@@ -280,21 +283,21 @@ class Pre_alpha_dataset:
         dataset_train = self.dataset.iloc[
             self.indexes['train']
         ]
+        dataset_validation = self.dataset.iloc[
+            self.indexes['validation']
+        ]
         dataset_test = self.dataset.iloc[
             self.indexes['test']
-        ]
-        dataset_dev = self.dataset.iloc[
-            self.indexes['dev']
         ]
         dataset_train.to_csv(
             path + '/' + name + '_train.tsv', header = False,
             sep = '\t', index = False
         )
-        dataset_test.to_csv(
-            path + '/' + name + '_test.tsv', header = False,
+        dataset_validation.to_csv(
+            path + '/' + name + '_validation.tsv', header = False,
             sep = '\t', index = False
         )
-        dataset_dev.to_csv(
-            path + '/' + name + '_dev.tsv', header = False,
+        dataset_test.to_csv(
+            path + '/' + name + '_test.tsv', header = False,
             sep = '\t', index = False
         )

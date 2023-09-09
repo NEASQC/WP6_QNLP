@@ -6,9 +6,8 @@ import json
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_path + "/../../models/quantum/beta/")
 from QuantumKNearestNeighbours import QuantumKNearestNeighbours as qkn
-from save_json_output import save_json_output
 from collections import Counter
-
+from save_json_output import JsonOutputer
 
 def main():
     
@@ -23,6 +22,9 @@ def main():
         "-o", "--output", help = "Output path with the predictions", type = str
     )
     args = parser.parse_args()
+    model_name = 'beta'
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    json_outputer = JsonOutputer(model_name, timestr, args.output)
     f = open(args.input)
     results_pre_alpha = json.load(f)
     seed = results_pre_alpha['input_args']['seed']
@@ -30,9 +32,9 @@ def main():
     train_labels_dir = results_pre_alpha['input_args']['train']
     test_labels = qkn.load_labels(results_pre_alpha['input_args']['test'])
     name_file = args.output + f"beta_neighbors_{seed}_{runs}_{args.k}"
-    predictions_list = [[] for i in range(len(test_labels))]
-    accuracies_test = []
-    time_list = []
+    accuracies_test_list = []
+    best_test_accuracy = None
+    best_test_run = None
 
     for i in range(runs):
         t1 = time.time()
@@ -41,32 +43,26 @@ def main():
         predictions = qkn(
             train_labels_dir, train_vectors, test_vectors, args.k).predictions
 
+        prediction_list = []
         correct_pred = 0
         for i,pred in enumerate(predictions):
-            predictions_list[i].append(pred)
+            prediction_list.append(pred)
             if pred == test_labels[i]:
                 correct_pred += 1
-        accuracies_test.append(correct_pred/len(test_labels))
+        accuracy_test = correct_pred/len(test_labels)
+        accuracies_test_list.append(accuracy_test)
+        best_test_accuracy = max(accuracies_test_list)
+        best_test_run = accuracies_test_list.index(max(accuracies_test_list))
+
         t2 = time.time()
-        time_list.append(t2 - t1)
+        time_taken = (t2 - t1)
 
-    predictions_majority_vote = []
-    for i in range(len(test_labels)):
-        c = Counter(predictions_list[i])
-        value, count = c.most_common()[0]
-        predictions_majority_vote.append(value)
-    with open(name_file + "_predictions.txt", "w") as output:
-            for pred in predictions_majority_vote:
-                output.write(f"{pred}\n")
-    best_final_accuracy = max(accuracies_test)    
-    best_run = accuracies_test.index(best_final_accuracy)
-
-    save_json_output(
-    'beta', args, predictions_majority_vote,
-    time_list, args.output, best_final_val_acc = best_final_accuracy,
-    best_run = best_run, seed = seed, final_val_acc = accuracies_test,
-    k = args.k
-    )
+        json_outputer.save_json_output_run_by_run(
+        args, prediction_list, time_taken,
+        best_final_test_acc = best_test_accuracy,
+        best_run = best_test_run, test_acc = accuracy_test,
+        seed = seed, k = args.k
+        )
     # We save the json output 
 
 if __name__ == "__main__":

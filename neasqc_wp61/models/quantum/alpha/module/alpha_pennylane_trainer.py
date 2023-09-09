@@ -7,11 +7,12 @@ from alpha_pennylane_model import Alpha_pennylane_model
 from utils import seed_everything, preprocess_train_test_dataset_for_alpha_pennylane, BertEmbeddingDataset
 
 class Alpha_pennylane_trainer():
-    def __init__(self, number_of_epochs: int, train_path: str, test_path: str, seed: int, n_qubits: int, q_delta: float,
+    def __init__(self, number_of_epochs: int, train_path: str, val_path: str, test_path: str, seed: int, n_qubits: int, q_delta: float,
                  batch_size: int, lr: float, weight_decay: float, step_lr: int, gamma: float):
         
         self.number_of_epochs = number_of_epochs
         self.train_path = train_path
+        self.val_path = val_path
         self.test_path = test_path
         self.seed = seed
         self.n_qubits = n_qubits
@@ -29,7 +30,7 @@ class Alpha_pennylane_trainer():
         seed_everything(self.seed)
 
 
-        self.X_train, self.X_test, self.Y_train, self.Y_test = preprocess_train_test_dataset_for_alpha_pennylane(self.train_path, self.test_path)
+        self.X_train, self.X_val, self.X_test, self.Y_train, self.Y_val, self.Y_test = preprocess_train_test_dataset_for_alpha_pennylane(self.train_path, self.val_path, self.test_path)
 
 
         # initialise datasets and optimizers as in PyTorch
@@ -37,8 +38,12 @@ class Alpha_pennylane_trainer():
         self.train_dataset = BertEmbeddingDataset(self.X_train, self.Y_train)
         self.training_dataloader = DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True)
 
-        self.validation_dataset = BertEmbeddingDataset(self.X_test, self.Y_test)
-        self.validation_dataloader = DataLoader(self.validation_dataset, batch_size=self.batch_size, shuffle=True)
+        # Shuffle is set to False for the validation dataset because in the predict function we need to keep the order of the predictions
+        self.validation_dataset = BertEmbeddingDataset(self.X_val, self.Y_val)
+        self.validation_dataloader = DataLoader(self.validation_dataset, batch_size=self.batch_size, shuffle=False)
+
+        self.test_dataset = BertEmbeddingDataset(self.X_test, self.Y_test)
+        self.test_dataloader = DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False)
 
 
         # initialise the device
@@ -177,7 +182,40 @@ class Alpha_pennylane_trainer():
         return prediction_list.detach().cpu().numpy()
 
 
+    def compute_test_logs(self, best_model):
+        running_loss = 0.0
+        running_corrects = 0
 
+        # Load the best model found during training
+        self.model.load_state_dict(best_model)
+        self.model.eval()
+
+        with torch.no_grad():
+            for inputs, labels in self.test_dataloader:
+                batch_size_ = len(inputs)
+                inputs = inputs.to(self.device)
+                labels = labels.to(self.device)
+
+                self.optimizer.zero_grad()
+
+                outputs = self.model(inputs)
+                _, preds = torch.max(outputs, 1)
+                loss = self.criterion(outputs, labels)
+                
+                # Print iteration results
+                running_loss += loss.item()*batch_size_
+                batch_corrects = torch.sum(preds == torch.max(labels, 1)[1]).item()
+                running_corrects += batch_corrects
+
+
+        test_loss = running_loss / len(self.test_dataloader.dataset)
+        test_acc = running_corrects / len(self.test_dataloader.dataset)
+
+        print('Run test results:')
+        print('Test loss: {}'.format(test_loss))
+        print('Test acc: {}'.format(test_acc))
+
+        return test_loss, test_acc
 
 
 
