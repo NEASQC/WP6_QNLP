@@ -47,7 +47,7 @@ class Alpha_pennylane_trainer():
 
 
         # initialise the device
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
         # initialise model
@@ -60,7 +60,7 @@ class Alpha_pennylane_trainer():
         self.lr_scheduler = lr_scheduler.StepLR(
             self.optimizer, step_size=self.step_lr, gamma=self.gamma)
 	
-        self.model = nn.DataParallel(self.model)
+        #self.model = nn.DataParallel(self.model)
         self.model.to(self.device)
         self.criterion.to(self.device)
 
