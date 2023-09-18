@@ -96,7 +96,7 @@ class Alpha_pennylane_trainer():
                 loss = self.criterion(outputs, labels)
                 loss.backward()
 
-                print('-'*20)
+                
                 #print the grad values of the model
                 # for name, param in self.model.named_parameters():
                 #     print(name, param.grad)
@@ -162,10 +162,12 @@ class Alpha_pennylane_trainer():
             print('Train acc: {}'.format(train_acc))
             print('Valid acc: {}'.format(validation_acc))
 
+            print('-'*20)
+
         return training_loss_list, training_acc_list, validation_loss_list, validation_acc_list, best_val_acc, best_model
 
     def predict(self):
-        prediction_list = torch.tensor([])
+        prediction_list = torch.tensor([]).to(self.device)
         
         self.model.eval()
 
