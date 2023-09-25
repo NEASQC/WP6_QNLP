@@ -89,8 +89,8 @@ def main():
         return (torch.argmax(y_hat, dim=1) ==
             torch.argmax(y, dim=1)).sum().item()/len(y)
 
-    acc_np = lambda y_hat, y: np.sum(np.round(y_hat.detach().numpy()) == y) / len(y)
-    # Accuracy function using numpy instead of torch 
+    acc_np = lambda y_hat, y: np.sum(np.round(y_hat.detach().numpy()) == y) / (2 * len(y)) 
+    # Accuracy function using numpy. We divide by 2 to avoid double-counting
 
     if args.optimiser == 'Adadelta':
         opt = torch.optim.Adadelta
