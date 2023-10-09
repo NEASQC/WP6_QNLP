@@ -250,9 +250,9 @@ bash 6_Classify_With_Quantum_Model.sh -m alpha_lambeq
 ##### Alpha-Pennylane
 ```
 bash 6_Classify_With_Quantum_Model.sh -m alpha_pennylane
--t ./data/dataset/reduced_amazonreview_train_sentence.csv
--j ./data/dataset/reduced_amazonreview_dev_sentence.csv
--v ./data/dataset/reduced_amazonreview_test_sentence.csv
+-t ./data/datasets/reduced_amazonreview_train_sentence.csv
+-j ./data/datasets/reduced_amazonreview_dev_sentence.csv
+-v ./data/datasets/reduced_amazonreview_test_sentence.csv
 -s 13 -r 10 -i 150 -u 3 -d 0.01 -b 512 -l 2e-1 -w 0 -z 150
 -g 1 -o ./benchmarking/results/raw/
 ```
