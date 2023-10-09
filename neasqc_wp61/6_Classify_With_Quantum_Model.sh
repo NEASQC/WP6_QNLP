@@ -57,7 +57,7 @@ echo "Weight decay: $wd";
 echo "Step size for the learning rate scheduler: $slr";
 echo "Gamma for the learning rate scheduler: $g";
 
-echo "Version between alpha_pennylane_lambeq and alpha_pennylane_lambeq_original: $version";
+echo "Version between alpha_1 and alpha_2: $version";
 echo "Reduced dimension for the word embeddings: $pca";
 echo "Number of qubits per SENTENCE type: $qs";
 
@@ -71,14 +71,14 @@ elif [[ "${model}" == "pre_alpha_lambeq" ]]
 then
 echo "running pre_alpha_lambeq"
 python3.10 ./data/data_processing/use_pre_alpha_lambeq.py -s ${seed} -op ${optimiser} -i ${iterations} -r ${runs} -tr ${train} -te ${test} -val ${validation} -o ${outfile} -an ${ansatz} -qn ${qn} -nl ${nl} -np ${np} -b ${b}
-elif [[ "${model}" == "alpha_pennylane" ]]
+elif [[ "${model}" == "alpha_3" ]]
 then
-echo "running alpha_pennylane"
-python3.10 ./data/data_processing/use_alpha_pennylane.py -s ${seed} -i ${iterations} -r ${runs} -tr ${train} -te ${test} -val ${validation} -o ${outfile} -nq ${nq} -qd ${qd} -b ${b} -lr ${lr} -wd ${wd} -slr ${slr} -g ${g}
-elif [[ "${model}" == "alpha_lambeq" ]]
+echo "running alpha_3"
+python3.10 ./data/data_processing/use_alpha_3.py -s ${seed} -i ${iterations} -r ${runs} -tr ${train} -te ${test} -val ${validation} -o ${outfile} -nq ${nq} -qd ${qd} -b ${b} -lr ${lr} -wd ${wd} -slr ${slr} -g ${g}
+elif [[ "${model}" == "alpha_1_2" ]]
 then
-echo "running alpha_lambeq"
-python3.10 ./data/data_processing/use_alpha_lambeq.py -s ${seed} -i ${iterations} -r ${runs} -v ${version} -pca ${pca} -tr ${train} -te ${test} -val ${validation} -o ${outfile} -an ${ansatz} -qn ${qn} -qs ${qs} -nl ${nl} -np ${np} -b ${b} -lr ${lr} -wd ${wd} -slr ${slr} -g ${g}
+echo "running alpha_1_2"
+python3.10 ./data/data_processing/use_alpha_1_2.py -s ${seed} -i ${iterations} -r ${runs} -v ${version} -pca ${pca} -tr ${train} -te ${test} -val ${validation} -o ${outfile} -an ${ansatz} -qn ${qn} -qs ${qs} -nl ${nl} -np ${np} -b ${b} -lr ${lr} -wd ${wd} -slr ${slr} -g ${g}
 else
 echo "no model ran";
 fi

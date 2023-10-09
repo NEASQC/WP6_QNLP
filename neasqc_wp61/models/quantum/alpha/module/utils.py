@@ -93,9 +93,9 @@ def fit_pca(df, n_components):
     return pca
 
 
-def preprocess_train_test_dataset_for_alpha_pennylane(train_csv_file, val_csv_file, test_csv_file,):
+def preprocess_train_test_dataset_for_alpha_3(train_csv_file, val_csv_file, test_csv_file,):
     """
-    Preprocess function for the dataset for the alpha pennylane model
+    Preprocess function for the dataset for the alpha 3 model
     """
     df_train = pd.read_csv(train_csv_file)
     df_val = pd.read_csv(val_csv_file)

@@ -4,13 +4,13 @@
 #SBATCH -p GpuQ
 #SBATCH -N 1
 #SBATCH -t 01:00:00
-#SBATCH --job-name=alpha_lambeq{{ s }}_{{ r }}_{{ i }}_{{ v }}_{{ pca }}_{{ an }}_{{ qn }}_{{ qs }}_{{ nl }}_{{ np }}_{{ sb }}_{{ lr }}_{{ wd }}_{{ slr }}_{{ g }}
+#SBATCH --job-name=alpha_1_2{{ s }}_{{ r }}_{{ i }}_{{ v }}_{{ pca }}_{{ an }}_{{ qn }}_{{ qs }}_{{ nl }}_{{ np }}_{{ sb }}_{{ lr }}_{{ wd }}_{{ slr }}_{{ g }}
    
 # Charge job to my project 
 #SBATCH -A iccom018c
 
 # Write stdout+stderr to file
-#SBATCH -o ./benchmarking/hpc/slurm_output/alpha_lambeq{{ s }}_{{ r }}_{{ i }}_{{ v }}_{{ pca }}_{{ an }}_{{ qn }}_{{ qs }}_{{ nl }}_{{ np }}_{{ sb }}_{{ lr }}_{{ wd }}_{{ slr }}_{{ g }}.txt
+#SBATCH -o ./benchmarking/hpc/slurm_output/alpha_1_2{{ s }}_{{ r }}_{{ i }}_{{ v }}_{{ pca }}_{{ an }}_{{ qn }}_{{ qs }}_{{ nl }}_{{ np }}_{{ sb }}_{{ lr }}_{{ wd }}_{{ slr }}_{{ g }}.txt
 
 # Mail me on job start & end
 #SBATCH --mail-user=yanis.lalou@ichec.ie
@@ -30,7 +30,7 @@ module load cuda/11.4
 # -s : Seed for the initial parameters
 # -r : Number of runs
 # -i : Number of iterations of the optimiser
-# -v : Choose between alpha_pennylane_lambeq and alpha_pennylane_lambeq_original
+# -v : Choose between alpha_1 and alpha_2
 # -pca : Choose the reduced dimension for the word embeddings
 # -tr : Directory of the train dataset
 # -te : Directory of the test datset
@@ -48,5 +48,5 @@ module load cuda/11.4
 
 echo "`date +%T`"
 
-bash 6_Classify_With_Quantum_Model.sh -m alpha_lambeq -t ./data/toy_dataset/toy_dataset_bert_sentence_embedding_train.csv.csv -v ./data/toy_dataset/toy_dataset_bert_sentence_embedding_test.csv -s {{ s }} -r {{ r }} -i {{ i }} -b {{ sb }} -l {{ lr }} -w {{ wd }} -z {{ slr }} -g {{ g }} -y {{ v }} -c {{ pca }} -e {{ qs }} -a {{ an }} -q {{ qn }} -n {{ nl }} -x {{ np }} -o ./benchmarking/results/raw/
+bash 6_Classify_With_Quantum_Model.sh -m alpha_1_2 -t ./data/toy_dataset/toy_dataset_bert_sentence_embedding_train.csv.csv -v ./data/toy_dataset/toy_dataset_bert_sentence_embedding_test.csv -s {{ s }} -r {{ r }} -i {{ i }} -b {{ sb }} -l {{ lr }} -w {{ wd }} -z {{ slr }} -g {{ g }} -y {{ v }} -c {{ pca }} -e {{ qs }} -a {{ an }} -q {{ qn }} -n {{ nl }} -x {{ np }} -o ./benchmarking/results/raw/
 echo "`date +%T`"
