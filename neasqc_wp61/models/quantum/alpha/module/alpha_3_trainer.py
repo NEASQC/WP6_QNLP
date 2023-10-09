@@ -3,10 +3,10 @@ import torch
 import torch.nn as nn
 from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
-from alpha_pennylane_model import Alpha_pennylane_model
-from utils import seed_everything, preprocess_train_test_dataset_for_alpha_pennylane, BertEmbeddingDataset
+from alpha_3_model import Alpha_3_model
+from utils import seed_everything, preprocess_train_test_dataset_for_alpha_3, BertEmbeddingDataset
 
-class Alpha_pennylane_trainer():
+class Alpha_3_trainer():
     def __init__(self, number_of_epochs: int, train_path: str, val_path: str, test_path: str, seed: int, n_qubits: int, q_delta: float,
                  batch_size: int, lr: float, weight_decay: float, step_lr: int, gamma: float):
         
@@ -30,7 +30,7 @@ class Alpha_pennylane_trainer():
         seed_everything(self.seed)
 
 
-        self.X_train, self.X_val, self.X_test, self.Y_train, self.Y_val, self.Y_test = preprocess_train_test_dataset_for_alpha_pennylane(self.train_path, self.val_path, self.test_path)
+        self.X_train, self.X_val, self.X_test, self.Y_train, self.Y_val, self.Y_test = preprocess_train_test_dataset_for_alpha_3(self.train_path, self.val_path, self.test_path)
 
 
         # initialise datasets and optimizers as in PyTorch
@@ -51,7 +51,7 @@ class Alpha_pennylane_trainer():
 
 
         # initialise model
-        self.model = Alpha_pennylane_model(self.n_qubits, self.q_delta, self.device)
+        self.model = Alpha_3_model(self.n_qubits, self.q_delta, self.device)
 
 
         # initialise loss and optimizer

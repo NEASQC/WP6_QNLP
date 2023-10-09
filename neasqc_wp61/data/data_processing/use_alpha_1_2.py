@@ -14,7 +14,7 @@ import time
 import git
 
 from lambeq import IQPAnsatz, Sim14Ansatz, Sim15Ansatz, StronglyEntanglingAnsatz
-from alpha_pennylane_lambeq_trainer import Alpha_pennylane_lambeq_trainer
+from alpha_1_2_trainer import Alpha_1_2_trainer
 from save_json_output import JsonOutputer
 
 
@@ -23,7 +23,7 @@ from save_json_output import JsonOutputer
 parser = argparse.ArgumentParser()
 
 # To chose the model
-parser.add_argument("-v", "--version", help = "Choose between alpha_pennylane_lambeq and alpha_pennylane_lambeq_original", type = str, default = "alpha_pennylane_lambeq")
+parser.add_argument("-v", "--version", help = "Choose between alpha_1 and alpha_2", type = str, default = "alpha_2")
 parser.add_argument("-pca", "--pca", help = "Choose the reduced dimension for the word embeddings", type = int, default = 22)
 
 parser.add_argument("-s", "--seed", help = "Seed for the initial parameters", type = int, default = 0)
@@ -66,14 +66,15 @@ def main(args):
         raise ValueError("The ansatz is not valid")
     
 
-    if args.version == "alpha_pennylane_lambeq":
+    if args.version == "alpha_2":
         version_original = False
-        model_name = "alpha_pennylane_lambeq"
-    elif args.version == "alpha_pennylane_lambeq_original":
+        model_name = args.version
+    elif args.version == "alpha_1":
         version_original = True
-        model_name = "alpha_pennylane_lambeq_original"
     else:
         raise ValueError("The version is not valid")
+
+    model_name = args.version
 
     
     all_training_loss_list = []
@@ -102,7 +103,7 @@ def main(args):
         print("-----------------------------------")
         print("\n")
 
-        trainer = Alpha_pennylane_lambeq_trainer(args.iterations, args.train, args.val, args.test, seed_list[i],
+        trainer = Alpha_1_2_trainer(args.iterations, args.train, args.val, args.test, seed_list[i],
                                                 ansatz, args.qn, args.qs, args.n_layers, args.n_single_qubit_params, 
                                                 args.batch_size, args.lr, args.weight_decay, args.step_lr, args.gamma, version_original, args.pca)
         

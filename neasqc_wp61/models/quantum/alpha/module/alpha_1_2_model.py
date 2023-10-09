@@ -3,7 +3,7 @@ from lambeq import PennyLaneModel
 import torch
 
 # inherit from PennyLaneModel to use the PennyLane circuit evaluation
-class Alpha_pennylane_lambeq_model(PennyLaneModel):
+class Alpha_1_2_model(PennyLaneModel):
     def __init__(self, version_original: bool, reduced_word_embedding_dimension: int, **kwargs):
         PennyLaneModel.__init__(self, **kwargs)
 

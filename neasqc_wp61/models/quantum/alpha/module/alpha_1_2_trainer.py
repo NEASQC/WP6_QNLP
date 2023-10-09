@@ -4,10 +4,10 @@ import torch
 import torch.nn as nn
 from torch.optim import lr_scheduler
 from lambeq import CircuitAnsatz
-from alpha_pennylane_lambeq_model import Alpha_pennylane_lambeq_model
+from alpha_1_2_model import Alpha_1_2_model
 from utils import seed_everything, preprocess_train_test_dataset, preprocess_train_test_dataset_words
 
-class Alpha_pennylane_lambeq_trainer():
+class Alpha_1_2_trainer():
     def __init__(self, number_of_epochs: int, train_path: str, val_path: str, test_path: str, seed: int, 
                  ansatz: CircuitAnsatz, qn: int, qs: int, n_layers: int, n_single_qubit_params: int, 
                  batch_size: int, lr: float, weight_decay: float, step_lr: int, gamma: float, 
@@ -99,7 +99,7 @@ class Alpha_pennylane_lambeq_trainer():
         
 
         # initialise model
-        self.model = Alpha_pennylane_lambeq_model.from_diagrams(self.all_circuits, probabilities=True, normalize=True, 
+        self.model = Alpha_1_2_model.from_diagrams(self.all_circuits, probabilities=True, normalize=True, 
                                                                 version_original = version_original, reduced_word_embedding_dimension = reduced_word_embedding_dimension)
         # initialise our model by pas sing in the diagrams, so that we have trainable parameters for each token
         self.model.initialise_weights()

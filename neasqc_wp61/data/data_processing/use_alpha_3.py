@@ -13,7 +13,7 @@ import torch
 import time
 import git
 
-from alpha_pennylane_trainer import Alpha_pennylane_trainer
+from alpha_3_trainer import Alpha_3_trainer
 from save_json_output import JsonOutputer
 
 
@@ -48,7 +48,7 @@ def main(args):
     random.seed(args.seed)
     seed_list = random.sample(range(1, int(2**32 - 1)), int(args.runs))
     
-    model_name = "alpha_pennylane"
+    model_name = "alpha_3"
     
     all_training_loss_list = []
     all_training_acc_list = []
@@ -76,7 +76,7 @@ def main(args):
         print("-----------------------------------")
         print("\n")
 
-        trainer = Alpha_pennylane_trainer(args.iterations, args.train, args.val, args.test, seed_list[i], args.n_qubits, args.q_delta,
+        trainer = Alpha_3_trainer(args.iterations, args.train, args.val, args.test, seed_list[i], args.n_qubits, args.q_delta,
                                           args.batch_size, args.lr, args.weight_decay, args.step_lr, args.gamma)
         
         training_loss_list, training_acc_list, validation_loss_list, validation_acc_list, best_val_acc, best_model = trainer.train()
