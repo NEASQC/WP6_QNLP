@@ -63,14 +63,14 @@ echo "Number of qubits per SENTENCE type: $qs";
 
 
 
-if [[ "${model}" == "pre_alpha" ]]
+if [[ "${model}" == "pre_alpha_1" ]]
 then
 echo "running pre_alpha"
-python3.10 ./data/data_processing/use_pre_alpha.py -s ${seed} -op ${optimiser} -i ${iterations} -r ${runs} -tr ${train} -te ${test} -val ${validation} -o ${outfile}
-elif [[ "${model}" == "pre_alpha_lambeq" ]]
+python3.10 ./data/data_processing/use_pre_alpha_1.py -s ${seed} -op ${optimiser} -i ${iterations} -r ${runs} -tr ${train} -te ${test} -val ${validation} -o ${outfile}
+elif [[ "${model}" == "pre_alpha_2" ]]
 then
-echo "running pre_alpha_lambeq"
-python3.10 ./data/data_processing/use_pre_alpha_lambeq.py -s ${seed} -op ${optimiser} -i ${iterations} -r ${runs} -tr ${train} -te ${test} -val ${validation} -o ${outfile} -an ${ansatz} -qn ${qn} -nl ${nl} -np ${np} -b ${b}
+echo "running pre_alpha_2"
+python3.10 ./data/data_processing/use_pre_alpha_2.py -s ${seed} -op ${optimiser} -i ${iterations} -r ${runs} -tr ${train} -te ${test} -val ${validation} -o ${outfile} -an ${ansatz} -qn ${qn} -nl ${nl} -np ${np} -b ${b}
 elif [[ "${model}" == "alpha_3" ]]
 then
 echo "running alpha_3"
