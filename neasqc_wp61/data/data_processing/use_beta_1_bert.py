@@ -4,8 +4,8 @@ import argparse
 import time 
 import json
 current_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(current_path + "/../../models/quantum/beta/")
-from QuantumKNearestNeighbours_bert import QuantumKNearestNeighbours_bert as qkn
+sys.path.append(current_path + "/../../models/quantum/beta_1/")
+from beta_1_bert import QuantumKNearestNeighbours_bert as qkn
 from save_json_output import JsonOutputer
 from collections import Counter
 import numpy as np
