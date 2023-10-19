@@ -5,7 +5,7 @@ import time
 import json
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_path + "/../../models/quantum/beta/")
-from QuantumKNearestNeighbours_bert import QuantumKNearestNeighbours_bert as qkn
+from quantum_k_nearest_neighbours_bert import QuantumKNearestNeighbours_bert as qkn
 from save_json_output import JsonOutputer
 from collections import Counter
 import numpy as np
@@ -16,7 +16,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-tr", "--train", help = "Directory of the train dataset", type = str, default = '../toy_dataset/toy_dataset_bert_sentence_embedding_train.csv')
     parser.add_argument("-te", "--test", help = "Directory of the test dataset", type = str, default = '../toy_dataset/toy_dataset_bert_sentence_embedding_test.csv')
-
+    parser.add_argument("-pca", "--pca_dimension", type= int, help = "Principal component dimension")
     parser.add_argument("-k", "--k",  nargs='+', help = "Number of K neighbors", type = int, default = [1, 3, 5, 7, 9])
 
     parser.add_argument("-o", "--output", help = "Output directory with the predictions", type = str, default = "../../benchmarking/results/raw/")
@@ -25,7 +25,15 @@ def main():
 
     print(args)
 
-    X_train, X_test, y_train, y_test = qkn.load_labels(args.train, args.test)
+    X_train, X_test, y_train, y_test = qkn.load_labels(
+        args.train, args.test, args.pca_dimension)
+    
+
+    X_test = qkn.normalise_vector(X_test)
+    X_train = qkn.normalise_vector(X_train)
+    for i in X_train:
+        print(np.linalg.norm(i))
+
 
     print("X_train shape: ", X_train.shape)
     print("X_test shape: ", X_test.shape)
