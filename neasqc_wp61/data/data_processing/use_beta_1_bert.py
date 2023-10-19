@@ -67,7 +67,7 @@ def main():
         predictions = predictions_list[i]
         accuracy_test = accuracy_test_list[i]
 
-        model_name = f"beta_neighbors_{k}"
+        model_name = f"beta_1_{k}"
 
         # Create the JsonOutputer object
         json_outputer = JsonOutputer(model_name, timestr, args.output)

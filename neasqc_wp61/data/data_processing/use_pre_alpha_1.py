@@ -2,7 +2,7 @@ import sys
 import os
 
 current_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(current_path + "/../../models/quantum/pre-alpha/")
+sys.path.append(current_path + "/../../models/quantum/pre_alpha_1/")
 import matplotlib.pyplot as plt
 import random
 import argparse
@@ -56,7 +56,7 @@ def main():
     validation_accuracy_list = []
     best_val_accuracy = None
     best_val_run = None
-    model_name = 'pre_alpha'
+    model_name = 'pre_alpha_1'
     timestr = time.strftime("%Y%m%d-%H%M%S")
     json_outputer = JsonOutputer(model_name, timestr, args.output)
 

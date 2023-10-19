@@ -2,8 +2,8 @@ import sys
 import os
 import argparse
 current_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(current_path + "/../../models/quantum/pre-alpha-lambeq/")
-from PreAlphaLambeq import *
+sys.path.append(current_path + "/../../models/quantum/pre_alpha_2/")
+from pre_alpha_2 import *
 from collections import Counter
 import random
 import pickle
@@ -57,13 +57,13 @@ def main():
     validation_accuracy_list = []
     best_val_accuracy = None
     best_val_run = None
-    model_name = 'pre_alpha_lambeq'
+    model_name = 'pre_alpha_2'
     timestr = time.strftime("%Y%m%d-%H%M%S")
     json_outputer = JsonOutputer(model_name, timestr, args.output)
     # The number of qubits per sentence is pre-defined as we still need 
     # to improve our model
     qs = 1 
-    name_file = args.output + f"pre_alpha_lambeq_{args.seed}_{args.optimiser}_"\
+    name_file = args.output + f"pre_alpha_2_{args.seed}_{args.optimiser}_"\
         f"{args.iterations}_{args.runs}_{args.ansatz}_{args.qn}_"\
         f"{qs}_{args.n_layers}_{args.n_single_qubit_params}_{args.batch_size}"
     # Name of the file to store the results. 
@@ -73,9 +73,9 @@ def main():
     # Set the random seed. 
 
 
-    labels_train = PreAlphaLambeq.load_dataset(args.train)[1]
-    labels_validation = PreAlphaLambeq.load_dataset(args.validation)[1]
-    labels_test = PreAlphaLambeq.load_dataset(args.test)[1]
+    labels_train = PreAlpha2.load_dataset(args.train)[1]
+    labels_validation = PreAlpha2.load_dataset(args.validation)[1]
+    labels_test = PreAlpha2.load_dataset(args.test)[1]
 
     # Load sentences and labels
 
@@ -128,35 +128,35 @@ def main():
         with open(test_path + '/diagrams_' + test_dataset_name + '.pickle' , 'rb') as file:
             diagrams_test = pickle.load(file)
 
-        circuits_train = PreAlphaLambeq.create_circuits(
+        circuits_train = PreAlpha2.create_circuits(
             diagrams_train, args.ansatz, args.qn,
             qs, args.n_layers, args.n_single_qubit_params
         )
-        circuits_validation = PreAlphaLambeq.create_circuits(
+        circuits_validation = PreAlpha2.create_circuits(
             diagrams_validation, args.ansatz, args.qn,
             qs, args.n_layers, args.n_single_qubit_params
         )
-        circuits_test = PreAlphaLambeq.create_circuits(
+        circuits_test = PreAlpha2.create_circuits(
             diagrams_test, args.ansatz, args.qn,
             qs, args.n_layers, args.n_single_qubit_params
         )
         
-        dataset_train = PreAlphaLambeq.create_dataset(
+        dataset_train = PreAlpha2.create_dataset(
             circuits_train, labels_train, args.batch_size)
-        dataset_validation = PreAlphaLambeq.create_dataset(
+        dataset_validation = PreAlpha2.create_dataset(
             circuits_validation, labels_validation, args.batch_size)
-        dataset_test = PreAlphaLambeq.create_dataset(
+        dataset_test = PreAlpha2.create_dataset(
             circuits_test, labels_test, args.batch_size)
         all_circuits = circuits_train + circuits_validation + circuits_test
         
-        model = PreAlphaLambeq.create_model(all_circuits)
+        model = PreAlpha2.create_model(all_circuits)
         
         if torch.cuda.is_available():
             device = 0
         else:
             device = -1
         
-        trainer = PreAlphaLambeq.create_trainer(
+        trainer = PreAlpha2.create_trainer(
             model, loss, opt, args.iterations,
             {'acc': acc}, seed = seed, device = device
         )
@@ -172,11 +172,11 @@ def main():
         for i in range(len(model.weights)):
             weights.append(model.weights.__getitem__(i).tolist())
 
-        vectors_train = PreAlphaLambeq.post_selected_output(
+        vectors_train = PreAlpha2.post_selected_output(
             model, all_circuits)[:len(labels_train)].tolist()
-        vectors_validation = PreAlphaLambeq.post_selected_output(
+        vectors_validation = PreAlpha2.post_selected_output(
             model, all_circuits)[-len(labels_validation):].tolist()
-        vectors_test = PreAlphaLambeq.post_selected_output(
+        vectors_test = PreAlpha2.post_selected_output(
             model, all_circuits)[-len(labels_test):].tolist()
         
         prediction_list = []

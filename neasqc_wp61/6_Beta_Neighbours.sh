@@ -18,6 +18,6 @@ echo "test: $test";
 echo "K values for KNN algorithm: ${k[*]}";
 echo "output: $output";
 
-echo "running beta neighbours"
+echo "running beta_1"
 
-python3.10 ./data/data_processing/use_beta_neighbours_with_bert.py -tr ${train} -te ${test} -k ${k[*]} -o ${output}
+python3.10 ./data/data_processing/use_beta_1_bert.py -tr ${train} -te ${test} -k ${k[*]} -o ${output}

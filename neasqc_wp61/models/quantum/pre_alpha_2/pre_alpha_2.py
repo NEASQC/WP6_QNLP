@@ -7,7 +7,7 @@ torch.set_num_threads(40)
 import pickle
 
 
-class PreAlphaLambeq:
+class PreAlpha2:
     """
     A class to implement the lambeq version of pre-alpha
     """
