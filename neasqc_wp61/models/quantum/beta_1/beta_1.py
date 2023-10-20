@@ -2,8 +2,9 @@ from QuantumDistance import QuantumDistance as qd
 import pandas as pd 
 import json
 from collections import Counter
-import numpy as np 
-
+import numpy as np
+from sklearn import preprocessing
+from sklearn.decomposition import PCA
 
 class QuantumKNearestNeighbours:
     """
@@ -12,8 +13,7 @@ class QuantumKNearestNeighbours:
     """
     
     def __init__(
-            self, dataset_dir : str, train_vectors :list,
-            test_vectors : list, k : int
+            self, X_train, X_test, y_train, y_test, k_values : list[int]
         )-> None:
         """
         Initialises the class. 
@@ -30,22 +30,27 @@ class QuantumKNearestNeighbours:
         k : int
             Number of neighbors of the algorithm
         """
-        self.labels = self.load_labels(dataset_dir)
-        self.train_vectors = train_vectors
-        self.test_vectors = test_vectors
-        self.k = k
+        self.y_test = y_test
+
+        self.labels = y_train
+        self.train_vectors = X_train
+        self.test_vectors = X_test
+        self.k_values = k_values
         self.predictions = []
         for i in self.test_vectors:
             distances = self.compute_distances(i)
-            closest_indexes = self.compute_minimum_distances(distances, self.k)
-            pred = self.labels_majority_vote(closest_indexes)
-            self.predictions.append(pred)
+            closest_indexes_list = self.compute_minimum_distances(distances, self.k_values)
+            pred_list = self.labels_majority_vote(closest_indexes_list)
+            self.predictions.append(pred_list)
+
+            print("Prediction made for vector: ", i)
         
 
     @staticmethod
     def load_labels(
-            dataset : str  
-    ) -> list[list[str],list[list[int]]]:
+            train_dataset_path : str,
+            test_dataset_path : str  
+    ):
         """
         Loads the chosen dataset as pandas dataframe.
 
@@ -60,21 +65,43 @@ class QuantumKNearestNeighbours:
             List with the labels of the dataset.
             0 False, and 1 True
         """
-        df = pd.read_csv(
-            dataset, sep='\t+',
-            header=None, names=['label', 'sentence', 'structure_tilde'],
-            engine='python'
-        )
-        labels = []
-        sentences = df['sentence'].tolist()
 
-        for i in range(df.shape[0]):
-            if df['label'].iloc[i] == 1:
-                labels.append(0)
-            else:
-                labels.append(1)
+        df_train = pd.read_csv(train_dataset_path)
+        df_test = pd.read_csv(test_dataset_path)
 
-        return labels
+
+        df_train['sentence_embedding'] = np.array([np.fromstring(embedding.strip(' []'), sep=',') for embedding in df_train['sentence_embedding']]).tolist()
+        df_test['sentence_embedding'] = np.array([np.fromstring(embedding.strip(' []'), sep=',') for embedding in df_test['sentence_embedding']]).tolist()
+
+        #We reduce the dimension of the sentence embedding to a 2D vector
+        ############################################################
+        # Convert the "sentence_embedding" column to a 2D NumPy array
+        X_train = np.array([embedding for embedding in df_train['sentence_embedding']])
+        X_test = np.array([embedding for embedding in df_test['sentence_embedding']])
+
+        # Initialize and fit the PCA model
+        pca = PCA(n_components=2)  # Specify the desired number of components
+        pca.fit(X_train)
+        print('PCA explained variance:', pca.explained_variance_ratio_.sum())
+
+        # Transform the data to the reduced dimension for both training and test sets
+        reduced_embeddings_train = pca.transform(X_train)
+        reduced_embeddings_test = pca.transform(X_test)
+
+        # Update the DataFrames with the reduced embeddings
+        df_train['sentence_embedding'] = list(reduced_embeddings_train)
+        df_test['sentence_embedding'] = list(reduced_embeddings_test)
+
+        #Preprocess labels
+        label_encoder = preprocessing.LabelEncoder()
+        label_encoder.fit(df_train['class'])
+
+        df_train['class'] = label_encoder.transform(df_train['class'])
+        df_test['class'] = label_encoder.transform(df_test['class'])
+
+        X_train, y_train, X_test, y_test = reduced_embeddings_train, df_train['class'], reduced_embeddings_test, df_test['class']
+        
+        return X_train, X_test, y_train.values, y_test.values
 
     def compute_distances(self, sample : np.array):
         """
@@ -98,7 +125,7 @@ class QuantumKNearestNeighbours:
         return distances
 
     @staticmethod
-    def compute_minimum_distances(distances, k):
+    def compute_minimum_distances(distances, k_values):
         """
         Computes the indexes of the k closest elements of the training 
         dataset
@@ -115,12 +142,17 @@ class QuantumKNearestNeighbours:
         closest_indexes : list[int]
             indexes of the k closest vectors
         """
+        closest_indexes_list = []
         closest_indexes = sorted(
-            range(len(distances)), key=lambda j: distances[j]
-            )[:k]
-        return closest_indexes
+                range(len(distances)), key=lambda j: distances[j]
+                )
+
+        for k in k_values:
+            closest_indexes_list.append(closest_indexes[:k])
+
+        return closest_indexes_list
     
-    def labels_majority_vote(self, closest_indexes):
+    def labels_majority_vote(self, closest_indexes_list):
         """
         Gets the labels of the closest vectors and returns the most 
         frequent one among them 
@@ -135,12 +167,18 @@ class QuantumKNearestNeighbours:
         label : int
             Most frequent label among the k closest vectors
         """
-        closest_labels = []
-        for i in closest_indexes:
-            closest_labels.append(self.labels[i])
-        c = Counter(closest_labels)
-        label, count = c.most_common()[0]
-        return label
+        label_list = []
+
+        for closest_indexes in closest_indexes_list:
+            closest_labels = []
+            for i in closest_indexes:
+                closest_labels.append(self.labels[i])
+            c = Counter(closest_labels)
+            label, count = c.most_common()[0]
+
+            label_list.append(label)
+
+        return label_list
 
 
 
