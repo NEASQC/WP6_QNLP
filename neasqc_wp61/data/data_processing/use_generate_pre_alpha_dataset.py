@@ -1,4 +1,4 @@
-from Pre_alpha_dataset import *
+from pre_alpha_dataset import *
 import os
 current_path = os.path.dirname(os.path.abspath(__file__))
 import numpy as np
@@ -16,7 +16,7 @@ def main():
     parser.add_argument("-o", "--output", help = "Path of the output dataset")
     args = parser.parse_args()
 
-    dataset = Pre_alpha_dataset(args.dataset)
+    dataset = PreAlphaDataset(args.dataset)
     dataset.generate_train_indexes(
         args.seed, int(args.train) + int(args.validation) + int(args.test), False)
     dataset.generate_val_test_indexes(

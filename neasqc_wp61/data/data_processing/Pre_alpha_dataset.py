@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np 
 import random as rd 
 
-class Pre_alpha_dataset:
+class PreAlphaDataset:
     """
     Class containing all the methods to create a pre-alha compatible
     dataset,i.e., a dataset where all the words present on the test dataset,
