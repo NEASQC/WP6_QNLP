@@ -1,8 +1,8 @@
 import sys
 import os
 current_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(current_path + "/../../models/quantum/pre-alpha-lambeq/")
-from PreAlphaLambeq import *
+sys.path.append(current_path + "/../../models/quantum/pre_alpha_2/")
+from pre_alpha_2 import *
 import argparse
 
 def main():
@@ -14,7 +14,6 @@ def main():
     parser.add_argument("-tr", "--train", help = "Path of train dataset")
     parser.add_argument("-val", "--validation", help = "Path of validation dataset")
     parser.add_argument("-te", "--test", help = "Path of test dataset")
-    parser.add_argument("-val", "--validation", help = "Path of dev dataset")
     parser.add_argument("-o", "--output", help = "Output path") 
     args = parser.parse_args()
     train_dataset_name = os.path.basename(args.train)
@@ -26,25 +25,25 @@ def main():
     dev_dataset_name = os.path.basename(args.validation)
     dev_dataset_name = os.path.splitext(dev_dataset_name)[0]
 
-    sentences_train = PreAlphaLambeq.load_dataset(args.train)[0]
-    sentences_validation = PreAlphaLambeq.load_dataset(args.validation)[0]
-    sentences_test = PreAlphaLambeq.load_dataset(args.test)[0]
-    sentences_dev = PreAlphaLambeq.load_dataset(args.validation)[0]
-    diagrams_train = PreAlphaLambeq.create_diagrams(sentences_train)
-    diagrams_validation = PreAlphaLambeq.create_diagrams(sentences_validation)
-    diagrams_test = PreAlphaLambeq.create_diagrams(sentences_test)
-    diagrams_dev = PreAlphaLambeq.create_diagrams(sentences_dev)
+    sentences_train = PreAlpha2.load_dataset(args.train)[0]
+    sentences_validation = PreAlpha2.load_dataset(args.validation)[0]
+    sentences_test = PreAlpha2.load_dataset(args.test)[0]
+    sentences_dev = PreAlpha2.load_dataset(args.validation)[0]
+    diagrams_train = PreAlpha2.create_diagrams(sentences_train)
+    diagrams_validation = PreAlpha2.create_diagrams(sentences_validation)
+    diagrams_test = PreAlpha2.create_diagrams(sentences_test)
+    diagrams_dev = PreAlpha2.create_diagrams(sentences_dev)
 
-    PreAlphaLambeq.save_diagrams(
+    PreAlpha2.save_diagrams(
         diagrams_train, args.output, 'diagrams_' + train_dataset_name 
     )
-    PreAlphaLambeq.save_diagrams(
+    PreAlpha2.save_diagrams(
         diagrams_validation, args.output, 'diagrams_' + validation_dataset_name 
     )
-    PreAlphaLambeq.save_diagrams(
+    PreAlpha2.save_diagrams(
         diagrams_test, args.output, 'diagrams_' + test_dataset_name 
     )
-    PreAlphaLambeq.save_diagrams(
+    PreAlpha2.save_diagrams(
         diagrams_dev, args.output, 'diagrams_' + dev_dataset_name 
     )
 
