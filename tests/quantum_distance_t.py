@@ -4,6 +4,7 @@ import sys
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_path + "/../neasqc_wp61/models/quantum/beta/")
 from quantum_distance import QuantumDistance as qd
+from quantum_k_nearest_neighbours_bert import QuantumKNearestNeighbours_bert as qkn
 import numpy as np 
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import Statevector
@@ -39,7 +40,23 @@ class TestQuantumDistance(unittest.TestCase):
                 euclidean_distance = np.linalg.norm(x2 - x1)
                 self.assertAlmostEqual(quantum_distance, euclidean_distance)
 
-    
+    def test_real_quantum_distance_with_padding(self):
+        sizes = [5,7]
+        for i,n in enumerate(sizes):
+            X1 = [np.random.uniform(-1000,1000,size =n) for i in range(100)]
+            X2 = [np.random.uniform(-1000,1000,size =n) for i in range(100)]
+            X1 = qkn.normalise_vector(X1)
+            X2 = qkn.normalise_vector(X2)
+            X1 = qkn.pad_zeros_vector(X1)
+            X2 = qkn.pad_zeros_vector(X2)
+            for i in range(100):
+                x1 = X1[i]
+                x2 = X2[i]
+                model = qd(x1, x2)
+                quantum_distance = model.compute_quantum_distance()
+                euclidean_distance = np.linalg.norm(x2 - x1)
+                self.assertAlmostEqual(quantum_distance, euclidean_distance)
+
 
 
 
