@@ -1,10 +1,12 @@
 from quantum_distance import QuantumDistance as qd
 import pandas as pd 
-import json
+import pickle
 from collections import Counter
 import numpy as np
 from sklearn import preprocessing
 from sklearn.decomposition import PCA
+import time
+import os
 
 class QuantumKNearestNeighbours_bert:
     """
@@ -29,23 +31,15 @@ class QuantumKNearestNeighbours_bert:
             List containing the vectors for testing
         k : int
             Number of neighbors of the algorithm
+        checkpoint_output : str
+            Path where to store the checkpoints with predictions
         """
         self.y_test = y_test
-
         self.labels = y_train
         self.train_vectors = X_train
         self.test_vectors = X_test
         self.k_values = k_values
-        self.predictions = []
-        for i in self.test_vectors:
-            distances = self.compute_distances(i)
-            closest_indexes_list = self.compute_minimum_distances(distances, self.k_values)
-            pred_list = self.labels_majority_vote(closest_indexes_list)
-            self.predictions.append(pred_list)
-
-            print("Prediction made for vector: ", i)
-        
-
+    
     @staticmethod
     def load_labels(
             train_dataset_path : str,
@@ -105,12 +99,83 @@ class QuantumKNearestNeighbours_bert:
         return X_train, X_test, y_train.values, y_test.values
     
     @staticmethod
-    def normalise_vector(X):
+    def normalise_vector(X : list[np.array]) -> list[np.array]:
+        """
+        Normalises a vector so that the sum
+        of its squared elements  is equal to 1.
+
+        Parameters
+        ----------
+        X : np.array
+            List of vectors to be normalised
+
+        Returns
+        -------
+        X_normalised : np.array
+            List of normalised vectors
+        """
         X_normalised = []
         for sample in X:
             X_normalised.append(sample/np.linalg.norm(sample))
         return np.array(X_normalised)
+    
+    @staticmethod
+    def pad_zeros_vector(X : list[np.array]) -> list[np.array]:
+        """
+        Pads a vector with zeros when its length is not a power of 2.
 
+        Parameters
+        ----------
+        X : np.array
+            List of vectors to be padded with zeros
+
+        Returns
+        -------
+        X_padded : np.array
+            List of padded vectors
+        """
+        n = len(X[0])
+        X_padded = []
+        next_power_2 = 2 ** int(np.ceil(np.log2(n)))
+        zero_padding = np.zeros(next_power_2 - n)
+
+        for sample in X:
+            X_padded.append(np.concatenate((sample, zero_padding)))
+        return X_padded
+    
+    def compute_predictions(
+        self, compute_checkpoints : bool = False,
+        ) -> None:
+        """
+        Makes the predictions of the model
+
+        Parameters
+        ----------
+        compute_checkpoints : bool
+            Decides whether to store checkpoints or not 
+        checkpoint_directory : str
+            Directory where to store the temporary checkpoints
+        """
+        self.predictions = []
+        for index,i in enumerate(self.test_vectors):
+            t1 = time.time()
+            distances = self.compute_distances(i)
+            closest_indexes_list = self.compute_minimum_distances(distances, self.k_values)
+            pred_list = self.labels_majority_vote(closest_indexes_list)
+            self.predictions.append(pred_list)
+            
+            if index % 25 == 0 and compute_checkpoints == True:
+                with open(
+                    './../../benchmarking/results/raw/temporary_predictions_beta.pickle', 'wb'
+                ) as file:
+                    pickle.dump(self.predictions, file)
+            t2 = time.time()
+            print('Time to do the iteration : ', t2 - t1)
+    def get_predictions(self):
+        """
+        Getter for the predictions
+        """
+        return self.predictions
 
 
     def compute_distances(self, sample : np.array):
