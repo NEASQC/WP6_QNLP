@@ -7,6 +7,7 @@ from sklearn import preprocessing
 from sklearn.decomposition import PCA
 import time
 import os
+current_path = os.path.dirname(os.path.abspath(__file__))
 
 class QuantumKNearestNeighbours_bert:
     """
@@ -166,7 +167,7 @@ class QuantumKNearestNeighbours_bert:
             
             if index % 25 == 0 and compute_checkpoints == True:
                 with open(
-                    './../../benchmarking/results/raw/temporary_predictions_beta.pickle', 'wb'
+                   current_path +  '/../../../benchmarking/results/raw/temporary_predictions_beta.pickle', 'wb'
                 ) as file:
                     pickle.dump(self.predictions, file)
             t2 = time.time()
