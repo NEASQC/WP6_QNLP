@@ -295,7 +295,7 @@ bash 6_Classify_With_Quantum_Model.sh -m alpha_pennylane -t [Sentence Train] -j 
 
 ##### Beta 1
 ```
-bash 6_Beta_Neighbours.sh -t [Sentence Train] -v [Sentence Test] -d 8 -k "1 3 5 7 9" -o ./benchmarking/results/raw/
+bash 6_Beta.sh -t [Sentence Train] -v [Sentence Test] -d 8 -k "1 3 5 7 9" -o ./benchmarking/results/raw/
 ```
 
 #### Plotting Results
