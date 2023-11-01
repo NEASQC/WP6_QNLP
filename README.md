@@ -185,7 +185,7 @@ Similarly, run the following to produce a BERT word embedding dataset:
 
 The <code>pre_alpha_1</code> and <code>pre_alpha_2</code> models both take <b>Standard Datasets</b> as input. 
 
-<code>pre_alpha_2</code> however also requires the presence of the DisCoCat diagrams corresponding to each sentence in the form of  a <code>.pickle</code> file in the <code>datasets</code> directory. This file is not given as input, but the model will search for it in this directory an expects it's name to be <code>diagrams_[dataset name].pickle</code> for each dataset that one gives as input. To produce these files from the corresponding <b>Standard Datasets</b>, one can use the <code>use_save_diagarams.py</code>. First, from the root of the repo, change into the <code>datasets</code> directory and run:
+<code>pre_alpha_2</code> however also requires the presence of the DisCoCat diagrams corresponding to each sentence in the form of  a <code>.pickle</code> file in the <code>datasets</code> directory. This file is not given as input, but the model will search for it in this directory an expects it's name to be <code>diagrams_[dataset name].pickle</code> for each dataset that one gives as input. The associated pickle files for the datasets that we have provided in the repo are also provided and are located in the <code>datasets</code> directory. To produce these files from the corresponding <b>Standard Datasets</b>, one can use the <code>use_save_diagarams.py</code>. First, from the root of the repo, change into the <code>datasets</code> directory and run:
 
 <pre>
   <code> $ python3.10 ../data_processing/use_save_diagrams.py -tr [train dataset] -val [validation dataset] -te [test dataset] -o . </code>
