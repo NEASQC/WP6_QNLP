@@ -26,11 +26,12 @@ source activate /ichec/work/iccom018c/.conda/beta
 
 # -t : path of the training dataset
 # -v : path of the testing dataset
+# -d : dimension of PCA-reduced BERT embeddings
 # -k : number of nearest neighbours
 # -o : path of output directory
 
 echo "`date +%T`"
 
-bash 6_Beta.sh -t ./data/datasets/reduced_amazonreview_train_sentence.csv -v ./data/datasets/reduced_amazonreview_test_sentence.csv -k "1 3 5 7 9" -o ./benchmarking/results/raw/
+bash 6_Beta.sh -t ./data/datasets/reduced_amazonreview_train_sentence.csv -v ./data/datasets/reduced_amazonreview_test_sentence.csv -d {d} -k {k} -o ./benchmarking/results/raw/
 
 echo "`date +%T`"
