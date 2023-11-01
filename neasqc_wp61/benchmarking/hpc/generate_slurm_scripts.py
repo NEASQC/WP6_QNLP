@@ -56,20 +56,20 @@ def main():
       #here we will do the same with alpha if we ever decide we want to run benchmarking experiments with it
 
       elif params[0] == 'beta_1':
-        if len(params) != 2: 
+        if len(params) != 3: 
           print("WARNING: line " + str(j) + " in your text file has the wrong number of parameters for the chosen model. This line will be skipped.")
           continue
         else:
           '''
           If model is beta_neighbours, create a SLURM script whose name is in the format
-          beta_1_[number of K neighbours].sh
+          beta_1_[PCA-reduced dimension of BERT embeddings]_[number of K neighbours].sh
           '''
           slurm_template = "slurm_templates/beta_1.sh"
           with open(slurm_template, 'r') as f1:
             template = Template(f1.read())
-          k = params[1]
-          filled_template = template.render(k=k)
-          with open(f'slurm_scripts/beta_1_{k}.sh','w') as f2:
+          d, k = params[1:]
+          filled_template = template.render(d=d,k=k)
+          with open(f'slurm_scripts/beta_1_{d}_{k}.sh','w') as f2:
             f2.write(filled_template)
 
       elif params[0] == 'alpha_3':
