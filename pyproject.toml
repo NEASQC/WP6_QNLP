@@ -5,7 +5,9 @@ description = "The repository of the quantum natural language processing WP6 wit
 authors = [
     "Richard Wolf <richard.wolf@ichec.ie>",
     "Conor Dune <conor.dunne@ichec.ie>",
-    "Pablo Suarez <pablo.suarez@ichec.ie>"]
+    "Pablo Suarez <pablo.suarez@ichec.ie>",
+    "Pablo Lauret Martinez de Rituerto <pablo.lauret@ichec.ie>",
+    "Yanis Lalou <yanis.lalou@ichec.ie>"]
 readme = "README.md"
 repository = "https://github.com/NEASQC/WP6_QNLP"
 packages = [
@@ -22,19 +24,19 @@ myqlm = "==1.5.1"
 scipy = "==1.9.3"
 scikit-learn = "==1.1.3"
 discopy = "==1.1.4"
-lambeq = "==0.3.2"
+lambeq = "==0.3.3"
 pytket = ">=0.19.2"
 qiskit = "==0.43.1"
 qiskit_ignis = "==0.7.1"
 sympy = "==1.11.1"
-torch = "2.0.1"
+torch = "==2.0.1"
 tensorflow = {version = "==2.10.0", markers = "platform_machine != 'arm64'"}
 tensorflow-macos = {version = "==2.10.0", markers = "sys_platform == 'darwin' and platform_machine == 'arm64'"}
 tensorflow-metal = {version = "==0.6.0", markers = "sys_platform == 'darwin' and platform_machine == 'arm64'"}
 GitPython = "==3.1.31"
 nltk = "^3.8.1"
-torchvision = "0.15.2"
-pennylane = "^0.30.0"
+torchvision = "==0.15.2"
+pennylane = "^0.31.0"
 plotly = "^5.15.0"
 
 
