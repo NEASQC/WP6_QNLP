@@ -22,17 +22,14 @@ def main():
     validation_dataset_name = os.path.splitext(validation_dataset_name)[0]
     test_dataset_name = os.path.basename(args.test)
     test_dataset_name = os.path.splitext(test_dataset_name)[0]
-    dev_dataset_name = os.path.basename(args.validation)
-    dev_dataset_name = os.path.splitext(dev_dataset_name)[0]
 
     sentences_train = PreAlpha2.load_dataset(args.train)[0]
     sentences_validation = PreAlpha2.load_dataset(args.validation)[0]
     sentences_test = PreAlpha2.load_dataset(args.test)[0]
-    sentences_dev = PreAlpha2.load_dataset(args.validation)[0]
     diagrams_train = PreAlpha2.create_diagrams(sentences_train)
     diagrams_validation = PreAlpha2.create_diagrams(sentences_validation)
     diagrams_test = PreAlpha2.create_diagrams(sentences_test)
-    diagrams_dev = PreAlpha2.create_diagrams(sentences_dev)
+
 
     PreAlpha2.save_diagrams(
         diagrams_train, args.output, 'diagrams_' + train_dataset_name 
@@ -43,9 +40,7 @@ def main():
     PreAlpha2.save_diagrams(
         diagrams_test, args.output, 'diagrams_' + test_dataset_name 
     )
-    PreAlpha2.save_diagrams(
-        diagrams_dev, args.output, 'diagrams_' + dev_dataset_name 
-    )
+
 
 if __name__ == "__main__":
     main()
