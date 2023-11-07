@@ -171,7 +171,7 @@ and run the following to produce a BERT sentence embedding dataset:
 
 <pre>
   <code>
-    $ python3.10 ../data_processing/data_vectorisation/dataset_vectoriser.py standard_dataset.tsv -e sentence
+    $ python3.10 ../data_processing/dataset_vectoriser.py standard_dataset.tsv -e sentence
   </code>
 </pre>
 
@@ -179,7 +179,7 @@ Similarly, run the following to produce a BERT word embedding dataset:
 
 <pre>
   <code>
-    $ python3.10 ../data_processing/data_vectorisation/dataset_vectoriser.py standard_dataset.tsv -e word
+    $ python3.10 ../data_processing/dataset_vectoriser.py standard_dataset.tsv -e word
   </code>
 </pre>
 
