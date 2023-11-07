@@ -26,7 +26,7 @@ parser.add_argument("-s", "--seed", help = "Seed for the initial parameters", ty
 parser.add_argument("-i", "--iterations", help = "Number of iterations of the optimiser", type = int, default = 100)
 parser.add_argument("-r", "--runs", help = "Number of runs", type = int, default = 1)
 parser.add_argument("-tr", "--train", help = "Directory of the train dataset", type = str, default = '../toy_dataset/toy_dataset_bert_sentence_embedding_train.csv')
-parser.add_argument("-val", "--val", help = "Directory of the validation dataset", type = str, default = '../toy_dataset/toy_dataset_bert_sentence_embedding_dev.csv')
+parser.add_argument("-val", "--val", help = "Directory of the validation dataset", type = str, default = '../toy_dataset/toy_dataset_bert_sentence_embedding_val.csv')
 parser.add_argument("-te", "--test", help = "Directory of the test dataset", type = str, default = '../toy_dataset/toy_dataset_bert_sentence_embedding_test.csv')
 parser.add_argument("-o", "--output", help = "Output directory with the predictions", type = str, default = "../../benchmarking/results/raw/")
 
