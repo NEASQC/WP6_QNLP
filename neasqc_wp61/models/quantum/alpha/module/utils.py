@@ -20,54 +20,61 @@ def seed_everything(seed: int):
     torch.mps.manual_seed(seed)
 
 
-def preprocess_train_test_dataset(train_csv_file, test_csv_file):
+def preprocess_train_test_dataset(train_csv_file, val_csv_file, test_csv_file):
     """
     Preprocess function for the dataset with sentence embeddings
     """
     df_train = pd.read_csv(train_csv_file)
+    df_val = pd.read_csv(val_csv_file)
     df_test = pd.read_csv(test_csv_file)
 
 
     df_train['sentence_embedding'] = np.array([np.fromstring(embedding.strip(' []'), sep=',') for embedding in df_train['sentence_embedding']]).tolist()
+    df_val['sentence_embedding'] = np.array([np.fromstring(embedding.strip(' []'), sep=',') for embedding in df_val['sentence_embedding']]).tolist()
     df_test['sentence_embedding'] = np.array([np.fromstring(embedding.strip(' []'), sep=',') for embedding in df_test['sentence_embedding']]).tolist()
 
     #Preprocess labels
     label_encoder = preprocessing.LabelEncoder()
-    label_encoder.fit(df_train['class'].append(df_test['class']))
+    label_encoder.fit(df_train['class'].append(df_val['class']))
 
     df_train['class'] = label_encoder.transform(df_train['class'])
+    df_val['class'] = label_encoder.transform(df_val['class'])
     df_test['class'] = label_encoder.transform(df_test['class'])
 
-    X_train, y_train, X_test, y_test = df_train[['sentence_embedding', 'sentence']], df_train['class'], df_test[['sentence_embedding', 'sentence']], df_test['class']
+    X_train, y_train, X_val, y_val, X_test, y_test = df_train[['sentence_embedding', 'sentence']], df_train['class'], df_val[['sentence_embedding', 'sentence']], df_val['class'], df_test[['sentence_embedding', 'sentence']], df_test['class']
 
-    return X_train, X_test, y_train, y_test
+    return X_train, X_val, X_test, y_train, y_val, y_test
 
 
-def preprocess_train_test_dataset_words(train_csv_file, test_csv_file, reduced_word_embedding_dimension):
+def preprocess_train_test_dataset_words(train_csv_file, val_csv_file, test_csv_file, reduced_word_embedding_dimension):
     """
     Preprocess function for the dataset with word embeddings
     """
     df_train = pd.read_csv(train_csv_file)
+    df_val = pd.read_csv(val_csv_file)
     df_test = pd.read_csv(test_csv_file)
 
 
     df_train['sentence_vectorized'] = df_train['sentence_vectorized'].apply(ast.literal_eval)
+    df_val['sentence_vectorized'] = df_val['sentence_vectorized'].apply(ast.literal_eval)
     df_test['sentence_vectorized'] = df_test['sentence_vectorized'].apply(ast.literal_eval)
 
     pca = fit_pca(df_train, reduced_word_embedding_dimension)
     df_train['sentence_vectorized'] = df_train['sentence_vectorized'].apply(lambda x: pca.transform(x))
+    df_val['sentence_vectorized'] = df_val['sentence_vectorized'].apply(lambda x: pca.transform(x))
     df_test['sentence_vectorized'] = df_test['sentence_vectorized'].apply(lambda x: pca.transform(x))
 
     #Preprocess labels
     label_encoder = preprocessing.LabelEncoder()
-    label_encoder.fit(df_train['class'].append(df_test['class']))
+    label_encoder.fit(df_train['class'].append(df_val['class']))
 
     df_train['class'] = label_encoder.transform(df_train['class'])
+    df_val['class'] = label_encoder.transform(df_val['class'])
     df_test['class'] = label_encoder.transform(df_test['class'])
 
-    X_train, y_train, X_test, y_test = df_train[['sentence_vectorized', 'sentence']], df_train['class'], df_test[['sentence_vectorized', 'sentence']], df_test['class']
+    X_train, y_train, X_val, y_val, X_test, y_test = df_train[['sentence_vectorized', 'sentence']], df_train['class'], df_val[['sentence_vectorized', 'sentence']], df_val['class'], df_test[['sentence_vectorized', 'sentence']], df_test['class']
 
-    return X_train, X_test, y_train, y_test
+    return X_train, X_val, X_test, y_train, y_val, y_test
 
 
 def fit_pca(df, n_components):
@@ -86,26 +93,29 @@ def fit_pca(df, n_components):
     return pca
 
 
-def preprocess_train_test_dataset_for_alpha_pennylane(train_csv_file, test_csv_file):
+def preprocess_train_test_dataset_for_alpha_3(train_csv_file, val_csv_file, test_csv_file,):
     """
-    Preprocess function for the dataset for the alpha pennylane model
+    Preprocess function for the dataset for the alpha 3 model
     """
     df_train = pd.read_csv(train_csv_file)
+    df_val = pd.read_csv(val_csv_file)
     df_test = pd.read_csv(test_csv_file)
 
 
     df_train['sentence_embedding'] = np.array([np.fromstring(embedding.strip(' []'), sep=',') for embedding in df_train['sentence_embedding']]).tolist()
+    df_val['sentence_embedding'] = np.array([np.fromstring(embedding.strip(' []'), sep=',') for embedding in df_val['sentence_embedding']]).tolist()
     df_test['sentence_embedding'] = np.array([np.fromstring(embedding.strip(' []'), sep=',') for embedding in df_test['sentence_embedding']]).tolist()
 
     enc = preprocessing.OneHotEncoder(handle_unknown='ignore')
-    enc.fit(df_train['class'].append(df_test['class']).values.reshape(-1, 1))
+    enc.fit(df_train['class'].append(df_val['class']).values.reshape(-1, 1))
     
     df_train['class'] = enc.transform(df_train['class'].values.reshape(-1, 1)).toarray().tolist()
+    df_val['class'] = enc.transform(df_val['class'].values.reshape(-1, 1)).toarray().tolist()
     df_test['class'] = enc.transform(df_test['class'].values.reshape(-1, 1)).toarray().tolist()
 
-    X_train, y_train, X_test, y_test = df_train['sentence_embedding'], df_train['class'], df_test['sentence_embedding'], df_test['class']
-
-    return X_train, X_test, y_train, y_test
+    X_train, y_train, X_val, y_val, X_test, y_test = df_train['sentence_embedding'], df_train['class'], df_val['sentence_embedding'], df_val['class'], df_test['sentence_embedding'], df_test['class']
+    
+    return X_train, X_val, X_test, y_train, y_val, y_test
 
 
 class BertEmbeddingDataset(Dataset):
