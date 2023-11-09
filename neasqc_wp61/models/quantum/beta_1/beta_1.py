@@ -260,6 +260,8 @@ class QuantumKNearestNeighbours:
             for i in range(1,len(counts)):
                 if counts[i] == counts[i-1]:
                     n += 1
+                else:
+                    break
             closest_labels = labels[:n]
             label = rd.choice(closest_labels)
 
