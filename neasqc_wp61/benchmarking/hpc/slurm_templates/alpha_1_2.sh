@@ -1,16 +1,16 @@
 #!/bin/sh
 
 # Slurm flags
-#SBATCH -p GpuQ
+#SBATCH -p ProdQ
 #SBATCH -N 1
 #SBATCH -t 01:00:00
-#SBATCH --job-name=alpha_1_2{{ s }}_{{ r }}_{{ i }}_{{ v }}_{{ pca }}_{{ an }}_{{ qn }}_{{ qs }}_{{ nl }}_{{ np }}_{{ sb }}_{{ lr }}_{{ wd }}_{{ slr }}_{{ g }}
+#SBATCH --job-name=alpha_1_2_{{ s }}_{{ r }}_{{ i }}_{{ v }}_{{ pca }}_{{ an }}_{{ qn }}_{{ qs }}_{{ nl }}_{{ np }}_{{ sb }}_{{ lr }}_{{ wd }}_{{ slr }}_{{ g }}
    
 # Charge job to my project 
 #SBATCH -A iccom018c
 
 # Write stdout+stderr to file
-#SBATCH -o ./benchmarking/hpc/slurm_output/alpha_1_2{{ s }}_{{ r }}_{{ i }}_{{ v }}_{{ pca }}_{{ an }}_{{ qn }}_{{ qs }}_{{ nl }}_{{ np }}_{{ sb }}_{{ lr }}_{{ wd }}_{{ slr }}_{{ g }}.txt
+#SBATCH -o ./benchmarking/hpc/slurm_output/alpha_1_2_{{ s }}_{{ r }}_{{ i }}_{{ v }}_{{ pca }}_{{ an }}_{{ qn }}_{{ qs }}_{{ nl }}_{{ np }}_{{ sb }}_{{ lr }}_{{ wd }}_{{ slr }}_{{ g }}.txt
 
 # Mail me on job start & end
 #SBATCH --mail-user=yanis.lalou@ichec.ie
@@ -22,9 +22,10 @@ cd WP6_QNLP/neasqc_wp61
 
 module load conda
 
-source activate /ichec/work/iccom018c/.conda/qnlp
+source activate /ichec/work/iccom018c/.conda/alpha
 
-module load cuda/11.4
+#Uncomment line below for GPU jobs
+#module load cuda/11.4
 
 
 # -s : Seed for the initial parameters

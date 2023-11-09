@@ -22,8 +22,8 @@ def plot_multiple_experiment_results(json_files, plot_type):
     std_train_losses_list = []
     times_list = []
 
-    dict_new_model_names = {"pre_alpha": "Pre_alpha 1",
-                            "pre_alpha_lambeq": "Pre_alpha 2",
+    dict_new_model_names = {"pre_alpha": "Pre-Alpha 1",
+                            "pre_alpha_lambeq": "Pre-Alpha 2",
                             "alpha_original": "Alpha 1",
                             "alpha_lambeq": "Alpha 2",
                             "alpha_pennylane": "Alpha 3"

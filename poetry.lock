@@ -78,13 +78,13 @@ wheel = ">=0.23.0,<1.0"
 
 [[package]]
 name = "autograd"
-version = "1.6.2"
+version = "1.5"
 description = "Efficiently computes derivatives of numpy code."
 optional = false
 python-versions = "*"
 files = [
-    {file = "autograd-1.6.2-py3-none-any.whl", hash = "sha256:208dde2a938e63b4f8f5049b1985505139e529068b0d26f8cd7771fd3eb145d5"},
-    {file = "autograd-1.6.2.tar.gz", hash = "sha256:8731e08a0c4e389d8695a40072ada4512641c113b6cace8f4cfbe8eb7e9aedeb"},
+    {file = "autograd-1.5-py3-none-any.whl", hash = "sha256:a22a17e71c4a601359d544827762dd66d5ba50b287a8444d4f85ada1ee762ef6"},
+    {file = "autograd-1.5.tar.gz", hash = "sha256:d80bd225154d1db13cb4eaccf7a18c358be72092641b68717f96fcf1d16acd0b"},
 ]
 
 [package.dependencies]
@@ -1332,13 +1332,13 @@ files = [
 
 [[package]]
 name = "lambeq"
-version = "0.3.2"
+version = "0.3.3"
 description = "A QNLP toolkit"
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "lambeq-0.3.2-py3-none-any.whl", hash = "sha256:2e4624c4e289bf8773d19894f73aebb86ae2c19bd8e59288d5121d8f674b81ae"},
-    {file = "lambeq-0.3.2.tar.gz", hash = "sha256:3cdfac289e069c5e606d44f0a4847bdc0d27829482cbacf664e9075fbb750755"},
+    {file = "lambeq-0.3.3-py3-none-any.whl", hash = "sha256:9ebc3f70a140d775d56225c0eb2db70ce3e13a0842a0c5e4306400524edfa249"},
+    {file = "lambeq-0.3.3.tar.gz", hash = "sha256:065e552f4969dec04d7b09aa87841a54a3a1be2ac0ed51ad3d6eab6dfb69049d"},
 ]
 
 [package.dependencies]
@@ -1391,6 +1391,8 @@ description = "Clang Python Bindings, mirrored from the official LLVM repo: http
 optional = false
 python-versions = "*"
 files = [
+    {file = "libclang-16.0.6-1-py2.py3-none-manylinux2014_aarch64.whl", hash = "sha256:88bc7e7b393c32e41e03ba77ef02fdd647da1f764c2cd028e69e0837080b79f6"},
+    {file = "libclang-16.0.6-1-py2.py3-none-manylinux2014_armv7l.whl", hash = "sha256:d80ed5827736ed5ec2bcedf536720476fd9d4fa4c79ef0cb24aea4c59332f361"},
     {file = "libclang-16.0.6-py2.py3-none-macosx_10_9_x86_64.whl", hash = "sha256:da9e47ebc3f0a6d90fb169ef25f9fbcd29b4a4ef97a8b0e3e3a17800af1423f4"},
     {file = "libclang-16.0.6-py2.py3-none-macosx_11_0_arm64.whl", hash = "sha256:e1a5ad1e895e5443e205568c85c04b4608e4e973dae42f4dfd9cb46c81d1486b"},
     {file = "libclang-16.0.6-py2.py3-none-manylinux2010_x86_64.whl", hash = "sha256:9dcdc730939788b8b69ffd6d5d75fe5366e3ee007f1e36a99799ec0b0c001492"},
@@ -1962,28 +1964,28 @@ files = [
 
 [[package]]
 name = "pennylane"
-version = "0.30.0"
+version = "0.31.1"
 description = "PennyLane is a Python quantum machine learning library by Xanadu Inc."
 optional = false
 python-versions = "*"
 files = [
-    {file = "PennyLane-0.30.0-py3-none-any.whl", hash = "sha256:6b8189bf34d84d39dbdda343c1bb1402117545443f57c6a6dd2480e6ab6c538c"},
-    {file = "PennyLane-0.30.0.tar.gz", hash = "sha256:c242bf997df5c23ab335a6d6fec23d9c42a071a9c5ae3d2c4dd91d3f98f10948"},
+    {file = "PennyLane-0.31.1-py3-none-any.whl", hash = "sha256:971253316d8f0bf848098fad61bbad0f0d7cb3b113cf50ecd382d95fb6ddadf4"},
 ]
 
 [package.dependencies]
 appdirs = "*"
-autograd = "*"
-autoray = ">=0.3.1"
+autograd = "<=1.5"
+autoray = ">=0.3.1,<=0.6.3"
 cachetools = "*"
 networkx = "*"
 numpy = "<1.24"
-pennylane-lightning = ">=0.30"
+pennylane-lightning = ">=0.31"
 requests = "*"
 rustworkx = "*"
 scipy = "*"
 semantic-version = ">=2.7"
 toml = "*"
+typing-extensions = "*"
 
 [package.extras]
 kernels = ["cvxopt", "cvxpy"]
@@ -3245,6 +3247,7 @@ files = [
     {file = "rustworkx-0.13.0-cp310-cp310-manylinux_2_12_i686.manylinux2010_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:71d5ff92bdb7b9d9324e2d07d9331675723ecc8efd5e8290f5cec14b3f53f12b"},
     {file = "rustworkx-0.13.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9592ed33482113cb524c060f733fe6677e3f0e1caafcc3c0589bee03f9218d9c"},
     {file = "rustworkx-0.13.0-cp310-cp310-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:2d66be71bec30e45fcc660b17b06584584c004d884be2d92d9c381caa2d43bd2"},
+    {file = "rustworkx-0.13.0-cp310-cp310-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:641c44f62196c7a2bdfa262feafe9db3710b45e7ae3b3e7dac57edf3e788b7bb"},
     {file = "rustworkx-0.13.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:5feab550fe029b4db24ed3ea95936f9fa9753827507a354d262dcf68dfa490db"},
     {file = "rustworkx-0.13.0-cp310-cp310-win32.whl", hash = "sha256:4c669747786e58d42adb909ac39af1d5a764275a52e96e7e3445519718a7b40f"},
     {file = "rustworkx-0.13.0-cp310-cp310-win_amd64.whl", hash = "sha256:3112b72cd254a4e1ea8f7e2ab672960f54fa04a2f40f4ee4c1967e3f0cbdffb9"},
@@ -3282,6 +3285,7 @@ files = [
     {file = "rustworkx-0.13.0-cp39-cp39-manylinux_2_12_i686.manylinux2010_i686.manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:01234e9c8572ec0060c13041bba162f902fdaf3ca731bb950831e8ccb1e27cc4"},
     {file = "rustworkx-0.13.0-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:27879a7df24a10ee06531b74131af4647262d66023a10c413bc656f601d5c06d"},
     {file = "rustworkx-0.13.0-cp39-cp39-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:99f215edd23f15e051e65dfe90664a1bcfa0c235c13ced9c7f336da2f6a35be3"},
+    {file = "rustworkx-0.13.0-cp39-cp39-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:76f948e2aa69561ca2e255f2a1d86dce005be58753c33f87bc78fdfdcd152267"},
     {file = "rustworkx-0.13.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bdd235fd83382264801756e2d38f9f09b113a62691984e2d3fc19570c6372198"},
     {file = "rustworkx-0.13.0-cp39-cp39-win32.whl", hash = "sha256:6dea6c5474f1b05e0345702a9368b33c8854c767389b0f571f0044301655a651"},
     {file = "rustworkx-0.13.0-cp39-cp39-win_amd64.whl", hash = "sha256:622379712710534092c8e83f694708ea79fe715b65f3c5894660f6cef7c7678e"},
@@ -4840,4 +4844,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "~3.10"
-content-hash = "8e39c0885260d5ae6fd4bcb54c57e99e9983171bc898c7a59290488895a8fc5a"
+content-hash = "20d0c240be2b598cca9e1d6952aafa2bd07be3c4a4556a49ea5f22a76058f396"

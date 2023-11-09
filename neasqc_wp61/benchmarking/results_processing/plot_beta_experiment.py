@@ -35,7 +35,7 @@ def process_log_files(log_file_paths):
 
 def plot_accuracy_vs_k(k_values, final_val_accs, best_accuracy, best_accuracy_log, best_accuracy_k):
     plt.figure(figsize=(10, 6))
-    plt.scatter(k_values, final_val_accs, marker='o', c='red', cmap='viridis', label='Beta model')
+    plt.scatter(k_values, final_val_accs, marker='o', c='red', cmap='viridis', label='Beta 1 model')
     plt.xlabel("K value")
     plt.ylabel("Test Accuracy")
     plt.title("Accuracy vs. K value")
@@ -54,7 +54,7 @@ def plot_accuracy_vs_k(k_values, final_val_accs, best_accuracy, best_accuracy_lo
     plt.show()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Plot Beta results from log files.")
+    parser = argparse.ArgumentParser(description="Plot Beta 1 results from log files.")
     parser.add_argument("--files", nargs='+', help="Paths of the log files.")
     parser.add_argument('--folder', help='Folder containing JSON files to plot')    
 

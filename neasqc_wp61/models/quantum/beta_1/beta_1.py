@@ -1,6 +1,7 @@
 from quantum_distance import QuantumDistance as qd
 import pandas as pd 
 import pickle
+import json
 from collections import Counter
 import numpy as np
 from sklearn import preprocessing
@@ -8,6 +9,7 @@ from sklearn.decomposition import PCA
 import time
 import os
 current_path = os.path.dirname(os.path.abspath(__file__))
+
 
 class QuantumKNearestNeighbours:
     """
@@ -36,6 +38,7 @@ class QuantumKNearestNeighbours:
             Path where to store the checkpoints with predictions
         """
         self.y_test = y_test
+
         self.labels = y_train
         self.train_vectors = X_train
         self.test_vectors = X_test
@@ -79,6 +82,7 @@ class QuantumKNearestNeighbours:
 
         # Initialize and fit the PCA model
         pca = PCA(n_components=pca_dimension)  # Specify the desired number of components
+
         pca.fit(X_train)
         print('PCA explained variance:', pca.explained_variance_ratio_.sum())
 
@@ -181,6 +185,7 @@ class QuantumKNearestNeighbours:
         return self.predictions
 
 
+
     def compute_distances(self, sample : np.array):
         """
         For a given vector, computes its distance to all other vectors in
@@ -258,8 +263,3 @@ class QuantumKNearestNeighbours:
 
         return label_list
 
-
-
-
-
-    

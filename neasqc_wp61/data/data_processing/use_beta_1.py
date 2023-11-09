@@ -35,7 +35,7 @@ def main():
         X_train = qkn.pad_zeros_vector(X_train)
         X_test = qkn.pad_zeros_vector(X_test)
     # We pad with zeros
-
+    
     print("X_train shape: ", X_train.shape)
     print("X_test shape: ", X_test.shape)
     print("y_train shape: ", y_train.shape)
@@ -50,7 +50,7 @@ def main():
     time_taken = 0
 
     t1 = time.time()
-
+    
     beta_model = qkn(
         X_train, X_test, y_train, y_test, k_values
     )
@@ -58,6 +58,7 @@ def main():
         compute_checkpoints = True
     )
     predictions_list = beta_model.get_predictions()
+
 
     #Here predictions is a list of lists, where each list contains the predictions for a given k
     predictions_list = np.array(predictions_list).T #So we have for each k a list of predictions
@@ -80,7 +81,7 @@ def main():
         predictions = predictions_list[i]
         accuracy_test = accuracy_test_list[i]
 
-        model_name = f"beta_neighbors_{k}"
+        model_name = f"beta_1_{k}"
 
         # Create the JsonOutputer object
         json_outputer = JsonOutputer(model_name, timestr, args.output)
