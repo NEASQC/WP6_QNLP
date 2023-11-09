@@ -24,6 +24,9 @@ def vectorise(dataset, embedding):
     bert_model.eval()
 
 
+    dataset_absolute_path = os.path.abspath(dataset)
+    directory, file_name = os.path.split(dataset_absolute_path)
+
        
     if embedding == 'sentence':
         print('Generating sentence embeddings. Please wait...')
@@ -38,7 +41,7 @@ def vectorise(dataset, embedding):
             sentence_embedding_list.append([tensor.item() for tensor in sentence_embedding])
 
         dftrain['sentence_embedding'] = sentence_embedding_list
-        dftrain.to_csv(dataset.split('.')[-2] + '_sentence_bert.csv', index=False)
+        dftrain.to_csv(directory + '/' + file_name.split('.')[0] + '_sentence_bert.csv', index=False)
         print('Done!')
 
     elif embedding == 'word':
@@ -58,7 +61,7 @@ def vectorise(dataset, embedding):
             sentence_embedding_list.append(sentence_embedding)
 
         dftrain['sentence_vectorized'] = sentence_embedding_list
-        dftrain.to_csv(dataset.split('.')[-2] + '_word_bert.csv', index=False)
+        dftrain.to_csv(directory + '/' + file_name.split('.')[0] + '_word_bert.csv', index=False)
         print('Done!')
 
     else: 
