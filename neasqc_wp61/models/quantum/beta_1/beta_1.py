@@ -9,7 +9,7 @@ import time
 import os
 current_path = os.path.dirname(os.path.abspath(__file__))
 
-class QuantumKNearestNeighbours_bert:
+class QuantumKNearestNeighbours:
     """
     Class for implementing the K Nearest Neighbors algorithm 
     using the quantum distance
@@ -72,8 +72,10 @@ class QuantumKNearestNeighbours_bert:
         #We reduce the dimension of the sentence embedding to a 2D vector
         ############################################################
         # Convert the "sentence_embedding" column to a 2D NumPy array
-        X_train = np.array([embedding for embedding in df_train['sentence_embedding']])
-        X_test = np.array([embedding for embedding in df_test['sentence_embedding']])
+        X_train = np.array(
+            [embedding for embedding in df_train['sentence_embedding']])
+        X_test = np.array(
+            [embedding for embedding in df_test['sentence_embedding']])
 
         # Initialize and fit the PCA model
         pca = PCA(n_components=pca_dimension)  # Specify the desired number of components
