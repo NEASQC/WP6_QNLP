@@ -2,7 +2,7 @@ from qiskit import QuantumCircuit, execute
 from qiskit_aer import AerSimulator
 from qiskit.circuit.controlledgate import ControlledGate
 import numpy as np 
-import matplotlib.pyplot as plt 
+import cmath
 from qiskit_aer import AerSimulator
 
 class QuantumDistance:
@@ -157,7 +157,7 @@ class QuantumDistance:
         for k,v in probabilities_dict.items():
             if k[0] == '0':
                 prob0 += v
-        quantum_distance = np.sqrt((8 * prob0 -4))
+        quantum_distance = abs(cmath.sqrt((8 * prob0 -4)))
         return quantum_distance
         
 
