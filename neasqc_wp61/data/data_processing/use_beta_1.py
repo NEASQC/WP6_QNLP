@@ -16,17 +16,26 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-tr", "--train", help = "Directory of the train dataset", type = str, default = '../toy_dataset/toy_dataset_bert_sentence_embedding_train.csv')
     parser.add_argument("-te", "--test", help = "Directory of the test dataset", type = str, default = '../toy_dataset/toy_dataset_bert_sentence_embedding_test.csv')
-
+    parser.add_argument("-pca", "--pca_dimension", type= int, help = "Principal component dimension")
     parser.add_argument("-k", "--k",  nargs='+', help = "Number of K neighbors", type = int, default = [1, 3, 5, 7, 9])
-
     parser.add_argument("-o", "--output", help = "Output directory with the predictions", type = str, default = "../../benchmarking/results/raw/")
 
     args = parser.parse_args()
 
     print(args)
 
-    X_train, X_test, y_train, y_test = qkn.load_labels(args.train, args.test)
+    X_train, X_test, y_train, y_test = qkn.load_labels(
+        args.train, args.test, args.pca_dimension)
+    
 
+    X_test = qkn.normalise_vector(X_test)
+    X_train = qkn.normalise_vector(X_train)
+
+    if args.pca_dimension <  2 * int(np.ceil(np.log2(args.pca_dimension))):
+        X_train = qkn.pad_zeros_vector(X_train)
+        X_test = qkn.pad_zeros_vector(X_test)
+    # We pad with zeros
+    
     print("X_train shape: ", X_train.shape)
     print("X_test shape: ", X_test.shape)
     print("y_train shape: ", y_train.shape)
@@ -41,10 +50,15 @@ def main():
     time_taken = 0
 
     t1 = time.time()
-    train_vectors = X_train
-    test_vectors = X_test
-    predictions_list = qkn(
-        X_train, X_test, y_train, y_test, k_values).predictions
+    
+    beta_model = qkn(
+        X_train, X_test, y_train, y_test, k_values
+    )
+    beta_model.compute_predictions(
+        compute_checkpoints = True
+    )
+    predictions_list = beta_model.get_predictions()
+
 
     #Here predictions is a list of lists, where each list contains the predictions for a given k
     predictions_list = np.array(predictions_list).T #So we have for each k a list of predictions

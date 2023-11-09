@@ -1,10 +1,15 @@
-from QuantumDistance import QuantumDistance as qd
+from quantum_distance import QuantumDistance as qd
 import pandas as pd 
+import pickle
 import json
 from collections import Counter
 import numpy as np
 from sklearn import preprocessing
 from sklearn.decomposition import PCA
+import time
+import os
+current_path = os.path.dirname(os.path.abspath(__file__))
+
 
 class QuantumKNearestNeighbours:
     """
@@ -29,6 +34,8 @@ class QuantumKNearestNeighbours:
             List containing the vectors for testing
         k : int
             Number of neighbors of the algorithm
+        checkpoint_output : str
+            Path where to store the checkpoints with predictions
         """
         self.y_test = y_test
 
@@ -36,20 +43,12 @@ class QuantumKNearestNeighbours:
         self.train_vectors = X_train
         self.test_vectors = X_test
         self.k_values = k_values
-        self.predictions = []
-        for i in self.test_vectors:
-            distances = self.compute_distances(i)
-            closest_indexes_list = self.compute_minimum_distances(distances, self.k_values)
-            pred_list = self.labels_majority_vote(closest_indexes_list)
-            self.predictions.append(pred_list)
-
-            print("Prediction made for vector: ", i)
-        
-
+    
     @staticmethod
     def load_labels(
             train_dataset_path : str,
-            test_dataset_path : str  
+            test_dataset_path : str, 
+            pca_dimension :int
     ):
         """
         Loads the chosen dataset as pandas dataframe.
@@ -76,11 +75,14 @@ class QuantumKNearestNeighbours:
         #We reduce the dimension of the sentence embedding to a 2D vector
         ############################################################
         # Convert the "sentence_embedding" column to a 2D NumPy array
-        X_train = np.array([embedding for embedding in df_train['sentence_embedding']])
-        X_test = np.array([embedding for embedding in df_test['sentence_embedding']])
+        X_train = np.array(
+            [embedding for embedding in df_train['sentence_embedding']])
+        X_test = np.array(
+            [embedding for embedding in df_test['sentence_embedding']])
 
         # Initialize and fit the PCA model
-        pca = PCA(n_components=2)  # Specify the desired number of components
+        pca = PCA(n_components=pca_dimension)  # Specify the desired number of components
+
         pca.fit(X_train)
         print('PCA explained variance:', pca.explained_variance_ratio_.sum())
 
@@ -102,6 +104,87 @@ class QuantumKNearestNeighbours:
         X_train, y_train, X_test, y_test = reduced_embeddings_train, df_train['class'], reduced_embeddings_test, df_test['class']
         
         return X_train, X_test, y_train.values, y_test.values
+    
+    @staticmethod
+    def normalise_vector(X : list[np.array]) -> list[np.array]:
+        """
+        Normalises a vector so that the sum
+        of its squared elements  is equal to 1.
+
+        Parameters
+        ----------
+        X : np.array
+            List of vectors to be normalised
+
+        Returns
+        -------
+        X_normalised : np.array
+            List of normalised vectors
+        """
+        X_normalised = []
+        for sample in X:
+            X_normalised.append(sample/np.linalg.norm(sample))
+        return np.array(X_normalised)
+    
+    @staticmethod
+    def pad_zeros_vector(X : list[np.array]) -> list[np.array]:
+        """
+        Pads a vector with zeros when its length is not a power of 2.
+
+        Parameters
+        ----------
+        X : np.array
+            List of vectors to be padded with zeros
+
+        Returns
+        -------
+        X_padded : np.array
+            List of padded vectors
+        """
+        n = len(X[0])
+        X_padded = []
+        next_power_2 = 2 ** int(np.ceil(np.log2(n)))
+        zero_padding = np.zeros(next_power_2 - n)
+
+        for sample in X:
+            X_padded.append(np.concatenate((sample, zero_padding)))
+        return X_padded
+    
+    def compute_predictions(
+        self, compute_checkpoints : bool = False,
+        ) -> None:
+        """
+        Makes the predictions of the model
+
+        Parameters
+        ----------
+        compute_checkpoints : bool
+            Decides whether to store checkpoints or not 
+        checkpoint_directory : str
+            Directory where to store the temporary checkpoints
+        """
+        self.predictions = []
+        for index,i in enumerate(self.test_vectors):
+            t1 = time.time()
+            distances = self.compute_distances(i)
+            closest_indexes_list = self.compute_minimum_distances(distances, self.k_values)
+            pred_list = self.labels_majority_vote(closest_indexes_list)
+            self.predictions.append(pred_list)
+            
+            if index % 25 == 0 and compute_checkpoints == True:
+                with open(
+                   current_path +  '/../../../benchmarking/results/raw/temporary_predictions_beta.pickle', 'wb'
+                ) as file:
+                    pickle.dump(self.predictions, file)
+            t2 = time.time()
+            print('Time to do the iteration : ', t2 - t1)
+    def get_predictions(self):
+        """
+        Getter for the predictions
+        """
+        return self.predictions
+
+
 
     def compute_distances(self, sample : np.array):
         """
@@ -121,7 +204,7 @@ class QuantumKNearestNeighbours:
         """
         distances = []
         for vector in(self.train_vectors):
-            distances.append(qd(sample, vector).dist)
+            distances.append(qd(sample, vector).compute_quantum_distance())
         return distances
 
     @staticmethod
@@ -180,8 +263,3 @@ class QuantumKNearestNeighbours:
 
         return label_list
 
-
-
-
-
-    
