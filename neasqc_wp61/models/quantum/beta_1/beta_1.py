@@ -7,6 +7,7 @@ from sklearn import preprocessing
 from sklearn.decomposition import PCA
 import time
 import os
+import random as rd 
 current_path = os.path.dirname(os.path.abspath(__file__))
 
 class QuantumKNearestNeighbours:
@@ -252,7 +253,17 @@ class QuantumKNearestNeighbours:
             for i in closest_indexes:
                 closest_labels.append(self.labels[i])
             c = Counter(closest_labels)
-            label, count = c.most_common()[0]
+            counter = c.most_common()
+            labels = [item[0] for item in counter]
+            counts = [item[1] for item in counter]
+            n = 1
+            for i in range(1,len(counts)):
+                if counts[i] == counts[i-1]:
+                    n += 1
+            closest_labels = labels[:n]
+            label = rd.choice(closest_labels)
+
+
 
             label_list.append(label)
 
