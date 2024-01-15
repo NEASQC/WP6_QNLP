@@ -35,9 +35,9 @@ class DimReduction(ABC):
         """
 
         self.dataset = dataset
-        if 'sentence_vector' not in self.dataset:
+        if 'sentence_embedding' not in self.dataset:
             raise ValueError('sentence vector not present in the dataset')
-        self.sentence_vectors = dataset['sentence_vector'].to_list()
+        self.sentence_vectors = dataset['sentence_embedding'].to_list()
         self.dim_out = dim_out
 
     @abstractmethod
@@ -45,6 +45,24 @@ class DimReduction(ABC):
         """
         Fits the dataset to output vectors with the desired dimension
         """
+
+    def save_dataset(
+            self, filename :str,
+            dataset_path : str) -> None:
+        """
+        Saves the reduced dataset in the specified directory
+
+        Parameters
+        ----------
+        filename : str
+            Name of the saved file
+        reduced_dataset_path : str
+            Path to store the reduced dataset
+        """
+        filepath =f"{dataset_path}{filename}"
+        self.dataset.to_csv(
+            filepath, sep='\t+'
+        )
 
 
 class PCA(DimReduction):
@@ -83,9 +101,8 @@ class PCA(DimReduction):
         """
         sentence_vectors_reduced = self.pca.fit_transform(
             self.sentence_vectors)
-        self.reduced_dataset = self.dataset.copy()
-        self.reduced_dataset[
-            'sentence_vector'] = sentence_vectors_reduced.tolist()
+        self.dataset[
+            'reduced_sentence_vector'] = sentence_vectors_reduced.tolist()
 
 class ICA(DimReduction):
     """
@@ -125,9 +142,8 @@ class ICA(DimReduction):
         sentence_vectors_reduced = self.ica.fit_transform(
             self.sentence_vectors
         )
-        self.reduced_dataset = self.dataset.copy()
-        self.reduced_dataset[
-            'sentence_vector'] = sentence_vectors_reduced.tolist()
+        self.dataset[
+            'reduced_sentence_vector'] = sentence_vectors_reduced.tolist()
         
 class TSVD(DimReduction):
     """
@@ -167,9 +183,8 @@ class TSVD(DimReduction):
         sentence_vectors_reduced = self.tsvd.fit_transform(
             self.sentence_vectors
         )
-        self.reduced_dataset = self.dataset.copy()
-        self.reduced_dataset[
-            'sentence_vector'] = sentence_vectors_reduced.tolist()
+        self.dataset[
+            'reduced_sentence_vector'] = sentence_vectors_reduced.tolist()
         
 class UMAP(DimReduction):
     """
@@ -209,9 +224,8 @@ class UMAP(DimReduction):
         sentence_vectors_reduced = self.umap.fit_transform(
             self.sentence_vectors
         )
-        self.reduced_dataset = self.dataset.copy()
-        self.reduced_dataset[
-            'sentence_vector'] = sentence_vectors_reduced.tolist()
+        self.dataset[
+            'reduced_sentence_vector'] = sentence_vectors_reduced.tolist()
         
 class TSNE(DimReduction):
     """
@@ -251,6 +265,6 @@ class TSNE(DimReduction):
             np.array(self.sentence_vectors)
         )
         self.reduced_dataset = self.dataset.copy()
-        self.reduced_dataset[
-            'sentence_vector'] = sentence_vectors_reduced.tolist()
+        self.dataset[
+            'reduced_sentence_vector'] = sentence_vectors_reduced.tolist()
         
