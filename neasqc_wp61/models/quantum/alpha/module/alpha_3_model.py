@@ -5,7 +5,7 @@ import pennylane as qml
 from pennylane import numpy as np
 
 # inherit from PennyLaneModel to use the PennyLane circuit evaluation
-class Alpha_3_model(PennyLaneModel):
+class Alpha3Model(PennyLaneModel):
     def __init__(self, n_qubits, q_delta, n_classes, device): 
         """
         Definition of the *dressed* layout.

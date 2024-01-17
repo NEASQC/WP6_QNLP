@@ -3,10 +3,10 @@ import torch
 import torch.nn as nn
 from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
-from alpha_3_model import Alpha_3_model
+from alpha_3_model import Alpha3Model
 from utils import seed_everything, preprocess_train_test_dataset_for_alpha_3, BertEmbeddingDataset
 
-class Alpha_3_trainer():
+class Alpha3Trainer():
     def __init__(self, number_of_epochs: int, train_path: str, val_path: str, test_path: str, seed: int, n_qubits: int, q_delta: float,
                  batch_size: int, lr: float, weight_decay: float, step_lr: int, gamma: float):
         
@@ -55,7 +55,7 @@ class Alpha_3_trainer():
 
 
         # initialise model
-        self.model = Alpha_3_model(self.n_qubits, self.q_delta, self.n_classes, self.device)
+        self.model = Alpha3Model(self.n_qubits, self.q_delta, self.n_classes, self.device)
 
 
         # initialise loss and optimizer
