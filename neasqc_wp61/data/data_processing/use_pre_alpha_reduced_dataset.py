@@ -1,4 +1,4 @@
-from pre_alpha_dataset import *
+from pre_alpha_reduced_dataset import *
 import os
 current_path = os.path.dirname(os.path.abspath(__file__))
 import numpy as np
