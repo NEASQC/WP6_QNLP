@@ -14,9 +14,10 @@ import numpy as np
 def main():
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("-tr", "--train", help = "Directory of the train dataset", type = str, default = '../toy_dataset/toy_dataset_bert_sentence_embedding_train.csv')
-    parser.add_argument("-te", "--test", help = "Directory of the test dataset", type = str, default = '../toy_dataset/toy_dataset_bert_sentence_embedding_test.csv')
-    parser.add_argument("-pca", "--pca_dimension", type= int, help = "Principal component dimension")
+    parser.add_argument(
+        "-tr", "--train", help = "Directory of the train dataset", type = str, default = '../datasets/toy_datasets/toy_dataset_bert_sentence_embedding_train.csv')
+    parser.add_argument("-te", "--test", help = "Directory of the test dataset", type = str, default = '../datasets/toy_datasets/toy_dataset_bert_sentence_embedding_test.csv')
+    parser.add_argument("-pca", "--pca_dimension", type= int, help = "Principal component dimension", default = 8)
     parser.add_argument("-k", "--k",  nargs='+', help = "Number of K neighbors", type = int, default = [1, 3, 5, 7, 9])
     parser.add_argument("-o", "--output", help = "Output directory with the predictions", type = str, default = "../../benchmarking/results/raw/")
 
