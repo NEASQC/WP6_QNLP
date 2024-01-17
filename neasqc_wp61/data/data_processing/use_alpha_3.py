@@ -25,11 +25,11 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-s", "--seed", help = "Seed for the initial parameters", type = int, default = 0)
 parser.add_argument("-i", "--iterations", help = "Number of iterations of the optimiser", type = int, default = 100)
 parser.add_argument("-r", "--runs", help = "Number of runs", type = int, default = 1)
-parser.add_argument("-tr", "--train", help = "Directory of the train dataset", type = str, default = '../toy_dataset/toy_dataset_bert_sentence_embedding_train.csv')
-parser.add_argument("-val", "--val", help = "Directory of the validation dataset", type = str, default = '../toy_dataset/toy_dataset_bert_sentence_embedding_val.csv')
-parser.add_argument("-te", "--test", help = "Directory of the test dataset", type = str, default = '../toy_dataset/toy_dataset_bert_sentence_embedding_test.csv')
+parser.add_argument("-tr", "--train", help = "Directory of the train dataset", type = str, default = '../datasets/multiclass/reviews_filtered_train_sentence_bert.csv')
+parser.add_argument("-val", "--val", help = "Directory of the validation dataset", type = str, default = '../datasets/multiclass/reviews_filtered_val_sentence_bert.csv')
+parser.add_argument("-te", "--test", help = "Directory of the test dataset", type = str, default = '../datasets/multiclass/reviews_filtered_test_sentence_bert.csv')
 parser.add_argument("-o", "--output", help = "Output directory with the predictions", type = str, default = "../../benchmarking/results/raw/")
-
+ 
 parser.add_argument("-nq", "--n_qubits", help = "Number of qubits in our circuit", type = int, default = 3)
 parser.add_argument("-qd", "--q_delta", help = "Initial spread of the parameters", type = float, default = 0.01)
 parser.add_argument("-b", "--batch_size", help = "Batch size", type = int, default = 2048)
@@ -48,18 +48,7 @@ def main(args):
     random.seed(args.seed)
     seed_list = random.sample(range(1, int(2**32 - 1)), int(args.runs))
     
-    model_name = "alpha_3"
-    
-    all_training_loss_list = []
-    all_training_acc_list = []
-    all_validation_loss_list = []
-    all_validation_acc_list = []
-
-    all_prediction_list = []
-    all_time_list = []
-
-    all_best_model_state_dict = []
-
+    model_name = "alpha_3_multiclass"
     best_val_acc_all_runs = 0
     best_run = 0
 
@@ -105,32 +94,6 @@ def main(args):
         model_path = os.path.join(args.output, f'{model_name}_{timestr}_run_{i}.pt')
         torch.save(best_model, model_path)
 
-        # all_time_list.append(time_taken)
-        # all_training_loss_list.append(training_loss_list)
-        # all_training_acc_list.append(training_acc_list)
-        # all_validation_loss_list.append(validation_loss_list)
-        # all_validation_acc_list.append(validation_acc_list)
-
-        # prediction_list = trainer.predict()
-        # all_prediction_list.append(prediction_list.tolist())
-
-        # all_best_model_state_dict.append(best_model)
-
-
-        
-
-    
-    
-
-
-    # # Save the results of all runs in a json file
-    # timestr = time.strftime("%Y%m%d-%H%M%S")
-    # json_outputer = JsonOutputer(model_name, timestr, args.output)
-    # json_outputer.save_json_output(args, all_prediction_list, all_time_list, best_val_acc = best_val_acc_all_runs, 
-    #                 best_run = best_run, seed_list = seed_list, val_acc = all_validation_acc_list, val_loss = all_validation_loss_list,
-    #                 train_acc = all_training_acc_list, train_loss = all_training_loss_list, weights = all_best_model_state_dict
-    #                 )
-   
 
 
 
