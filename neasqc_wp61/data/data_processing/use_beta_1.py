@@ -19,7 +19,7 @@ def main():
     parser.add_argument("-pca", "--pca_dimension", type= int, help = "Principal component dimension")
     parser.add_argument("-k", "--k",  nargs='+', help = "Number of K neighbors", type = int, default = [1, 3, 5, 7, 9])
     parser.add_argument("-o", "--output", help = "Output directory with the predictions", type = str, default = "../../benchmarking/results/raw/")
-
+    parser.add_argument("-s", "--seed", help = "Random seed for selecting labels in case of tie", type = int)
     args = parser.parse_args()
 
     print(args)

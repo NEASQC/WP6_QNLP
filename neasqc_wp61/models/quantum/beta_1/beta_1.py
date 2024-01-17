@@ -8,6 +8,7 @@ from sklearn import preprocessing
 from sklearn.decomposition import PCA
 import time
 import os
+import random as rd 
 current_path = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -55,8 +56,12 @@ class QuantumKNearestNeighbours:
 
         Parameters
         ----------
-        dataset : str
-            Directory where the dataset is stored
+        train_dataset_path : str
+            Path of the train dataset
+        test_dataset_path : str
+            Path of the test dataset
+        pca_dimension : 
+            PCA dimension to make the reduction
 
         Returns
         -------
@@ -160,8 +165,6 @@ class QuantumKNearestNeighbours:
         ----------
         compute_checkpoints : bool
             Decides whether to store checkpoints or not 
-        checkpoint_directory : str
-            Directory where to store the temporary checkpoints
         """
         self.predictions = []
         for index,i in enumerate(self.test_vectors):
@@ -208,7 +211,7 @@ class QuantumKNearestNeighbours:
         return distances
 
     @staticmethod
-    def compute_minimum_distances(distances, k_values):
+    def compute_minimum_distances(distances, k_values) -> list:
         """
         Computes the indexes of the k closest elements of the training 
         dataset
@@ -217,7 +220,7 @@ class QuantumKNearestNeighbours:
         ----------
         distances : list[float]
             List with the distances to all elements of the training dataset
-        k : int
+        k_values : lsit
             Number of selected k neighbors
 
         Returns 
@@ -242,12 +245,12 @@ class QuantumKNearestNeighbours:
 
         Parameters 
         ----------
-        closest_indexes : list[int]
+        closest_indexes_list : list[int]
             List with the indexes of the k closest vectors
         
         Returns
         -------
-        label : int
+        label : list
             Most frequent label among the k closest vectors
         """
         label_list = []
@@ -257,7 +260,19 @@ class QuantumKNearestNeighbours:
             for i in closest_indexes:
                 closest_labels.append(self.labels[i])
             c = Counter(closest_labels)
-            label, count = c.most_common()[0]
+            counter = c.most_common()
+            labels = [item[0] for item in counter]
+            counts = [item[1] for item in counter]
+            n = 1
+            for i in range(1,len(counts)):
+                if counts[i] == counts[i-1]:
+                    n += 1
+                else:
+                    break
+            closest_labels = labels[:n]
+            label = rd.choice(closest_labels)
+
+
 
             label_list.append(label)
 
