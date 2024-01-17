@@ -18,31 +18,31 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-s", "--seed", help = "Seed for the initial parameters", type = int)
+        "-s", "--seed", help = "Seed for the initial parameters", type = int, default = 1906)
     parser.add_argument(
-        "-op", "--optimiser", help = "Optimiser to use", type = str)
+        "-op", "--optimiser", help = "Optimiser to use", type = str, default = 'Adam')
     parser.add_argument(
-        "-i", "--iterations", help = "Number of iterations of the optimiser", type = int)
+        "-i", "--iterations", help = "Number of iterations of the optimiser", type = int, default = 100)
     parser.add_argument(
-        "-r", "--runs", help = "Number of runs", type = int)
+        "-r", "--runs", help = "Number of runs", type = int, default = 2)
     parser.add_argument(
-        "-tr", "--train", help = "Directory of the train dataset", type = str)
+        "-tr", "--train", help = "Directory of the train dataset", type = str, default = './../datasets/reduced_amazonreview_train.tsv')
     parser.add_argument(
-        "-val", "--validation", help = "Directory of the validation dataset", type = str)
+        "-val", "--validation", help = "Directory of the validation dataset", type = str, default = './../datasets/reduced_amazonreview_val.tsv')
     parser.add_argument(
-        "-te", "--test", help = "Directory of the test datset", type = str)
+        "-te", "--test", help = "Directory of the test datset", type = str, default = './../datasets/reduced_amazonreview_test.tsv')
     parser.add_argument(
-        "-o", "--output", help = "Output directory with the predictions", type = str)
+        "-o", "--output", help = "Output directory with the predictions", type = str, default = './../../benchmarking/results/raw/')
     parser.add_argument(
-        "-an", "--ansatz", help = "Ansatz to be used in quantum circuits", type = str)
+        "-an", "--ansatz", help = "Ansatz to be used in quantum circuits", type = str, default = 'IQP')
     parser.add_argument(
-        "-qn", "--qn", help = "Number of qubits per NOUN type", type = int)
+        "-qn", "--qn", help = "Number of qubits per NOUN type", type = int, default = 1)
     parser.add_argument(
-        "-nl", "--n_layers", help = "Number of layers for the circuits", type = int)
+        "-nl", "--n_layers", help = "Number of layers for the circuits", type = int, default = 1)
     parser.add_argument(
-        "-np", "--n_single_qubit_params", help = "Number of parameters per qubit", type = int)
+        "-np", "--n_single_qubit_params", help = "Number of parameters per qubit", type = int, default = 1)
     parser.add_argument(
-        "-b", "--batch_size", help = "Batch size used for traininig the model", type = int)
+        "-b", "--batch_size", help = "Batch size used for traininig the model", type = int, default = 10)
     args = parser.parse_args()
     train_dataset_name = os.path.basename(args.train)
     train_dataset_name = os.path.splitext(train_dataset_name)[0]

@@ -3,10 +3,10 @@ import torch
 import torch.nn as nn
 from torch.optim import lr_scheduler
 from torch.utils.data import DataLoader
-from alpha_3_model import Alpha_3_model
+from alpha_3_model import Alpha3Model
 from utils import seed_everything, preprocess_train_test_dataset_for_alpha_3, BertEmbeddingDataset
 
-class Alpha_3_trainer():
+class Alpha3Trainer():
     def __init__(self, number_of_epochs: int, train_path: str, val_path: str, test_path: str, seed: int, n_qubits: int, q_delta: float,
                  batch_size: int, lr: float, weight_decay: float, step_lr: int, gamma: float):
         
@@ -33,6 +33,10 @@ class Alpha_3_trainer():
         self.X_train, self.X_val, self.X_test, self.Y_train, self.Y_val, self.Y_test = preprocess_train_test_dataset_for_alpha_3(self.train_path, self.val_path, self.test_path)
 
 
+        self.n_classes = self.Y_train.apply(tuple).nunique()
+
+        print("In the dataset there is:", self.n_classes, "classes")
+
         # initialise datasets and optimizers as in PyTorch
 
         self.train_dataset = BertEmbeddingDataset(self.X_train, self.Y_train)
@@ -51,11 +55,11 @@ class Alpha_3_trainer():
 
 
         # initialise model
-        self.model = Alpha_3_model(self.n_qubits, self.q_delta, self.device)
+        self.model = Alpha3Model(self.n_qubits, self.q_delta, self.n_classes, self.device)
 
 
         # initialise loss and optimizer
-        self.criterion = nn.BCELoss()
+        self.criterion = nn.CrossEntropyLoss()
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=self.lr, weight_decay=self.weight_decay)
         self.lr_scheduler = lr_scheduler.StepLR(
             self.optimizer, step_size=self.step_lr, gamma=self.gamma)
@@ -63,6 +67,7 @@ class Alpha_3_trainer():
         #self.model = nn.DataParallel(self.model)
         self.model.to(self.device)
         self.criterion.to(self.device)
+
 
         
 
@@ -96,13 +101,10 @@ class Alpha_3_trainer():
                 loss = self.criterion(outputs, labels)
                 loss.backward()
 
-                
-                #print the grad values of the model
-                # for name, param in self.model.named_parameters():
-                #     print(name, param.grad)
-                # print('-'*20)
+                # print('preds: ', preds)
+                # print('labels: ', torch.max(labels, 1)[1])
 
-                # raise Exception('stop')
+                
             
                 self.optimizer.step()
 
@@ -119,6 +121,7 @@ class Alpha_3_trainer():
             
             training_loss_list.append(train_loss)
             training_acc_list.append(train_acc)
+            
 
             running_loss = 0.0
             running_corrects = 0
@@ -218,6 +221,3 @@ class Alpha_3_trainer():
         print('Test acc: {}'.format(test_acc))
 
         return test_loss, test_acc
-
-
-
