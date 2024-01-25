@@ -59,9 +59,9 @@ class DimReduction(ABC):
         reduced_dataset_path : str
             Path to store the reduced dataset
         """
-        filepath =f"{dataset_path}{filename}"
+        filepath =f"{dataset_path}{filename}.tsv"
         self.dataset.to_csv(
-            filepath, sep='\t+'
+            filepath, sep='\t', index = False
         )
 
 
@@ -92,17 +92,17 @@ class PCA(DimReduction):
         super().__init__(
             dataset = dataset, dim_out = dim_out
         )
-        self.pca = skd.PCA(n_components=self.dim_out, **kwargs)
+        self.pca_sk = skd.PCA(n_components=self.dim_out, **kwargs)
     
     def fit(self):
         """
         Fits the vectorised sentences to obtain the reduced dimension
         sentence vectors
         """
-        sentence_vectors_reduced = self.pca.fit_transform(
+        sentence_vectors_reduced = self.pca_sk.fit_transform(
             self.sentence_vectors)
         self.dataset[
-            'reduced_sentence_vector'] = sentence_vectors_reduced.tolist()
+            'reduced_sentence_embedding'] = sentence_vectors_reduced.tolist()
 
 class ICA(DimReduction):
     """
@@ -130,7 +130,7 @@ class ICA(DimReduction):
         super().__init__(
             dataset = dataset, dim_out = dim_out
         )
-        self.ica = skd.FastICA(
+        self.ica_sk = skd.FastICA(
             n_components = self.dim_out, **kwargs
         )
 
@@ -139,11 +139,11 @@ class ICA(DimReduction):
         Fits the vectorised sentences to obtain the reduced dimension
         sentence vectors
         """
-        sentence_vectors_reduced = self.ica.fit_transform(
+        sentence_vectors_reduced = self.ica_sk.fit_transform(
             self.sentence_vectors
         )
         self.dataset[
-            'reduced_sentence_vector'] = sentence_vectors_reduced.tolist()
+            'reduced_sentence_embedding'] = sentence_vectors_reduced.tolist()
         
 class TSVD(DimReduction):
     """
@@ -171,7 +171,7 @@ class TSVD(DimReduction):
         super().__init__(
             dataset = dataset, dim_out = dim_out
         )
-        self.tsvd = skd.TruncatedSVD(
+        self.tsvd_sk = skd.TruncatedSVD(
             n_components = self.dim_out, **kwargs
         )
 
@@ -180,11 +180,11 @@ class TSVD(DimReduction):
         Fits the vectorised sentences to obtain the reduced dimension
         sentence vectors
         """
-        sentence_vectors_reduced = self.tsvd.fit_transform(
+        sentence_vectors_reduced = self.tsvd_sk.fit_transform(
             self.sentence_vectors
         )
         self.dataset[
-            'reduced_sentence_vector'] = sentence_vectors_reduced.tolist()
+            'reduced_sentence_embedding'] = sentence_vectors_reduced.tolist()
         
 class UMAP(DimReduction):
     """
@@ -212,7 +212,7 @@ class UMAP(DimReduction):
         super().__init__(
             dataset = dataset, dim_out = dim_out
         )
-        self.umap = umap.UMAP(
+        self.umap_sk = umap.UMAP(
             n_components = self.dim_out, **kwargs
         )
 
@@ -221,11 +221,11 @@ class UMAP(DimReduction):
         Fits the vectorised sentences to obtain the reduced dimension
         sentence vectors
         """
-        sentence_vectors_reduced = self.umap.fit_transform(
+        sentence_vectors_reduced = self.umap_sk.fit_transform(
             self.sentence_vectors
         )
         self.dataset[
-            'reduced_sentence_vector'] = sentence_vectors_reduced.tolist()
+            'reduced_sentence_embedding'] = sentence_vectors_reduced.tolist()
         
 class TSNE(DimReduction):
     """
@@ -253,7 +253,7 @@ class TSNE(DimReduction):
         super().__init__(
             dataset = dataset, dim_out = dim_out
         )
-        self.tsne = skm.TSNE(
+        self.tsne_sk = skm.TSNE(
             n_components = self.dim_out, **kwargs)
     
     def fit(self):
@@ -261,10 +261,10 @@ class TSNE(DimReduction):
         Fits the vectorised sentences to obtain the reduced dimension
         sentence vectors
         """
-        sentence_vectors_reduced = self.tsne.fit_transform(
+        sentence_vectors_reduced = self.tsne_sk.fit_transform(
             np.array(self.sentence_vectors)
         )
         self.reduced_dataset = self.dataset.copy()
         self.dataset[
-            'reduced_sentence_vector'] = sentence_vectors_reduced.tolist()
+            'reduced_sentence_embedding'] = sentence_vectors_reduced.tolist()
         
