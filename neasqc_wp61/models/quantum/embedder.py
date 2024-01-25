@@ -61,12 +61,14 @@ class Embedder(ABC):
         ----------
         path : str
             The path to the location where the user wishes to save the
-            generated dataset containing the embeddings.
+            generated dataset containing the embeddings (it should not
+            include a / at the end).
+        filename: str
+            The name with which the generated dataset containing the
+            embeddings will be saved (it should not include .csv or any
+            other file extension).
         """
         embeddings_df = self.compute_embedding()
-        # Ask Pablo where bool comes into play exactly
-        # TO DO: Check if path exists, else create the directory
-        # This will be done in pipeline
         embeddings_df.to_csv(path + "/" + filename + ".csv", index=False)
 
 
@@ -169,7 +171,7 @@ class Bert(Embedder):
             print("Generating word embeddings. Please wait...")
             vectorised_sentence_list = []
             for sentence in embeddings_df.sentence.values:
-                # List storing the word embeddings of the words in a sentence
+                # List storing the word embeddings of each word in a sentence
                 sentence_word_embeddings = []
                 for word in sentence.split():
                     inputs = tokenizer.encode_plus(word).input_ids
@@ -201,6 +203,10 @@ class Bert(Embedder):
         path : str
             The path to the location where the user wishes to save the
             generated dataset containing the embeddings.
+        filename: str
+            The name with which the generated dataset containing the
+            embeddings will be saved (it should not include .csv or any
+            other file extension).
         """
         super().save_embedding_dataset(path, filename)
 
@@ -240,7 +246,7 @@ class FastText(Embedder):
 
         super().__init__(dataset, sentence_or_word)
         self.dim = dim
-        self.cased_or_uncased = cased_or_uncased  # Need this???
+        self.cased_or_uncased = cased_or_uncased
 
     def compute_embedding(self) -> DataFrame:
         """
@@ -265,13 +271,12 @@ class FastText(Embedder):
         embeddings_df = self.dataset
         embeddings_df.columns = ["class", "sentence", "sentence_structure"]
 
-        # In the case of fasttext, the model is cased so if we want to do uncased
-        # this would just be casfolding the input sentence, chat to PS and RW about this
-
         if self.sentence_or_word:
             print("Generating sentence embeddings. Please wait...")
             vectorised_sentence_list = []
             for sentence in embeddings_df.sentence.values:
+                if not self.cased_or_uncased:
+                    sentence = sentence.casefold()
                 sentence_embedding = model.get_sentence_vector(sentence).tolist()
                 vectorised_sentence_list.append(sentence_embedding)
 
@@ -303,5 +308,9 @@ class FastText(Embedder):
         path : str
             The path to the location where the user wishes to save the
             generated dataset containing the embeddings.
+         filename: str
+            The name with which the generated dataset containing the
+            embeddings will be saved (it should not include .csv or any
+            other file extension).
         """
         super().save_embedding_dataset(path, filename)
