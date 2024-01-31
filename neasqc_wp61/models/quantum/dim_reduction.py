@@ -6,6 +6,7 @@ Module containing the base class for performing dimensionality reduction
 
 """
 from abc import ABC, abstractmethod
+
 import pandas as pd
 import sklearn.decomposition as skd
 import sklearn.manifold as skm
@@ -35,13 +36,14 @@ class DimReduction(ABC):
         """
 
         self.dataset = dataset
-        if 'sentence_embedding' not in self.dataset:
-            raise ValueError('sentence vector not present in the dataset')
-        self.sentence_vectors = dataset['sentence_embedding'].to_list()
+        try:
+            self.sentence_vectors = dataset['sentence_embedding'].to_list()
+        except KeyError:
+            raise ValueError('Sentence vector not present in the dataset')
         self.dim_out = dim_out
 
     @abstractmethod
-    def fit(self) -> None:
+    def reduce_dimension(self) -> None:
         """
         Fits the dataset to output vectors with the desired dimension
         """
@@ -55,7 +57,7 @@ class DimReduction(ABC):
         Parameters
         ----------
         filename : str
-            Name of the saved file
+            Name of the file to save to
         reduced_dataset_path : str
             Path to store the reduced dataset
         """
@@ -94,7 +96,7 @@ class PCA(DimReduction):
         )
         self.pca_sk = skd.PCA(n_components=self.dim_out, **kwargs)
     
-    def fit(self):
+    def reduce_dimension(self):
         """
         Fits the vectorised sentences to obtain the reduced dimension
         sentence vectors
@@ -134,7 +136,7 @@ class ICA(DimReduction):
             n_components = self.dim_out, **kwargs
         )
 
-    def fit(self):
+    def reduce_dimension(self):
         """
         Fits the vectorised sentences to obtain the reduced dimension
         sentence vectors
@@ -153,7 +155,7 @@ class TSVD(DimReduction):
         self, dataset : pd.DataFrame, dim_out : int, **kwargs
     )-> None:
         """
-        Initialises the tSVD dimensionality reduction class
+        Initialises the TSVD dimensionality reduction class
             Parameters
             ----------
             dataset : pd.DataFrame
@@ -175,7 +177,7 @@ class TSVD(DimReduction):
             n_components = self.dim_out, **kwargs
         )
 
-    def fit(self):
+    def reduce_dimension(self):
         """
         Fits the vectorised sentences to obtain the reduced dimension
         sentence vectors
@@ -216,7 +218,7 @@ class UMAP(DimReduction):
             n_components = self.dim_out, **kwargs
         )
 
-    def fit(self):
+    def reduce_dimension(self):
         """
         Fits the vectorised sentences to obtain the reduced dimension
         sentence vectors
@@ -256,7 +258,7 @@ class TSNE(DimReduction):
         self.tsne_sk = skm.TSNE(
             n_components = self.dim_out, **kwargs)
     
-    def fit(self):
+    def reduce_dimension(self):
         """
         Fits the vectorised sentences to obtain the reduced dimension
         sentence vectors

@@ -1,84 +1,83 @@
 import unittest 
+import argparse
+
 import pandas as pd 
 import numpy as np 
 import os 
 import sys 
+
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_path + "/../neasqc_wp61/models/quantum/")
 from dim_reduction import *
 
 class TestDimReduction(unittest.TestCase):
-    
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         """
         Generate random dataset for our tests
         """
-        n_rows = 10 
+        number_of_sentences = 10 
         data = {
-            'label' : np.random.randint(2, size=n_rows),
+            'label' : np.random.randint(2, size=number_of_sentences),
             'sentence_embedding' : [
-                np.random.rand(768) for _ in range(n_rows)]
+                np.random.rand(
+                    args.original_dimension) for _ in range(
+                        number_of_sentences)]
         }
-        self.df = pd.DataFrame(data)
+        cls.df = pd.DataFrame(data)
+        cls.dim_out = args.reduced_dimension
 
-
-    def testPCA(self):
+    def test_PCA_gets_desired_dimension(self):
         """
         Test of PCA dimensionality reduction. 
         """
-        dim_out = 4
-        PCA_object = PCA(self.df, dim_out, svd_solver = 'full', tol = 9.0)
-        PCA_object.fit()
+        PCA_object = PCA(self.df, self.dim_out, svd_solver = 'full', tol = 9.0)
+        PCA_object.reduce_dimension()
         for value in PCA_object.dataset['reduced_sentence_embedding']:
-            self.assertEqual(len(value), dim_out)
+            self.assertEqual(len(value), self.dim_out)
     
-    def testICA(self):
+    def test_ICA_gets_desired_dimension(self):
         """
         Test of ICA dimensionality reduction. 
         """
-        dim_out = 2
-        ICA_object = ICA(self.df, dim_out, fun = 'cube')
-        ICA_object.fit()
+        ICA_object = ICA(self.df, self.dim_out, fun = 'cube')
+        ICA_object.reduce_dimension()
         for value in ICA_object.dataset['reduced_sentence_embedding']:
-            self.assertEqual(len(value), dim_out)
+            self.assertEqual(len(value), self.dim_out)
 
-    def testTSVD(self):
+    def test_TSVD_gets_desired_dimension(self):
         """
         Test of TSVD dimensionality reduction. 
         """
-        dim_out = 2
-        TSVD_object = TSVD(self.df, dim_out, algorithm = 'arpack')
-        TSVD_object.fit()
+        TSVD_object = TSVD(self.df, self.dim_out, algorithm = 'arpack')
+        TSVD_object.reduce_dimension()
         for value in TSVD_object.dataset['reduced_sentence_embedding']:
-            self.assertEqual(len(value), dim_out)
+            self.assertEqual(len(value), self.dim_out)
 
-    def testUMAP(self):
+    def test_UMAP_gets_desired_dimension(self):
         """
         Test of UMAP dimensionality reduction. 
         """
-        dim_out = 4
-        UMAP_object = UMAP(self.df, dim_out, n_neighbors=2)
-        UMAP_object.fit()
+        UMAP_object = UMAP(self.df, self.dim_out, n_neighbors=2)
+        UMAP_object.reduce_dimension()
         for value in UMAP_object.dataset['reduced_sentence_embedding']:
-            self.assertEqual(len(value), dim_out)  
+            self.assertEqual(len(value), self.dim_out)  
 
-    def testTSNE(self):
+    def test_TSNE_gets_desired_dimension(self):
         """
         Test of TSNE dimensionality reduction. 
         """
-        dim_out = 3
-        TSNE_object = TSNE(self.df, dim_out, perplexity=5.0)
-        TSNE_object.fit()
+        TSNE_object = TSNE(self.df, self.dim_out, perplexity=5.0)
+        TSNE_object.reduce_dimension()
         for value in TSNE_object.dataset['reduced_sentence_embedding']:
-            self.assertEqual(len(value), dim_out)  
+            self.assertEqual(len(value), self.dim_out)  
 
-    def test_save_dataset(self):
+    def test_save_dataset_correctly(self):
         """
         Test save dataset function
         """
-        dim_out = 8
-        UMAP_object = UMAP(self.df, dim_out, n_neighbors=2)
-        UMAP_object.fit()
+        UMAP_object = UMAP(self.df, self.dim_out, n_neighbors=2)
+        UMAP_object.reduce_dimension()
         name_dataset = 'umap_dataset'
         UMAP_object.save_dataset(name_dataset, './')
         df = pd.read_csv(name_dataset + '.tsv', sep = '\t')
@@ -92,9 +91,23 @@ class TestDimReduction(unittest.TestCase):
             'reduced_sentence_embedding'].apply(str_to_float)
         
         for value in df['reduced_sentence_embedding']:
-            self.assertEqual(len(value), dim_out)
+            self.assertEqual(len(value), self.dim_out)
 
 
 
 if __name__ == '__main__':
-    unittest.main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-od", "--original_dimension",
+        help = "Dimension of the vectors to reduce",
+        default = 768
+    )
+    parser.add_argument(
+        "-rd", "--reduced_dimension",
+        help = "Desired output reduced version",
+        default = 3
+    )
+    args, remaining = parser.parse_known_args()
+    remaining.insert(0, sys.argv[0])
+
+    unittest.main(argv=remaining)
