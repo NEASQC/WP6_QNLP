@@ -98,12 +98,12 @@ class TestDimReduction(unittest.TestCase):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "-od", "--original_dimension",
+        "-od", "--original_dimension", type = int,
         help = "Dimension of the vectors to reduce",
         default = 768
     )
     parser.add_argument(
-        "-rd", "--reduced_dimension",
+        "-rd", "--reduced_dimension", type = int,
         help = "Desired output reduced version",
         default = 3
     )
