@@ -26,11 +26,11 @@ def main():
     parser.add_argument(
         "-r", "--runs", help = "Number of runs", type = int, default = 2)
     parser.add_argument(
-        "-tr", "--train", help = "Directory of the train dataset", type = str, default = './../datasets/reduced_amazonreview_train.tsv')
+        "-tr", "--train", help = "Directory of the train dataset", type = str, default = './../datasets/toy_datasets/binary_toy_train.tsv')
     parser.add_argument(
-        "-val", "--validation", help = "Directory of the validation dataset", type = str, default = './../datasets/reduced_amazonreview_val.tsv')
+        "-val", "--validation", help = "Directory of the validation dataset", type = str, default = './../datasets/toy_datasets/binary_toy_validation.tsv')
     parser.add_argument(
-        "-te", "--test", help = "Directory of the test datset", type = str, default = './../datasets/reduced_amazonreview_test.tsv')
+        "-te", "--test", help = "Directory of the test datset", type = str, default = './../datasets/toy_datasets/binary_toy_test.tsv')
     parser.add_argument(
         "-o", "--output", help = "Output directory with the predictions", type = str, default = './../../benchmarking/results/raw/')
     parser.add_argument(
@@ -76,6 +76,13 @@ def main():
     labels_train = PreAlpha2.load_dataset(args.train)[1]
     labels_validation = PreAlpha2.load_dataset(args.validation)[1]
     labels_test = PreAlpha2.load_dataset(args.test)[1]
+    labels_train_int = torch.argmax(
+        torch.tensor(labels_train), dim=1).tolist()
+    labels_val_int = torch.argmax(
+        torch.tensor(labels_validation), dim=1).tolist()
+    labels_test_int = torch.argmax(
+        torch.tensor(labels_test), dim=1).tolist()
+
 
     # Load sentences and labels
 
@@ -118,6 +125,8 @@ def main():
     
     
     for s in range(int(args.runs)):
+        print(f'RUN == {s}')
+        print('##########################\n\n')
         t1 = time.time()
         seed = seed_list[s]
 
@@ -168,27 +177,24 @@ def main():
         train_acc = trainer.train_eval_results['acc']
         val_acc = trainer.val_eval_results['acc']
         validation_accuracy_list.append(val_acc)
+        train_probabilities = trainer.train_probabilities
+        val_probabilities = trainer.val_probabilities
+        test_probabilities = PreAlpha2.post_selected_output(
+            model, circuits_test)
+        train_predictions = trainer.train_predictions
+        val_predictions = trainer.val_predictions
+        test_predictions = [
+            int(torch.argmax(tensor)) for tensor in test_probabilities]
+        test_probabilities = test_probabilities.tolist()
         weights = []
         for i in range(len(model.weights)):
             weights.append(model.weights.__getitem__(i).tolist())
 
-        vectors_train = PreAlpha2.post_selected_output(
-            model, all_circuits)[:len(labels_train)].tolist()
-        vectors_validation = PreAlpha2.post_selected_output(
-            model, all_circuits)[-len(labels_validation):].tolist()
-        vectors_test = PreAlpha2.post_selected_output(
-            model, all_circuits)[-len(labels_test):].tolist()
         
-        prediction_list = []
-        for i,v in enumerate(vectors_test):
-            if v[0]>0.5:
-                prediction_list.append(0)
-            else:
-                prediction_list.append(1)
-
-        
+        ####### Compute test accuracy 
         test_acc = acc_np(model(circuits_test), labels_test)
 
+        ####### Compute time taken 
         t2 = time.time()
         time_taken = t2 - t1
 
@@ -199,20 +205,24 @@ def main():
                 best_val_run = index
                 iteration_best_val_accuracy = sublist.index(max(sublist))
 
+        
         json_outputer.save_json_output_run_by_run(
-            args, prediction_list, time_taken,
+            args,  time_taken, labels_train_int,
+            labels_val_int, labels_test_int,
             best_val_acc = best_val_accuracy, best_run = best_val_run,
             iteration_best_val_accuracy = iteration_best_val_accuracy,
-            seed_list = seed_list, train_loss = train_loss,
-            train_acc = train_acc, val_loss = val_loss,
+            seed_list = seed_list, train_predictions = train_predictions,
+            val_predictions = val_predictions,
+            test_predictions = test_predictions,
+            train_loss = train_loss, train_acc = train_acc,
+            val_loss = val_loss,
             val_acc = val_acc, test_acc = test_acc,
-            weights = weights, vectors_train = vectors_train,
-            vectors_validation = vectors_validation, vectors_test = vectors_test
+            weights = weights, train_probabilities = train_probabilities,
+            val_probabilities = val_probabilities,
+            test_probabilities = test_probabilities
         )
 
 
 
 if __name__ == "__main__":
     main()
-
-
