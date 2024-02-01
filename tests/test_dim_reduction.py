@@ -27,7 +27,7 @@ class TestDimReduction(unittest.TestCase):
         cls.df = pd.DataFrame(data)
         cls.dim_out = args.reduced_dimension
 
-    def test_PCA_gets_desired_dimension(self):
+    def test_PCA_outputs_desired_dimension(self):
         """
         Test of PCA dimensionality reduction. 
         """
@@ -36,7 +36,7 @@ class TestDimReduction(unittest.TestCase):
         for value in PCA_object.dataset['reduced_sentence_embedding']:
             self.assertEqual(len(value), self.dim_out)
     
-    def test_ICA_gets_desired_dimension(self):
+    def test_ICA_outputs_desired_dimension(self):
         """
         Test of ICA dimensionality reduction. 
         """
@@ -45,7 +45,7 @@ class TestDimReduction(unittest.TestCase):
         for value in ICA_object.dataset['reduced_sentence_embedding']:
             self.assertEqual(len(value), self.dim_out)
 
-    def test_TSVD_gets_desired_dimension(self):
+    def test_TSVD_outputs_desired_dimension(self):
         """
         Test of TSVD dimensionality reduction. 
         """
@@ -54,7 +54,7 @@ class TestDimReduction(unittest.TestCase):
         for value in TSVD_object.dataset['reduced_sentence_embedding']:
             self.assertEqual(len(value), self.dim_out)
 
-    def test_UMAP_gets_desired_dimension(self):
+    def test_UMAP_outputs_desired_dimension(self):
         """
         Test of UMAP dimensionality reduction. 
         """
@@ -63,7 +63,7 @@ class TestDimReduction(unittest.TestCase):
         for value in UMAP_object.dataset['reduced_sentence_embedding']:
             self.assertEqual(len(value), self.dim_out)  
 
-    def test_TSNE_gets_desired_dimension(self):
+    def test_TSNE_outputs_desired_dimension(self):
         """
         Test of TSNE dimensionality reduction. 
         """
