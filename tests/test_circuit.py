@@ -59,7 +59,7 @@ class TestCircuit(unittest.TestCase):
             for r in results:
                 self.assertIsInstance(r, torch.Tensor)
 
-    def test_result_of_rescaling_function(self):
+    def test_result_of_different_rescaling_functions(self):
         """
         Test the results of rescaling function of the inputs,
         ensuring that it varies when different 
@@ -87,7 +87,7 @@ class TestCircuit(unittest.TestCase):
             self.assertNotEqual(results_list[2], results_list[0])
                           
 
-    def test_result_of_observables(self):
+    def test_result_of_different_observables(self):
         """
         Test the results of different observables,
         ensuring that it varies when different 
@@ -112,10 +112,6 @@ class TestCircuit(unittest.TestCase):
                 circuit_function)(self.input, self.params[i])
                 self.assertNotIn(results, results_list)
                 results_list.append(results)
-
-
-
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
