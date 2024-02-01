@@ -21,7 +21,6 @@ class Alpha3Model(PennyLaneModel):
         self.pre_net = nn.Linear(768, self.n_qubits)
         self.q_params = nn.Parameter(self.q_delta * torch.randn((self.n_qubits + 2) * self.n_qubits))
         self.post_net = nn.Linear(self.n_qubits, self.n_classes)
-        self.softmax = nn.Softmax()
 
         
         dev = qml.device('default.qubit', wires=self.n_qubits)
@@ -46,7 +45,7 @@ class Alpha3Model(PennyLaneModel):
         q_out = q_out.transpose(0, 1).float()  # Transpose dimensions 0 and 1 to get a tensor of shape (batch_size, self.n_qubits)
 
         # return the two-dimensional prediction from the postprocessing layer
-        return self.softmax(self.post_net(q_out))
+        return self.post_net(q_out)
     
 
 

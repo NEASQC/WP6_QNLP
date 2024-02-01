@@ -34,20 +34,24 @@ class Alpha3Trainer():
 
 
         self.n_classes = self.Y_train.apply(tuple).nunique()
+        self.softmax = nn.Softmax()
 
         print("In the dataset there is:", self.n_classes, "classes")
 
         # initialise datasets and optimizers as in PyTorch
 
         self.train_dataset = BertEmbeddingDataset(self.X_train, self.Y_train)
-        self.training_dataloader = DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True)
+        self.train_labels = torch.argmax(torch.tensor(self.train_dataset.Y.tolist()), dim=1).tolist()
+        self.training_dataloader = DataLoader(self.train_dataset, batch_size=self.batch_size)
 
         # Shuffle is set to False for the validation dataset because in the predict function we need to keep the order of the predictions
         self.validation_dataset = BertEmbeddingDataset(self.X_val, self.Y_val)
-        self.validation_dataloader = DataLoader(self.validation_dataset, batch_size=self.batch_size, shuffle=False)
+        self.validation_labels = torch.argmax(torch.tensor(self.validation_dataset.Y.tolist()), dim=1).tolist()
+        self.validation_dataloader = DataLoader(self.validation_dataset, batch_size=self.batch_size)
 
         self.test_dataset = BertEmbeddingDataset(self.X_test, self.Y_test)
-        self.test_dataloader = DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False)
+        self.test_labels = torch.argmax(torch.tensor(self.test_dataset.Y.tolist()), dim=1).tolist()
+        self.test_dataloader = DataLoader(self.test_dataset, batch_size=self.batch_size)
 
 
         # initialise the device
@@ -72,11 +76,15 @@ class Alpha3Trainer():
         
 
     def train(self):
-        training_loss_list = []
-        training_acc_list = []
+        train_loss_list = []
+        train_acc_list = []
+        train_preds_list = []
+        train_probs_list = []
 
-        validation_loss_list = []
-        validation_acc_list = []
+        val_loss_list = []
+        val_acc_list = []
+        val_preds_list = []
+        val_probs_list = [] 
 
         best_val_acc = 0.0
 
@@ -88,6 +96,8 @@ class Alpha3Trainer():
             self.model.train()
             #with torch.enable_grad():
             #for circuits, embeddings, labels in train_dataloader:
+            train_preds_epoch = []
+            train_probs_epoch = []
             for inputs, labels in self.training_dataloader:
                 batch_size_ = len(inputs)
                 inputs = inputs.to(self.device)
@@ -97,7 +107,9 @@ class Alpha3Trainer():
                 outputs = self.model(inputs)
 
                 
-                _, preds = torch.max(outputs, 1)
+                _, preds = torch.max(self.softmax(outputs), 1)
+                train_preds_epoch.append(preds)
+                train_probs_epoch.append(self.softmax(outputs))
                 loss = self.criterion(outputs, labels)
                 loss.backward()
 
@@ -118,9 +130,10 @@ class Alpha3Trainer():
             # Print epoch results
             train_loss = running_loss / len(self.training_dataloader.dataset)
             train_acc = running_corrects / len(self.training_dataloader.dataset)
-            
-            training_loss_list.append(train_loss)
-            training_acc_list.append(train_acc)
+            train_preds_list.append(torch.cat(train_preds_epoch, dim=0).tolist())
+            train_probs_list.append(torch.cat(train_probs_epoch, dim=0).tolist())
+            train_loss_list.append(train_loss)
+            train_acc_list.append(train_acc)
             
 
             running_loss = 0.0
@@ -129,6 +142,8 @@ class Alpha3Trainer():
             self.model.eval()
 
             with torch.no_grad():
+                val_preds_epoch = []
+                val_probs_epoch = []
                 for inputs, labels in self.validation_dataloader:
                     batch_size_ = len(inputs)
                     inputs = inputs.to(self.device)
@@ -137,21 +152,26 @@ class Alpha3Trainer():
                     self.optimizer.zero_grad()
 
                     outputs = self.model(inputs)
-                    _, preds = torch.max(outputs, 1)
+                    _, preds = torch.max(self.softmax(outputs), 1)
+                    val_preds_epoch.append(preds)
+                    val_probs_epoch.append(self.softmax(outputs))
                     loss = self.criterion(outputs, labels)
                     
                     # Print iteration results
                     running_loss += loss.item()*batch_size_
                     batch_corrects = torch.sum(preds == torch.max(labels, 1)[1]).item()
                     running_corrects += batch_corrects
+                
+                val_preds_list.append(torch.cat(val_preds_epoch, dim=0).tolist())
+                val_probs_list.append(torch.cat(val_probs_epoch, dim=0).tolist())
 
 
             validation_loss = running_loss / len(self.validation_dataloader.dataset)
             validation_acc = running_corrects / len(self.validation_dataloader.dataset)
 
 
-            validation_loss_list.append(validation_loss)
-            validation_acc_list.append(validation_acc)
+            val_loss_list.append(validation_loss)
+            val_acc_list.append(validation_acc)
 
             if validation_acc > best_val_acc:
                 best_val_acc = validation_acc
@@ -167,24 +187,11 @@ class Alpha3Trainer():
 
             print('-'*20)
 
-        return training_loss_list, training_acc_list, validation_loss_list, validation_acc_list, best_val_acc, best_model
-
-    def predict(self):
-        prediction_list = torch.tensor([]).to(self.device)
-        
-        self.model.eval()
-
-        with torch.no_grad():
-            for inputs, labels in self.validation_dataloader:
-                inputs = inputs.to(self.device)
-                labels = labels.to(self.device)
-
-                outputs = self.model(inputs)
-                _, preds = torch.max(outputs, 1)
-
-                prediction_list = torch.cat((prediction_list, torch.round(torch.flatten(preds))))
-
-        return prediction_list.detach().cpu().numpy()
+        return (
+            self.train_labels, self.validation_labels, self.test_labels,
+            train_preds_list, val_preds_list, train_loss_list, train_acc_list,
+            val_loss_list, val_acc_list, best_val_acc, best_model, train_probs_list,
+            val_probs_list)
 
 
     def compute_test_logs(self, best_model):
@@ -194,7 +201,8 @@ class Alpha3Trainer():
         # Load the best model found during training
         self.model.load_state_dict(best_model)
         self.model.eval()
-
+        test_preds_epoch = []
+        test_probs_epoch = []
         with torch.no_grad():
             for inputs, labels in self.test_dataloader:
                 batch_size_ = len(inputs)
@@ -204,7 +212,9 @@ class Alpha3Trainer():
                 self.optimizer.zero_grad()
 
                 outputs = self.model(inputs)
-                _, preds = torch.max(outputs, 1)
+                _, preds = torch.max(self.softmax(outputs), 1)
+                test_preds_epoch.append(preds)
+                test_probs_epoch.append(self.softmax(outputs))
                 loss = self.criterion(outputs, labels)
                 
                 # Print iteration results
@@ -212,7 +222,8 @@ class Alpha3Trainer():
                 batch_corrects = torch.sum(preds == torch.max(labels, 1)[1]).item()
                 running_corrects += batch_corrects
 
-
+            test_preds = torch.cat(test_preds_epoch, dim=0).tolist()
+            test_probs = torch.cat(test_probs_epoch, dim=0).tolist()
         test_loss = running_loss / len(self.test_dataloader.dataset)
         test_acc = running_corrects / len(self.test_dataloader.dataset)
 
@@ -220,4 +231,4 @@ class Alpha3Trainer():
         print('Test loss: {}'.format(test_loss))
         print('Test acc: {}'.format(test_acc))
 
-        return test_loss, test_acc
+        return test_preds, test_loss, test_acc, test_probs
