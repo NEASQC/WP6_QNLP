@@ -5,8 +5,8 @@ Module containing the base class for the variational circuits of Alpha3 model
 
 """
 from abc import ABC, abstractmethod
-import pennylane as qml
 from typing import Callable
+
 import pennylane as qml
 from pennylane.measurements.expval import ExpectationMP
 import torch
@@ -33,15 +33,15 @@ class Circuit(ABC):
         axis_embedding : str 
             Rotation gate to use for the angle encoding of the inputs. 
             Must be one of ['X','Y','Z']
-        oservables : list[qml.operation.Operator]
+        observables : list[qml.operation.Operator]
             List with Pennylane operators, one acting on each qubit.
             The circuit will output the expected value of each 
             of the operators. 
-        data_rescaling : Callable, default = None
-            Function to apply to rescale the inputs that will be encoded
         device_name : str, default = "default.qubit"
             Pennylane simulator to use. The available devices can be found in
             https://docs.pennylane.ai/en/stable/code/api/pennylane.device.html
+        data_rescaling : Callable, default = None
+            Function to apply to rescale the inputs that will be encoded
         ** kwargs 
             Keyword arguments to be introduced to the pennylane device.
             More info can be found in 
@@ -57,7 +57,7 @@ class Circuit(ABC):
         self.data_rescaling = data_rescaling
 
     @abstractmethod
-    def circuit_function(
+    def build_circuit_function(
         self, input :torch.tensor, params : torch.tensor
     )-> list[ExpectationMP]:
         """
@@ -66,10 +66,10 @@ class Circuit(ABC):
         Parameters
         ----------
         input : torch.tensor
-            Input features introduced. These will be embedded in the circuit 
+            Input features introduced. These will be encoded in the circuit 
             using angle encoding techniques
         params : torch.tensor
-            Variational paramaters of the ansatz. They will be optimised
+            Variational paramaters of the ansatz. Will be optimised
             within the model
 
         Returns
@@ -79,9 +79,10 @@ class Circuit(ABC):
             observables
         """
 
-    def run_and_measure(self, circuit_function : Callable)->qml.QNode:
+    def run_and_measure_circuit(self, circuit_function : Callable)->qml.QNode:
         """
-        Builds a quantum node containing the circuit function and device to
+        Builds a quantum node containing a circuit function (output
+        of build_circuit_function) and device to
         be run on. More info can be found in 
         https://docs.pennylane.ai/en/stable/code/api/pennylane.qnode.html
 
@@ -93,7 +94,7 @@ class Circuit(ABC):
         Returns
         -------
         qnode : qml.QNode
-            Pennylane quantum node. When called, it outputs the results of 
+            Pennylane Quantum node. When called, it outputs the results of 
             the measurements in our circuit function. 
         """
         qnode = qml.QNode(circuit_function, self.device, interface = "torch")
@@ -128,11 +129,11 @@ class Sim14(Circuit):
             List with Pennylane operators, one acting on each qubit.
             The circuit will output the expected value of each 
             of the operators. 
-        data_rescaling : Callable, default = None
-            Function to apply to rescale the inputs that will be encoded
         device_name : str, default = "default.qubit"
             Pennylane simulator to use. The available devices can be found in
             https://docs.pennylane.ai/en/stable/code/api/pennylane.device.html
+        data_rescaling : Callable, default = None
+            Function to apply to rescale the inputs that will be encoded
         ** kwargs 
             Keyword arguments to be introduced to the pennylane device.
             More info can be found in 
@@ -145,7 +146,7 @@ class Sim14(Circuit):
         )
         self.parameters_shape = (n_layers, 4  * n_qubits)
 
-    def circuit_function(
+    def build_circuit_function(
         self, inputs : torch.Tensor,
         params : torch.Tensor
     ) -> list[ExpectationMP]:
@@ -155,7 +156,7 @@ class Sim14(Circuit):
         Parameters
         ----------
         input : torch.tensor
-            Input features introduced. These will be embedded in the circuit 
+            Input features introduced. These will be encoded in the circuit 
             using angle encoding techniques
         params : torch.tensor
             Variational paramaters of the ansatz. They will be optimised
@@ -224,11 +225,11 @@ class Sim15(Circuit):
             List with Pennylane operators, one acting on each qubit.
             The circuit will output the expected value of each 
             of the operators. 
-        data_rescaling : Callable, default = None
-            Function to apply to rescale the inputs that will be encoded
         device_name : str, default = "default.qubit"
             Pennylane simulator to use. The available devices can be found in
             https://docs.pennylane.ai/en/stable/code/api/pennylane.device.html
+        data_rescaling : Callable, default = None
+            Function to apply to rescale the inputs that will be encoded
         ** kwargs 
             Keyword arguments to be introduced to the pennylane device.
             More info can be found in 
@@ -242,7 +243,7 @@ class Sim15(Circuit):
         )
         self.parameters_shape = (n_layers, 2  * n_qubits)
     
-    def circuit_function(
+    def build_circuit_function(
         self, inputs : torch.Tensor,
         params : torch.Tensor
     ) -> list[ExpectationMP]:
@@ -252,7 +253,7 @@ class Sim15(Circuit):
         Parameters
         ----------
         input : torch.tensor
-            Input features introduced. These will be embedded in the circuit 
+            Input features introduced. These will be encoded in the circuit 
             using angle encoding techniques
         params : torch.tensor
             Variational paramaters of the ansatz. They will be optimised
@@ -320,11 +321,11 @@ class StronglyEntangling(Circuit):
             List with Pennylane operators, one acting on each qubit.
             The circuit will output the expected value of each 
             of the operators. 
-        data_rescaling : Callable, default = None
-            Function to apply to rescale the inputs that will be encoded
         device_name : str, default = "default.qubit"
             Pennylane simulator to use. The available devices can be found in
             https://docs.pennylane.ai/en/stable/code/api/pennylane.device.html
+        data_rescaling : Callable, default = None
+            Function to apply to rescale the inputs that will be encoded
         ** kwargs 
             Keyword arguments to be introduced to the pennylane device.
             More info can be found in 
@@ -338,7 +339,7 @@ class StronglyEntangling(Circuit):
         )
         self.parameters_shape = (n_layers, 3  * n_qubits)
 
-    def circuit_function(
+    def build_circuit_function(
         self, inputs : torch.Tensor,
         params : torch.Tensor
     ) -> list[ExpectationMP]:
@@ -348,7 +349,7 @@ class StronglyEntangling(Circuit):
         Parameters
         ----------
         input : torch.tensor
-            Input features introduced. These will be embedded in the circuit 
+            Input features introduced. These will be encoded in the circuit 
             using angle encoding techniques
         params : torch.tensor
             Variational paramaters of the ansatz. They will be optimised
@@ -371,10 +372,10 @@ class StronglyEntangling(Circuit):
         for i in range(self.n_layers):
             idx = 0
             for j in range(self.n_qubits):
-                qml.RZ(params[i, idx], wires = j)
-                qml.RY(params[i, idx + 1], wires = j)
-                qml.RZ(params[i, idx + 2], wires = j)
-                idx += self.n_qubits
+                qml.RZ(params[i, j + idx], wires = j)
+                qml.RY(params[i, j + idx + 1], wires = j)
+                qml.RZ(params[i, j + idx + 2], wires = j)
+                idx += 2
             for j in range(self.n_qubits - 1):
                 ctrl = j 
                 tgt = (j + 1) 
