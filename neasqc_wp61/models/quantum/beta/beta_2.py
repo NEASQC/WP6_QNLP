@@ -49,11 +49,11 @@ class QuantumKMeans:
         Returns
         -------
         list[int]
-            Predictions for each of the train instances
+            Predictions for each of the train instances. 
         """
         X_train_normalised = []
         for x in self.X_train:
             X_train_normalised.append(x/np.linalg.norm(x))
-        return self.k_means_instance.predict(X_train_normalised)
+        return self.k_means_instance.predict(X_train_normalised) 
     
 
