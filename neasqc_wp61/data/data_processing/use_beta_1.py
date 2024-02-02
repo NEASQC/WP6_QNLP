@@ -8,7 +8,7 @@ from collections import Counter
 import numpy as np
 
 current_path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(current_path + "/../../models/quantum/beta_1/")
+sys.path.append(current_path + "/../../models/quantum/beta/")
 from beta_1 import QuantumKNearestNeighbours as qkn
 from save_json_output import JsonOutputer
 
