@@ -30,6 +30,8 @@ qiskit = "==0.43.1"
 qiskit_ignis = "==0.7.1"
 sympy = "==1.11.1"
 torch = "==2.0.1"
+fasttext = { git = "https://github.com/cfculhane/fastText.git" }
+transformers = "==4.24.0"
 tensorflow = {version = "==2.10.0", markers = "platform_machine != 'arm64'"}
 tensorflow-macos = {version = "==2.10.0", markers = "sys_platform == 'darwin' and platform_machine == 'arm64'"}
 tensorflow-metal = {version = "==0.6.0", markers = "sys_platform == 'darwin' and platform_machine == 'arm64'"}
