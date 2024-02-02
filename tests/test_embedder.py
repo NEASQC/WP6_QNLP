@@ -1,14 +1,16 @@
-import unittest
-import pandas as pd
-import numpy as np
 import random
 import os
 import sys
+
+import unittest
+import pandas as pd
+import numpy as np
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 dataset_path = current_path + "/../neasqc_wp61/data/datasets/"
 sys.path.append(current_path + "/../neasqc_wp61/models/quantum/")
 from embedder import *
+
 
 # Define helper functions
 
@@ -60,7 +62,7 @@ def is_word_embedding(x: list) -> bool:
 
 def str_to_sentence_embedding(x: str) -> list[float]:
     """
-    Converts a string into a list of floats. Helps read sentence
+    Converts a string into a list ofq floats. Helps read sentence
     embeddings off a TSV file.
 
     Parameters
