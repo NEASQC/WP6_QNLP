@@ -100,13 +100,4 @@ def load_data_pipeline(
     reduced_sentence_vectors = reduce_dimension_list_of_vectors(
         formatted_sentence_vectors, out_dimension
     )
-    normalised_sentence_vectors = normalise_list_of_vectors(
-        reduced_sentence_vectors
-    )
-    if out_dimension <  2 * int(np.ceil(np.log2(out_dimension))):
-        padded_sentence_vectors = pad_list_of_vectors_with_zeros(
-            normalised_sentence_vectors
-        )
-        return padded_sentence_vectors, labels
-    else:
-        return normalised_sentence_vectors, labels
+    return reduced_sentence_vectors, labels

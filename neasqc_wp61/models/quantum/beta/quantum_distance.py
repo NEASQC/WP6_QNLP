@@ -21,10 +21,9 @@ class QuantumDistance:
         Parameters
         ----------
         x1 : np.array
-            First vector. Must be normalised so that the sum of 
-            the squares of its components is equal to 1.
-            Second vector. Must be normalised so that the sum of
-            the squares of its components is equal to 1.
+            First of the vectors to compute the distance between
+        x2 : np. array
+            Second of the vectors to compute the distance between
         """
         if len(x1) != len(x2):
             raise ValueError(
@@ -32,13 +31,34 @@ class QuantumDistance:
             )
         self.x1 = x1
         self.x2 = x2
-        self.nq_encoding = int(np.ceil(np.log2(len(x1))))
+        self.normalise_vectors()
+        if len(self.x1) != 2 * int(np.ceil(np.log2(len(self.x1)))):
+            self.pad_with_zeros()
+
         # Number of qubits needed to encode our vectors
-        self.nq = self.nq_encoding + 3
+        self.nq_encoding = int(np.ceil(np.log2(len(x1))))
         # Number of total qubits in the quantum circuit
+        self.nq = self.nq_encoding + 3
         self.qc = QuantumCircuit(self.nq)
 
+    def normalise_vectors(self):
+        """
+        Normalises x1,x2 so that their norm is equal to 1
+        """
+        self.x1 = self.x1/np.linalg.norm(self.x1)
+        self.x2 = self.x2/np.linalg.norm(self.x2)
     
+    def pad_with_zeros(self):
+        """
+        Pads vectors x1,x2 with zeros until their lengths
+        are powers of 2
+        """
+        n = len(self.x1)
+        next_power_of_2 = 2 ** int(np.ceil(np.log2(n)))
+        zero_padding = np.zeros(next_power_of_2 - n)
+        self.x1 = np.concatenate(self.x1, zero_padding)
+        self.x2 = np.concatenate(self.x2, zero_padding)
+
     def build_gate_state_preparation(self, x : np.array) -> ControlledGate:
         """
         Builds a gate that embbeds the vector
