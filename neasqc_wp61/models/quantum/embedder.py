@@ -5,13 +5,14 @@ Module containing the base class for transforming sentences in a dataset into em
 """
 
 from abc import ABC, abstractmethod
+
 import pandas as pd
 from pandas.core.api import DataFrame as DataFrame
 from transformers import BertTokenizer, BertModel
 import torch
 import numpy as np
 import fasttext as ft
-import fasttext.util
+import fasttext.util as ftu
 
 
 class Embedder(ABC):
@@ -263,10 +264,10 @@ class FastText(Embedder):
             FastText embeddings corresponding to the sentence contained
             in each row.
         """
-        fasttext.util.download_model("en", if_exists="ignore")
+        ftu.download_model("en", if_exists="ignore")
         model = ft.load_model("cc.en.300.bin")
         if self.dim < 300:
-            fasttext.util.reduce_model(model, self.dim)
+            ftu.reduce_model(model, self.dim)
         elif self.dim > 300:
             print("Error: dimension must be <= 300")
             return
