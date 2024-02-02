@@ -41,3 +41,19 @@ class QuantumKMeans:
             self.X_train, self.initial_centers, metric = self.metric
         )
         self.k_means_instance.process()
+
+    def get_predictions(self) -> list[int]:
+        """
+        Gets the predictions for the train instances.
+
+        Returns
+        -------
+        list[int]
+            Predictions for each of the train instances
+        """
+        X_train_normalised = []
+        for x in self.X_train:
+            X_train_normalised.append(x/np.linalg.norm(x))
+        return self.k_means_instance.predict(X_train_normalised)
+    
+
