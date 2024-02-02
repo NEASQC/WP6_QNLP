@@ -7,72 +7,7 @@ import numpy as np
 import pandas as pd 
 from sklearn.decomposition import PCA 
 
-
-def load_labels(
-        train_dataset_path : str,
-        test_dataset_path : str, 
-        pca_dimension :int
-):
-    """
-    Loads the chosen dataset as pandas dataframe.
-
-    Parameters
-    ----------
-    train_dataset_path : str
-        Path of the train dataset
-    test_dataset_path : str
-        Path of the test dataset
-    pca_dimension : 
-        PCA dimension to make the reduction
-
-    Returns
-    -------
-    labels: list[int]
-        List with the labels of the dataset.
-        0 False, and 1 True
-    """
-
-    df_train = pd.read_csv(train_dataset_path)
-    df_test = pd.read_csv(test_dataset_path)
-
-
-    df_train['sentence_embedding'] = np.array([np.fromstring(embedding.strip(' []'), sep=',') for embedding in df_train['sentence_embedding']]).tolist()
-    df_test['sentence_embedding'] = np.array([np.fromstring(embedding.strip(' []'), sep=',') for embedding in df_test['sentence_embedding']]).tolist()
-
-    #We reduce the dimension of the sentence embedding to a 2D vector
-    ############################################################
-    # Convert the "sentence_embedding" column to a 2D NumPy array
-    X_train = np.array(
-        [embedding for embedding in df_train['sentence_embedding']])
-    X_test = np.array(
-        [embedding for embedding in df_test['sentence_embedding']])
-
-    # Initialize and fit the PCA model
-    pca = PCA(n_components=pca_dimension)  # Specify the desired number of components
-
-    pca.fit(X_train)
-    print('PCA explained variance:', pca.explained_variance_ratio_.sum())
-
-    # Transform the data to the reduced dimension for both training and test sets
-    reduced_embeddings_train = pca.transform(X_train)
-    reduced_embeddings_test = pca.transform(X_test)
-
-    # Update the DataFrames with the reduced embeddings
-    df_train['sentence_embedding'] = list(reduced_embeddings_train)
-    df_test['sentence_embedding'] = list(reduced_embeddings_test)
-
-    #Preprocess labels
-    label_encoder = preprocessing.LabelEncoder()
-    label_encoder.fit(df_train['class'])
-
-    df_train['class'] = label_encoder.transform(df_train['class'])
-    df_test['class'] = label_encoder.transform(df_test['class'])
-
-    X_train, y_train, X_test, y_test = reduced_embeddings_train, df_train['class'], reduced_embeddings_test, df_test['class']
-    
-    return X_train, X_test, y_train.values, y_test.values
-
-def load_sentence_vectors_dataset(dataset_path : str) -> list[np.array]:
+def load_sentence_vectors_labels_dataset(dataset_path : str) -> list[np.array]:
     """
     Outputs sentence's vectors for a given dataset path
 
@@ -89,12 +24,13 @@ def load_sentence_vectors_dataset(dataset_path : str) -> list[np.array]:
     df = pd.read_csv(dataset_path)
     try:
         sentence_vectors = df['sentence_embedding'].tolist()
+        labels = df['class']
     except KeyError:
-        raise ValueError('Sentence vector not present in the dataset')
+        raise ValueError('Sentence vector/labels not present in the dataset')
     formatted_sentence_vectors = []
     for s in sentence_vectors:
         formatted_sentence_vectors.append(ast.literal_eval(s))
-    return formatted_sentence_vectors
+    return formatted_sentence_vectors, labels
 
 def reduce_dimension_list_of_vectors(
         X : list[np.array], out_dimension : int) ->list[np.array]:
@@ -148,3 +84,29 @@ def pad_list_of_vectors_with_zeros(X : list[np.array]) -> list[np.array]:
     for sample in X:
         X_padded.append(np.concatenate((sample, zero_padding)))
     return X_padded
+
+def load_data_pipeline(
+    dataset_path, out_dimension
+):
+    """
+    Full pipeline to load the dataset
+    """
+    formatted_sentence_vectors = load_sentence_vectors_labels_dataset(
+        dataset_path
+    )[0]
+    labels = load_sentence_vectors_labels_dataset(
+        dataset_path
+    )[1]
+    reduced_sentence_vectors = reduce_dimension_list_of_vectors(
+        formatted_sentence_vectors, out_dimension
+    )
+    normalised_sentence_vectors = normalise_list_of_vectors(
+        reduced_sentence_vectors
+    )
+    if out_dimension <  2 * int(np.ceil(np.log2(out_dimension))):
+        padded_sentence_vectors = pad_list_of_vectors_with_zeros(
+            normalised_sentence_vectors
+        )
+        return padded_sentence_vectors, labels
+    else:
+        return normalised_sentence_vectors, labels

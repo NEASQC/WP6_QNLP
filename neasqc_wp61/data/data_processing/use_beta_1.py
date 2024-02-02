@@ -11,6 +11,7 @@ current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_path + "/../../models/quantum/beta/")
 from beta_1 import QuantumKNearestNeighbours as qkn
 from save_json_output import JsonOutputer
+from utils import *
 
 def main():
     
@@ -45,14 +46,12 @@ def main():
     )
     args = parser.parse_args()
 
-    X_train, X_test, y_train, y_test = qkn.load_labels(
-        args.train, args.test, args.pca_dimension)
-    X_test = qkn.normalise_vector(X_test)
-    X_train = qkn.normalise_vector(X_train)
-    # Pad with zeros if dimension is not power of 2
-    if args.pca_dimension <  2 * int(np.ceil(np.log2(args.pca_dimension))):
-        X_train = qkn.pad_zeros_vector(X_train)
-        X_test = qkn.pad_zeros_vector(X_test)
+    X_train, y_train = load_data_pipeline(
+        args.train, args.pca_dimension
+    )
+    X_test, y_test = load_data_pipeline(
+        args.test, args.pca_dimension
+    )
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
 
