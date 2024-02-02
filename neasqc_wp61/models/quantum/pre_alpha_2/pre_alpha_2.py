@@ -42,9 +42,9 @@ class PreAlpha2:
 
         for i in range(df.shape[0]):
             if df['label'].iloc[i] == 1:
-                labels.append([0,1])
-            else:
                 labels.append([1,0])
+            else:
+                labels.append([0,1])
 
         return sentences, labels
 
@@ -68,9 +68,7 @@ class PreAlpha2:
         """
         parser = lambeq.BobcatParser()
         raw_diagrams = parser.sentences2diagrams(data)
-        diagrams = [
-            lambeq.remove_cups(diagram) for diagram in raw_diagrams]
-        return diagrams
+        return raw_diagrams
     
     def save_diagrams(
         diagrams : list[discopy.rigid.Diagram],
@@ -250,4 +248,3 @@ class PreAlpha2:
     def post_selected_output(
         model, circuits):
         return model.get_diagram_output(circuits)
-    
