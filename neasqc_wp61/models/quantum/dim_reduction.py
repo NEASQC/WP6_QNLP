@@ -58,8 +58,8 @@ class DimReduction(ABC):
         ----------
         filename : str
             Name of the file to save to
-        reduced_dataset_path : str
-            Path to store the reduced dataset
+        dataset_path : str
+            Path to store the dataset
         """
         filepath =f"{dataset_path}{filename}.tsv"
         self.dataset.to_csv(
