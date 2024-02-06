@@ -1,59 +1,38 @@
-"""
-Utilities functions of beta models 
-"""
-import ast
-
 import numpy as np 
-import pandas as pd 
-from sklearn.decomposition import PCA 
 
-def load_sentence_vectors_labels_dataset(dataset_path : str) -> list[np.array]:
+def normalise_vector(x : np.array) -> np.array:
     """
-    Outputs sentence's vectors for a given dataset path
+    Normalises a vector so that it has norm 1
 
     Parameters
     ----------
-    dataset_path : str
-        Path of the dataset
+    x : np.array
+        Vector to be normalised
+
+    Returns
+    ------
+    np.array
+        Normalised vector
+    """
+    return x/np.linalg.norm(x)
+
+def pad_vector_with_zeros(x : np.array) -> np.array:
+    """
+    Pads a vector with zeros so that length
+    is a power of 2
+
+    Parameters
+    ----------
+    x : np.array
+        Vector to be padded
     
     Returns
     -------
-    formatted_sentence_vectors : list[np.array]
-        List with the vectors of each sentence
+    np.array
+        Padded vector
     """
-    df = pd.read_csv(dataset_path)
-    try:
-        sentence_vectors = df['sentence_embedding'].tolist()
-        labels = df['class']
-    except KeyError:
-        raise ValueError('Sentence vector/labels not present in the dataset')
-    formatted_sentence_vectors = []
-    for s in sentence_vectors:
-        formatted_sentence_vectors.append(ast.literal_eval(s))
-    return formatted_sentence_vectors, labels
+    n = len(x)
+    next_power_of_2 = 2 ** int(np.ceil(np.log2(n)))
+    zero_padding = np.zeros(next_power_of_2 - n)
+    return np.concatenate((x, zero_padding), axis = 0)
 
-def reduce_dimension_list_of_vectors(
-        X : list[np.array], out_dimension : int) ->list[np.array]:
-    """
-    Reduced the dimension of the sentences vectors 
-    (to be updated with the modular code)
-    """
-    pca = PCA(n_components=out_dimension)
-    return pca.fit_transform(X)
-
-def load_data_pipeline(
-    dataset_path, out_dimension
-):
-    """
-    Full pipeline to load the dataset
-    """
-    formatted_sentence_vectors = load_sentence_vectors_labels_dataset(
-        dataset_path
-    )[0]
-    labels = load_sentence_vectors_labels_dataset(
-        dataset_path
-    )[1]
-    reduced_sentence_vectors = reduce_dimension_list_of_vectors(
-        formatted_sentence_vectors, out_dimension
-    )
-    return reduced_sentence_vectors, labels
