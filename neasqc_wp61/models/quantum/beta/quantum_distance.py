@@ -1,3 +1,9 @@
+"""
+QuantumDistance
+===============
+Module containing the base class for computing the quantum distance
+"""
+
 import cmath
 
 import numpy as np 
