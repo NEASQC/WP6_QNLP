@@ -1,45 +1,89 @@
-from quantum_distance import QuantumDistance as qd
+"""
+QuantumKNearestNeighbours
+=========================
+Module containing the base class for the quantum k-nearest neighbours algorithm
+"""
+
+import time
+import random as rd 
 import pickle
 from collections import Counter
-import numpy as np
-import time
-import os
-import random as rd 
-current_path = os.path.dirname(os.path.abspath(__file__))
 
+import numpy as np
+
+from quantum_distance import QuantumDistance as qd
 
 class QuantumKNearestNeighbours:
     """
-    Class for implementing the K Nearest Neighbors algorithm 
+    Class for implementing the k-nearest neighbors algorithm 
     using the quantum distance
     """
     
     def __init__(
-        self, X_train, X_test, y_train, y_test, k_values : list[int]
+        self, x_train : list[np.array], x_test : list[np.array],
+        y_train : list[int], y_test : list[int], k : int
     )-> None:
         """
-        Initialises the class. 
+        Initialiser of the class
 
         Parameters
         ----------
-        dataset_dir : str
-            Directory where the dataset with the
-            training  labels is stored
-        vectors_train_dir : str
-            List containig the vectors for training
-        vectors_test_dir : str
-            List containing the vectors for testing
+        x_train : list[np.array]
+            Train vectors
+        x_test : list[np.array]
+            Testing vectors
+        y_train : list[int]
+            Train labels
+        y_test = list[int]
+            Test labels
         k : int
-            Number of neighbors of the algorithm
-        checkpoint_output : str
-            Path where to store the checkpoints with predictions
+            k closest vectors to make predictions with
         """
+        self.x_train = x_train
+        self.x_test = x_test
+        self.y_train = y_train
         self.y_test = y_test
+        self.k = k
+        self.n_train = len(self.x_train)
+        self.n_test = len(self.x_test)
 
-        self.labels = y_train
-        self.train_vectors = X_train
-        self.test_vectors = X_test
-        self.k_values = k_values
+    def compute_train_test_distances(self) -> None:
+        """
+        For each training instance, computes and stores the quantum distance
+        between it and all the test instances
+        """
+        self.train_test_distances = [[] for _ in range(self.n_train)]
+        for i,xtr in enumerate(self.x_train):
+            for xte in self.x_test:
+                self.train_test_distances[i].append(
+                    qd(xtr, xte).compute_quantum_distance()
+                )
+
+    def save_train_train_test_distances(self, path : str, name : str) -> None:
+        """
+        Saves the computed train_test distances as pickle file
+
+        Parameters
+        ----------
+        path : Path 
+        """
+
+    
+    def compute_closest_vectors_indexes(self) -> None:
+        """
+        For each training instance, and provided that distances
+        have been computed, stores the indexes
+        of the closest k neighbours. 
+        """
+        self.closest_vectors_indexes = []
+        for i in range(self.n_train):
+            self.closest_vectors_indexes.append(sorted(
+                range(self.n_test), key = lambda j : self.train_test_distances[i][j])
+            [:self.k])
+
+
+
+
         
     def compute_predictions(
         self, compute_checkpoints : bool = False,
@@ -76,26 +120,7 @@ class QuantumKNearestNeighbours:
 
 
 
-    def compute_distances(self, sample : np.array):
-        """
-        For a given vector, computes its distance to all other vectors in
-        the dataset
 
-        Parameters
-        ----------
-        sample : np.array
-            The vector to which we are computing the distance
-
-        Returns
-        -------
-        distances : list[float]
-            The distance of the sample vector to all other vectors in
-            training dataset
-        """
-        distances = []
-        for vector in(self.train_vectors):
-            distances.append(qd(sample, vector).compute_quantum_distance())
-        return distances
 
     @staticmethod
     def compute_minimum_distances(distances, k_values) -> list:

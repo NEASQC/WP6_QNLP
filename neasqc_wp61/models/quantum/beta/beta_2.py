@@ -12,19 +12,19 @@ class QuantumKMeans:
     """
 
     def __init__(
-        self, X_train : list[np.array], k : int
+        self, x_train : np.array, k : int
     )-> None:
         """
         Initialises the class.
 
         Parameters
         ----------
-        X_train : list[np.array]
+        x_train : list[np.array]
             List with sentence vectors 
         k : int
             Number of clusters
         """
-        self.X_train = X_train
+        self.x_train = x_train
         self.k = k 
         quantum_distance = lambda x,y : qd(x,y).compute_quantum_distance()
         self.metric = distance_metric(
@@ -38,7 +38,7 @@ class QuantumKMeans:
         Instantiates and runs k-means algorithm
         """
         self.k_means_instance = kmeans(
-            self.X_train, self.initial_centers, metric = self.metric
+            self.x_train, self.initial_centers, metric = self.metric
         )
         self.k_means_instance.process()
 
@@ -51,9 +51,31 @@ class QuantumKMeans:
         list[int]
             Predictions for each of the train instances. 
         """
-        X_train_normalised = []
-        for x in self.X_train:
-            X_train_normalised.append(x/np.linalg.norm(x))
-        return self.k_means_instance.predict(X_train_normalised) 
+        return self.k_means_instance.predict(self.x_train) 
+    
+    def get_total_metric_errors(self) -> float:
+        """
+        Gets the sum of metric errors with respect to quantum distance: 
+        \f[error=\sum_{i=0}^{N}distance(x_{i}-center(x_{i}))\f]
+
+        Returns
+        -------
+        float 
+            Sum of metric errors wrt to quantum distance
+        """
+        return self.k_means_instance.get_total_wce()
+    
+    def get_clusters_centers(self) -> list[list]:
+        """
+        Gets the centers of each cluster
+
+        Returns
+        -------
+        list [list]
+            Centers of each of the clusters
+        """
+        return self.k_means_instace.get_centers()
+    
+
     
 
