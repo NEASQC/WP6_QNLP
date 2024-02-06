@@ -1,8 +1,10 @@
+import cmath
+
+import numpy as np 
+
 from qiskit import QuantumCircuit, execute
 from qiskit_aer import AerSimulator
 from qiskit.circuit.controlledgate import ControlledGate
-import numpy as np 
-import cmath
 from qiskit_aer import AerSimulator
 
 class QuantumDistance:
