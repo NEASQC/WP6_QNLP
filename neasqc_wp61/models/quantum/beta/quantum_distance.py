@@ -56,8 +56,8 @@ class QuantumDistance:
         n = len(self.x1)
         next_power_of_2 = 2 ** int(np.ceil(np.log2(n)))
         zero_padding = np.zeros(next_power_of_2 - n)
-        self.x1 = np.concatenate(self.x1, zero_padding)
-        self.x2 = np.concatenate(self.x2, zero_padding)
+        self.x1 = np.concatenate((self.x1, zero_padding), axis = 0)
+        self.x2 = np.concatenate((self.x2, zero_padding), axis = 0)
 
     def build_gate_state_preparation(self, x : np.array) -> ControlledGate:
         """
