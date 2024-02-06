@@ -10,6 +10,7 @@ from qiskit.quantum_info import Statevector
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_path + "/../neasqc_wp61/models/quantum/beta/")
 from quantum_distance import QuantumDistance as qd
+from utils import normalise_vector, pad_vector_with_zeros
 
 
 class TestQuantumDistance(unittest.TestCase):
@@ -38,7 +39,8 @@ class TestQuantumDistance(unittest.TestCase):
 
     def test_quantum_distance_equals_eucl_distance(self):
         """
-        Tests that for normalised vectors that don't need padding, the 
+        Tests that for normalised vectors that don't need padding
+        (their lengths are a power of 2), the 
         quantum distance and the euclidean distance output 
         the same value (up to a small error)
         """
@@ -46,8 +48,8 @@ class TestQuantumDistance(unittest.TestCase):
             for _ in range(args.n_samples):
                 x1 = np.random.uniform(-args.x_limit,args.x_limit, size=n)
                 x2 = np.random.uniform(-args.x_limit,args.x_limit, size=n)
-                x1 = x1/np.linalg.norm(x1)
-                x2 = x2/np.linalg.norm(x2)
+                x1 = normalise_vector(x1)
+                x2 = normalise_vector(x2)
                 quantum_distance = qd(x1,x2).compute_quantum_distance()
                 euclidean_distance = np.linalg.norm(x2 - x1)
                 self.assertAlmostEqual(quantum_distance, euclidean_distance)
@@ -62,8 +64,10 @@ class TestQuantumDistance(unittest.TestCase):
             for _ in range(args.n_samples):
                 x1 = np.random.uniform(-args.x_limit,args.x_limit, size=n)
                 x2 = np.random.uniform(-args.x_limit,args.x_limit, size=n)
-                x1 = x1/np.linalg.norm(x1)
-                x2 = x2/np.linalg.norm(x2)
+                x1 = normalise_vector(x1)
+                x2 = normalise_vector(x2)
+                x1 = pad_vector_with_zeros(x1)
+                x2 = pad_vector_with_zeros(x2)
                 quantum_distance = qd(x1, x2).compute_quantum_distance()
                 euclidean_distance = np.linalg.norm(x2 - x1)
                 self.assertAlmostEqual(quantum_distance, euclidean_distance)

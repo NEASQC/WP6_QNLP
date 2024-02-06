@@ -33,40 +33,36 @@ class QuantumDistance:
         x2 : np. array
             Second of the vectors to compute the distance between
         """
-        if len(x1) != len(x2):
-            raise ValueError(
-                'x1 and x2 need to have the same length'
-            )
+
         self.x1 = x1
         self.x2 = x2
-        self.normalise_vectors()
-        if len(self.x1) != 2 * int(np.ceil(np.log2(len(self.x1)))):
-            self.pad_with_zeros()
-
+        self.verify_vectors_satisfy_conditions()
         # Number of qubits needed to encode our vectors
-        self.nq_encoding = int(np.ceil(np.log2(len(x1))))
+        self.nq_encoding = int(np.ceil(np.log2(len(self.x1))))
         # Number of total qubits in the quantum circuit
         self.nq = self.nq_encoding + 3
         self.qc = QuantumCircuit(self.nq)
 
-    def normalise_vectors(self):
+    def verify_vectors_satisfy_conditions(self) -> None:
         """
-        Normalises x1,x2 so that their norm is equal to 1
+        Checks if vectors x1 and x2 satisfy the conditions needed 
+        in order to compute their quantum distance 
         """
-        self.x1 = self.x1/np.linalg.norm(self.x1)
-        self.x2 = self.x2/np.linalg.norm(self.x2)
-    
-    def pad_with_zeros(self):
-        """
-        Pads vectors x1,x2 with zeros until their lengths
-        are powers of 2
-        """
-        n = len(self.x1)
-        next_power_of_2 = 2 ** int(np.ceil(np.log2(n)))
-        zero_padding = np.zeros(next_power_of_2 - n)
-        self.x1 = np.concatenate((self.x1, zero_padding), axis = 0)
-        self.x2 = np.concatenate((self.x2, zero_padding), axis = 0)
-
+        if len(self.x1) != len(self.x2):
+            raise ValueError('Vectors must be the same length')
+        elif (
+            abs(np.linalg.norm(self.x1) - 1.0) > 1e-09
+            or (np.linalg.norm(self.x1) - 1.0) > 1e-09
+        ):
+            raise ValueError('Both vectors must have norm 1')
+        elif (
+            not np.log2(len(self.x1)).is_integer()
+            or not np.log2(len(self.x2)).is_integer()
+        ):
+            raise ValueError('Both vectors lengths must be power of 2')
+        else:
+            pass
+        
     def build_gate_state_preparation(self, x : np.array) -> ControlledGate:
         """
         Builds a gate that embbeds the vector
