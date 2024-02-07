@@ -1,17 +1,17 @@
-
 """
 DimReduction
 ============
-Module containing the base class for performing dimensionality reduction
+Module containing the base class for performing dimensionality reduction.
 
 """
 from abc import ABC, abstractmethod
 
+import numpy as np 
 import pandas as pd
 import sklearn.decomposition as skd
 import sklearn.manifold as skm
-import numpy as np 
 import umap
+
 
 class DimReduction(ABC):
     """
@@ -22,44 +22,43 @@ class DimReduction(ABC):
         self, dataset : pd.DataFrame, dim_out : int
     )-> None:
         """
-        Initialises the dimensionality reduction class
+        Initialise the dimensionality reduction class.
         
         Parameters
         ----------
         dataset : pd.DataFrame
-            Pandas dataset. Each row of the dataset corresponds
-            to a sentence. The dataset must contain one column named
+            Pandas dataframe where each row corresponds
+            to a sentence. It must contain one column named
             'sentence_vector', with the vector representation 
             of each sentence.
         dim_out : int 
-            Desired output dimension of the vectors
+            Desired output dimension of the vectors.
         """
-
         self.dataset = dataset
         try:
             self.sentence_vectors = dataset['sentence_embedding'].to_list()
         except KeyError:
-            raise ValueError('Sentence vector not present in the dataset')
+            raise ValueError('Sentence vector not present in the dataset.')
         self.dim_out = dim_out
 
     @abstractmethod
-    def reduce_dimension(self) -> None:
+    def reduce_dimension(self)-> None:
         """
-        Fits the dataset to output vectors with the desired dimension
+        Fit the dataset to output vectors with the desired dimension.
         """
 
     def save_dataset(
             self, filename :str,
-            dataset_path : str) -> None:
+            dataset_path : str)-> None:
         """
-        Saves the reduced dataset in the specified directory
+        Save the reduced dataset in a given path.
 
         Parameters
         ----------
         filename : str
-            Name of the file to save to
+            Name of the file to save to.
         dataset_path : str
-            Path to store the dataset
+            Path where to store the dataset.
         """
         filepath =f"{dataset_path}{filename}.tsv"
         self.dataset.to_csv(
@@ -69,65 +68,67 @@ class DimReduction(ABC):
 
 class PCA(DimReduction):
     """
-    Class for principal component analysis implementation
+    Class for principal component analysis implementation.
     """
     def __init__(
         self, dataset : pd.DataFrame, dim_out : int, **kwargs
     )-> None:
         """
-        Initialises the PCA dimensionality reduction class
+        Initialise the PCA dimensionality reduction class.
 
-            Parameters
-            ----------
-            dataset : pd.DataFrame
-                Pandas dataset. Each row of the dataset corresponds
-                to a sentence. The dataset must contain one column named
-                'vectorised_sentence', with the vector representation 
-                of each sentence.
-            dim_out : int 
-                Desired output dimension of the vectors
-            **kwargs 
-                Arguments passed to the sklearn.decomposition.PCA object
-                They can be found in 
-                https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html
+        Parameters
+        ----------
+        dataset : pd.DataFrame
+            Pandas dataframe where each row corresponds
+            to a sentence. It must contain one column named
+            'sentence_vector', with the vector representation 
+            of each sentence.
+        dim_out : int 
+            Desired output dimension of the vectors.
+        **kwargs 
+            Arguments passed to the sklearn.decomposition.PCA object.
+            They can be found in 
+            https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.PCA.html.
         """
         super().__init__(
             dataset = dataset, dim_out = dim_out
         )
         self.pca_sk = skd.PCA(n_components=self.dim_out, **kwargs)
     
-    def reduce_dimension(self):
+    def reduce_dimension(self)-> None:
         """
-        Fits the vectorised sentences to obtain the reduced dimension
-        sentence vectors
+        Fit the vectorised sentences to obtain the reduced dimension
+        sentence vectors.
         """
         sentence_vectors_reduced = self.pca_sk.fit_transform(
             self.sentence_vectors)
         self.dataset[
             'reduced_sentence_embedding'] = sentence_vectors_reduced.tolist()
 
+
 class ICA(DimReduction):
     """
-    Class for the independent component analysis implementation
+    Class for the independent component analysis implementation.
     """
     def __init__(
         self, dataset : pd.DataFrame, dim_out : int, **kwargs
     )-> None:
         """
-        Initialises the ICA dimensionality reduction class
-            Parameters
-            ----------
-            dataset : pd.DataFrame
-                Pandas dataset. Each row of the dataset corresponds
-                to a sentence. The dataset must contain one column named
-                'vectorised_sentence', with the vector representation 
-                of each sentence.
-            dim_out : int 
-                Desired output dimension of the vectors
-            **kwargs 
-                Arguments passed to the sklearn.decomposition.FastICA object
-                They can be found in 
-                https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.FastICA.html
+        Initialise the ICA dimensionality reduction class.
+
+        Parameters
+        ----------
+        dataset : pd.DataFrame
+            Pandas dataframe where each row corresponds
+            to a sentence. It must contain one column named
+            'sentence_vector', with the vector representation 
+            of each sentence.
+        dim_out : int 
+            Desired output dimension of the vectors.
+        **kwargs 
+            Arguments passed to the sklearn.decomposition.FastICA object.
+            They can be found in 
+            https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.FastICA.html.
         """
         super().__init__(
             dataset = dataset, dim_out = dim_out
@@ -136,10 +137,10 @@ class ICA(DimReduction):
             n_components = self.dim_out, **kwargs
         )
 
-    def reduce_dimension(self):
+    def reduce_dimension(self)-> None:
         """
-        Fits the vectorised sentences to obtain the reduced dimension
-        sentence vectors
+        Fit the vectorised sentences to obtain the reduced dimension
+        sentence vectors.
         """
         sentence_vectors_reduced = self.ica_sk.fit_transform(
             self.sentence_vectors
@@ -147,28 +148,30 @@ class ICA(DimReduction):
         self.dataset[
             'reduced_sentence_embedding'] = sentence_vectors_reduced.tolist()
         
+
 class TSVD(DimReduction):
     """
-    Class for truncated SVD dimensionality reduction
+    Class for truncated SVD dimensionality reduction.
     """
     def __init__(
         self, dataset : pd.DataFrame, dim_out : int, **kwargs
     )-> None:
         """
-        Initialises the TSVD dimensionality reduction class
-            Parameters
-            ----------
-            dataset : pd.DataFrame
-                Pandas dataset. Each row of the dataset corresponds
-                to a sentence. The dataset must contain one column named
-                'vectorised_sentence', with the vector representation 
-                of each sentence.
-            dim_out : int 
-                Desired output dimension of the vectors
-            **kwargs 
-                Arguments passed to the sklearn.decomposition.TruncatedSVD object
-                They can be found in 
-                https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.TruncatedSVD.html
+        Initialise the TSVD dimensionality reduction class.
+
+        Parameters
+        ----------
+        dataset : pd.DataFrame
+            Pandas dataframe where each row corresponds
+            to a sentence. It must contain one column named
+            'sentence_vector', with the vector representation 
+            of each sentence.
+        dim_out : int 
+            Desired output dimension of the vectors.
+        **kwargs 
+            Arguments passed to the sklearn.decomposition.TruncatedSVD object.
+            They can be found in 
+            https://scikit-learn.org/stable/modules/generated/sklearn.decomposition.TruncatedSVD.html.
         """
         super().__init__(
             dataset = dataset, dim_out = dim_out
@@ -177,10 +180,10 @@ class TSVD(DimReduction):
             n_components = self.dim_out, **kwargs
         )
 
-    def reduce_dimension(self):
+    def reduce_dimension(self)-> None:
         """
-        Fits the vectorised sentences to obtain the reduced dimension
-        sentence vectors
+        Fit the vectorised sentences to obtain the reduced dimension
+        sentence vectors.
         """
         sentence_vectors_reduced = self.tsvd_sk.fit_transform(
             self.sentence_vectors
@@ -188,28 +191,30 @@ class TSVD(DimReduction):
         self.dataset[
             'reduced_sentence_embedding'] = sentence_vectors_reduced.tolist()
         
+
 class UMAP(DimReduction):
     """
-    Class for UMAP dimensionality reduction
+    Class for UMAP dimensionality reduction.
     """
     def __init__(
         self, dataset : pd.DataFrame, dim_out : int, **kwargs
     )-> None:
         """
-        Initialises the UMAP dimensionality reduction class
-            Parameters
-            ----------
-            dataset : pd.DataFrame
-                Pandas dataset. Each row of the dataset corresponds
-                to a sentence. The dataset must contain one column named
-                'vectorised_sentence', with the vector representation 
-                of each sentence.
-            dim_out : int 
-                Desired output dimension of the vectors
-            **kwargs 
-                Arguments passed to the sklearn.decomposition.UMAP object
-                They can be found in 
-                https://umap-learn.readthedocs.io/en/latest/parameters.html
+        Initialise the UMAP dimensionality reduction class.
+
+        Parameters
+        ----------
+        dataset : pd.DataFrame
+            Pandas dataframe where each row corresponds
+            to a sentence. It must contain one column named
+            'sentence_vector', with the vector representation 
+            of each sentence.
+        dim_out : int 
+            Desired output dimension of the vectors.
+        **kwargs 
+            Arguments passed to the sklearn.decomposition.UMAP object.
+            They can be found in 
+            https://umap-learn.readthedocs.io/en/latest/parameters.html.
         """
         super().__init__(
             dataset = dataset, dim_out = dim_out
@@ -218,10 +223,10 @@ class UMAP(DimReduction):
             n_components = self.dim_out, **kwargs
         )
 
-    def reduce_dimension(self):
+    def reduce_dimension(self)-> None:
         """
-        Fits the vectorised sentences to obtain the reduced dimension
-        sentence vectors
+        Fit the vectorised sentences to obtain the reduced dimension
+        sentence vectors.
         """
         sentence_vectors_reduced = self.umap_sk.fit_transform(
             self.sentence_vectors
@@ -229,28 +234,30 @@ class UMAP(DimReduction):
         self.dataset[
             'reduced_sentence_embedding'] = sentence_vectors_reduced.tolist()
         
+
 class TSNE(DimReduction):
     """
-    Class for truncated TSNE dimensionality reduction
+    Class for truncated TSNE dimensionality reduction.
     """
     def __init__(
         self, dataset : pd.DataFrame, dim_out : int, **kwargs
     )-> None:
         """
-        Initialises the tSNE dimensionality reduction class
-            Parameters
-            ----------
-            dataset : pd.DataFrame
-                Pandas dataset. Each row of the dataset corresponds
-                to a sentence. The dataset must contain one column named
-                'vectorised_sentence', with the vector representation 
-                of each sentence.
-            dim_out : int 
-                Desired output dimension of the vectors
-            **kwargs 
-                Arguments passed to the sklearn.decomposition.TSNE object
-                They can be found in 
-                https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html
+        Initialise the TSNE dimensionality reduction class.
+            
+        Parameters
+        ----------
+        dataset : pd.DataFrame
+            Pandas dataframe where each row corresponds
+            to a sentence. It must contain one column named
+            'sentence_vector', with the vector representation 
+            of each sentence.
+        dim_out : int 
+            Desired output dimension of the vectors.
+        **kwargs 
+            Arguments passed to the sklearn.decomposition.TSNE object.
+            They can be found in 
+            https://scikit-learn.org/stable/modules/generated/sklearn.manifold.TSNE.html.
         """
         super().__init__(
             dataset = dataset, dim_out = dim_out
@@ -258,10 +265,10 @@ class TSNE(DimReduction):
         self.tsne_sk = skm.TSNE(
             n_components = self.dim_out, **kwargs)
     
-    def reduce_dimension(self):
+    def reduce_dimension(self)-> None:
         """
-        Fits the vectorised sentences to obtain the reduced dimension
-        sentence vectors
+        Fit the vectorised sentences to obtain the reduced dimension
+        sentence vectors.
         """
         sentence_vectors_reduced = self.tsne_sk.fit_transform(
             np.array(self.sentence_vectors)
