@@ -31,19 +31,19 @@ class Circuit(ABC):
         n_layers : int
             Number of times the ansatz is applied to the circuit
         axis_embedding : str 
-            Rotation gate to use for the angle encoding of the inputs. 
+            Rotation gate to use for the angle encoding of the inputs
             Must be one of ['X','Y','Z']
         observables : list[qml.operation.Operator]
-            List with Pennylane operators, one acting on each qubit.
+            List with Pennylane operators, one acting on each qubit
             The circuit will output the expected value of each 
-            of the operators. 
+            of the operators
         device_name : str, default = "default.qubit"
             Pennylane simulator to use. The available devices can be found in
             https://docs.pennylane.ai/en/stable/code/api/pennylane.device.html
         data_rescaling : Callable, default = None
             Function to apply to rescale the inputs that will be encoded
         ** kwargs 
-            Keyword arguments to be introduced to the pennylane device.
+            Keyword arguments to be introduced to the pennylane device
             More info can be found in 
             https://docs.pennylane.ai/en/stable/code/api/pennylane.device.html
         
@@ -95,7 +95,7 @@ class Circuit(ABC):
         -------
         qnode : qml.QNode
             Pennylane Quantum node. When called, it outputs the results of 
-            the measurements in our circuit function. 
+            the measurements in our circuit function
         """
         qnode = qml.QNode(circuit_function, self.device, interface = "torch")
         return qnode
@@ -123,19 +123,19 @@ class Sim14(Circuit):
         n_layers : int
             Number of times the ansatz is applied to the circuit
         axis_embedding : str 
-            Rotation gate to use for the angle encoding of the inputs. 
+            Rotation gate to use for the angle encoding of the inputs
             Must be one of ['X','Y','Z']
         oservables : list[qml.operation.Operator]
-            List with Pennylane operators, one acting on each qubit.
+            List with Pennylane operators, one acting on each qubit
             The circuit will output the expected value of each 
-            of the operators. 
+            of the operators
         device_name : str, default = "default.qubit"
             Pennylane simulator to use. The available devices can be found in
             https://docs.pennylane.ai/en/stable/code/api/pennylane.device.html
         data_rescaling : Callable, default = None
             Function to apply to rescale the inputs that will be encoded
         ** kwargs 
-            Keyword arguments to be introduced to the pennylane device.
+            Keyword arguments to be introduced to the pennylane device
             More info can be found in 
             https://docs.pennylane.ai/en/stable/code/api/pennylane.device.html
         
@@ -219,10 +219,10 @@ class Sim15(Circuit):
         n_layers : int
             Number of times the ansatz is applied to the circuit
         axis_embedding : str 
-            Rotation gate to use for the angle encoding of the inputs. 
+            Rotation gate to use for the angle encoding of the inputs
             Must be one of ['X','Y','Z']
         oservables : list[qml.operation.Operator]
-            List with Pennylane operators, one acting on each qubit.
+            List with Pennylane operators, one acting on each qubit
             The circuit will output the expected value of each 
             of the operators. 
         device_name : str, default = "default.qubit"
@@ -231,7 +231,7 @@ class Sim15(Circuit):
         data_rescaling : Callable, default = None
             Function to apply to rescale the inputs that will be encoded
         ** kwargs 
-            Keyword arguments to be introduced to the pennylane device.
+            Keyword arguments to be introduced to the pennylane device
             More info can be found in 
             https://docs.pennylane.ai/en/stable/code/api/pennylane.device.html
         
@@ -315,19 +315,19 @@ class StronglyEntangling(Circuit):
         n_layers : int
             Number of times the ansatz is applied to the circuit
         axis_embedding : str 
-            Rotation gate to use for the angle encoding of the inputs. 
+            Rotation gate to use for the angle encoding of the inputs
             Must be one of ['X','Y','Z']
         oservables : list[qml.operation.Operator]
-            List with Pennylane operators, one acting on each qubit.
+            List with Pennylane operators, one acting on each qubit
             The circuit will output the expected value of each 
-            of the operators. 
+            of the operators
         device_name : str, default = "default.qubit"
             Pennylane simulator to use. The available devices can be found in
             https://docs.pennylane.ai/en/stable/code/api/pennylane.device.html
         data_rescaling : Callable, default = None
             Function to apply to rescale the inputs that will be encoded
         ** kwargs 
-            Keyword arguments to be introduced to the pennylane device.
+            Keyword arguments to be introduced to the pennylane device
             More info can be found in 
             https://docs.pennylane.ai/en/stable/code/api/pennylane.device.html
         
