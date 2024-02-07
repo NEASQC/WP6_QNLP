@@ -6,18 +6,15 @@ import argparse
 
 import pennylane as qml
 import torch
-import numpy as np 
-import lambeq
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_path + "/../neasqc_wp61/models/quantum/")
 from circuit import *
 
-
 class TestCircuit(unittest.TestCase):
     
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         """
         Set up the class for testing
         """
@@ -45,7 +42,7 @@ class TestCircuit(unittest.TestCase):
         cls.input = torch.nn.Parameter(torch.randn(cls.n_qubits))
 
 
-    def test_circuits_output_correct_type(self):
+    def test_circuits_output_correct_type(self) -> None:
         """
         Test the that the the three different ansatze implemented 
         work. To do so it will be asserted that the expected value obtained
@@ -59,10 +56,11 @@ class TestCircuit(unittest.TestCase):
             for r in results:
                 self.assertIsInstance(r, torch.Tensor)
 
-    def test_result_of_different_rescaling_functions(self):
+    def test_circuit_outputs_of_different_rescaling_functions_are_different(
+            self) -> None:
         """
-        Test the results of rescaling function of the inputs,
-        ensuring that it varies when different 
+        Test the circuit outputs after applying rescaling functions on inputs,
+        ensuring that those vary when different 
         rescaling functions are applied
         """
         data_rescaling_functions = [
@@ -87,10 +85,11 @@ class TestCircuit(unittest.TestCase):
             self.assertNotEqual(results_list[2], results_list[0])
                           
 
-    def test_result_of_different_observables(self):
+    def test_circuit_outputs_of_different_observables_are_different(
+            self) -> None:
         """
-        Test the results of different observables,
-        ensuring that it varies when different 
+        Test the circuit outputs of different observables,
+        ensuring that those vary when different 
         observables are measured 
         """
         operators = [

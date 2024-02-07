@@ -224,7 +224,7 @@ class Sim15(Circuit):
         oservables : list[qml.operation.Operator]
             List with Pennylane operators, one acting on each qubit
             The circuit will output the expected value of each 
-            of the operators. 
+            of the operators
         device_name : str, default = "default.qubit"
             Pennylane simulator to use. The available devices can be found in
             https://docs.pennylane.ai/en/stable/code/api/pennylane.device.html
