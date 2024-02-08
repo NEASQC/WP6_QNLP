@@ -44,7 +44,6 @@ def main():
         type = str, default = "../../benchmarking/results/raw/"
     )
     args = parser.parse_args()
-    
     X_train, X_test, y_train, y_test = qkn.load_labels(
         args.train, args.test, args.pca_dimension)
     X_test = qkn.normalise_vector(X_test)
