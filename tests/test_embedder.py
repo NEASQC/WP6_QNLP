@@ -1,14 +1,15 @@
-import random
 import os
+import random
 import sys
 
-import unittest
-import pandas as pd
 import numpy as np
+import pandas as pd
+import unittest
 
 current_path = os.path.dirname(os.path.abspath(__file__))
 dataset_path = current_path + "/../neasqc_wp61/data/datasets/"
 sys.path.append(current_path + "/../neasqc_wp61/models/quantum/")
+
 from embedder import *
 
 
@@ -30,7 +31,6 @@ def is_sentence_embedding(x: list) -> bool:
     bool
         True if x is of type list[list[float]], False otherwise.
     """
-
     if isinstance(x, list):
         return all(isinstance(element, float) for element in x)
     return False
@@ -89,7 +89,8 @@ def str_to_word_embedding(x: str) -> list[list[float]]:
 
     Parameters
     ----------
-    x: str The str that we wish to convert to a readable word embedding.
+    x: str
+        The str that we wish to convert to a readable word embedding.
 
     Returns
     -------
@@ -112,6 +113,7 @@ def str_to_word_embedding(x: str) -> list[list[float]]:
 
 
 class TestEmbedder(unittest.TestCase):
+
     def setUp(self):
         """
         Load test dataset to perform our tests on.
@@ -138,9 +140,7 @@ class TestEmbedder(unittest.TestCase):
         embeddings is 768.
         """
         dim_bert = 768
-        sentence_embeddings_df = Bert(
-            self.dataset, cased_or_uncased=True
-        ).compute_embeddings()
+        sentence_embeddings_df = Bert(self.dataset, cased=True).compute_embeddings()
         embeddings_list = list(sentence_embeddings_df["sentence_vectorised"])
         for embedding in embeddings_list:
             self.assertEqual(len(embedding), dim_bert)
@@ -152,7 +152,7 @@ class TestEmbedder(unittest.TestCase):
         """
         dim_bert = 768
         word_embeddings_df = Bert(
-            self.dataset, sentence_or_word=False
+            self.dataset, sentence_embedding=False
         ).compute_embeddings()
         embeddings_list = list(word_embeddings_df["sentence_vectorised"])
         for vector in embeddings_list:
@@ -166,7 +166,7 @@ class TestEmbedder(unittest.TestCase):
         """
         dim_bert = 768
         word_embeddings_df = Bert(
-            self.dataset, cased_or_uncased=True, sentence_or_word=False
+            self.dataset, cased=True, sentence_embedding=False
         ).compute_embeddings()
         embeddings_list = list(word_embeddings_df["sentence_vectorised"])
         for vector in embeddings_list:
@@ -179,9 +179,7 @@ class TestEmbedder(unittest.TestCase):
         different sentence embeddings for the same sentence.
         """
         uncased_embeddings_df = Bert(self.dataset).compute_embeddings()
-        cased_embeddings_df = Bert(
-            self.dataset, cased_or_uncased=True
-        ).compute_embeddings()
+        cased_embeddings_df = Bert(self.dataset, cased=True).compute_embeddings()
         uncased_embeddings_list = list(uncased_embeddings_df["sentence_vectorised"])
         cased_embeddings_list = list(cased_embeddings_df["sentence_vectorised"])
         for i in range(len(uncased_embeddings_list)):
@@ -193,10 +191,10 @@ class TestEmbedder(unittest.TestCase):
         different word embeddings for the same words.
         """
         uncased_embeddings_df = Bert(
-            self.dataset, sentence_or_word=False
+            self.dataset, sentence_embedding=False
         ).compute_embeddings()
         cased_embeddings_df = Bert(
-            self.dataset, sentence_or_word=False, cased_or_uncased=True
+            self.dataset, sentence_embedding=False, cased=True
         ).compute_embeddings()
         uncased_embeddings_list = list(uncased_embeddings_df["sentence_vectorised"])
         cased_embeddings_list = list(cased_embeddings_df["sentence_vectorised"])
@@ -231,7 +229,7 @@ class TestEmbedder(unittest.TestCase):
         """
         dim_ft = 300
         word_embeddings_df = FastText(
-            self.dataset, sentence_or_word=False
+            self.dataset, sentence_embedding=False
         ).compute_embeddings()
         embeddings_list = list(word_embeddings_df["sentence_vectorised"])
         for vector in embeddings_list:
@@ -260,7 +258,7 @@ class TestEmbedder(unittest.TestCase):
         """
         out_dim = random.randint(1, 299)
         sentence_embeddings_df = FastText(
-            self.dataset, sentence_or_word=False, dim=out_dim
+            self.dataset, sentence_embedding=False, dim=out_dim
         ).compute_embeddings()
         embeddings_list = list(sentence_embeddings_df["sentence_vectorised"])
         for vector in embeddings_list:
@@ -295,7 +293,7 @@ class TestEmbedder(unittest.TestCase):
         """
         path = "./"
         filename = "test_word_embeddings"
-        embedder = Bert(self.dataset, sentence_or_word=False)
+        embedder = Bert(self.dataset, sentence_embedding=False)
         embedder.compute_embeddings()
         embedder.save_embedding_dataset(path, filename)
         saved_word_embedding_df = pd.read_csv(
@@ -337,7 +335,7 @@ class TestEmbedder(unittest.TestCase):
         """
         path = "./"
         filename = "test_word_embeddings"
-        embedder = FastText(self.dataset, sentence_or_word=False)
+        embedder = FastText(self.dataset, sentence_embedding=False)
         embedder.compute_embeddings()
         embedder.save_embedding_dataset(path, filename)
         saved_word_embedding_df = pd.read_csv(
