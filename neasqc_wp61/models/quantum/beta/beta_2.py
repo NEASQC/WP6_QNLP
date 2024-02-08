@@ -1,32 +1,38 @@
+"""
+QuantumKMeans
+=============
+Module containing the base class for the k-means algorithm using
+the quantum distance.
+"""
 import numpy as np 
 
-from pyclustering.cluster.kmeans import kmeans
 from pyclustering.cluster.center_initializer import (
     kmeans_plusplus_initializer, random_center_initializer)
+from pyclustering.cluster.kmeans import kmeans
 from pyclustering.utils.metric import distance_metric, type_metric
 
-from utils import normalise_vector, pad_vector_with_zeros
 from quantum_distance import QuantumDistance as qd
+from utils import normalise_vector, pad_vector_with_zeros
+
 
 class QuantumKMeans:
     """
-    Class for implementing the K Means algorithm 
+    Class for implementing the K-Means algorithm 
     using a quantum distance.
     """
 
     def __init__(
         self, x_train : np.array, k : int,
-        
     )-> None:
         """
-        Initialises the class.
+        Initialise the class.
 
         Parameters
         ----------
         x_train : list[np.array]
-            List with sentence vectors 
+            List with sentence vectors. 
         k : int
-            Number of clusters
+            Number of clusters.
         """
         self.x_train = x_train
         self.k = k 
@@ -35,21 +41,22 @@ class QuantumKMeans:
         )
 
     @staticmethod
-    def quantum_distance(x1 : np.array, x2 : np.array) -> float:
+    def quantum_distance(x1 : np.array, x2 : np.array)-> float:
         """
-        Wrapper for the quantum distance
+        Wrapper for implementing the quantum distance as a metric of
+        the k-means algorithm.
 
         Parameters
         ----------
         x1 : np.array
-            First of the vectors between which to compute the distance
+            First of the vectors between which to compute the distance.
         x2 : np.array
-            Second of the vectors between which to compute the distance
+            Second of the vectors between which to compute the distance.
         
         Returns
         -------
         float
-            Quantum distance
+            Quantum distance between the two vectors.
         """
         x1 = normalise_vector(x1)
         x1 = pad_vector_with_zeros(x1)
@@ -60,19 +67,19 @@ class QuantumKMeans:
     def initialise_cluster_centers(
         self, random_initialisation = True,
         seed = 30031935
-    ) -> None:
+    )-> None:
         """
-        Initialises the cluster centers
+        Initialise the cluster centers for the algorithm.
 
         Parameters
         ----------
         random_center_initializer : bool
-            If True randomly initialises the cluster centers
+            If True randomly initialises the cluster centers.
             If False, uses the K-Means++ algorirthm to initialise
             cluster center. More info can be found in pycluster docs
             https://pyclustering.github.io/docs/0.8.2/html/index.html
         seed : int
-            Seed to use when random_center_intializer = True
+            Seed to use when random_center_intializer = True.
         """
         if random_initialisation == True:
             self.initial_centers = random_center_initializer(
@@ -82,18 +89,18 @@ class QuantumKMeans:
             self.initial_centers = kmeans_plusplus_initializer(
                 self.x_train, self.k).initialize()
 
-    def run_k_means_algorithm(self):
+    def run_k_means_algorithm(self)-> None:
         """
-        Instantiates and runs k-means algorithm
+        Instantiate and run k-means algorithm.
         """
         self.k_means_instance = kmeans(
             self.x_train, self.initial_centers, metric = self.metric
         )
         self.k_means_instance.process()
 
-    def get_train_predictions(self) -> list[int]:
+    def get_train_predictions(self)-> list[int]:
         """
-        Gets the predictions for the train instances.
+        Get the predictions for the train instances.
 
         Returns
         -------
@@ -102,26 +109,26 @@ class QuantumKMeans:
         """
         return self.k_means_instance.predict(self.x_train) 
     
-    def get_total_metric_errors(self) -> float:
+    def get_total_metric_error(self)-> float:
         """
-        Gets the sum of metric errors with respect to quantum distance: 
-        \f[error=\sum_{i=0}^{N}distance(x_{i}-center(x_{i}))\f]
+        Get the sum of metric errors with respect to quantum distance: 
+        \f[error=\sum_{i=0}^{N}distance(x_{i}-center(x_{i}))\f].
 
         Returns
         -------
         float 
-            Sum of metric errors wrt to quantum distance
+            Sum of metric errors wrt to quantum distance.
         """
         return self.k_means_instance.get_total_wce()
     
-    def get_clusters_centers(self) -> list[list]:
+    def get_clusters_centers(self)-> list[list]:
         """
-        Gets the centers of each cluster
+        Get the centers of each cluster.
 
         Returns
         -------
         list [list]
-            Centers of each of the clusters
+            List with the centers of each of the clusters.
         """
         return self.k_means_instance.get_centers()
     

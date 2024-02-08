@@ -7,6 +7,7 @@ import numpy as np
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import Statevector
 
+# The two lines below will be removed when converting the library to a package.
 current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_path + "/../neasqc_wp61/models/quantum/beta/")
 from quantum_distance import QuantumDistance as qd
@@ -15,13 +16,16 @@ from utils import normalise_vector, pad_vector_with_zeros
 
 class TestQuantumDistance(unittest.TestCase):
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls)-> None:
+        """
+        Set up the class for testing.
+        """
         np.random.seed(args.seed)
 
-    def test_proper_state_preparation(self):
+    def test_proper_state_preparation(self)-> None:
         """
-        Tests that the script doing the proper state 
-        preparation
+        Test that the script is doing the correct state 
+        preparation.
         """
         x1 = np.array([1/np.sqrt(2), 1/np.sqrt(2)])
         x2 = [1,1]
@@ -37,12 +41,12 @@ class TestQuantumDistance(unittest.TestCase):
         self.assertIn('01', list(probabilities_dict.keys()))
         self.assertIn('11', list(probabilities_dict.keys()))
 
-    def test_quantum_distance_equals_eucl_distance(self):
+    def test_quantum_distance_equals_eucl_distance(self)-> None:
         """
-        Tests that for normalised vectors that don't need padding
+        Test that for normalised vectors that don't need padding
         (their lengths are a power of 2), the 
         quantum distance and the euclidean distance output 
-        the same value (up to a small error)
+        the same value (up to a small error).
         """
         for n in args.sizes_without_padding:
             for _ in range(args.n_samples):
@@ -54,11 +58,11 @@ class TestQuantumDistance(unittest.TestCase):
                 euclidean_distance = np.linalg.norm(x2 - x1)
                 self.assertAlmostEqual(quantum_distance, euclidean_distance)
 
-    def test_quantum_distance_equals_eucl_distance_padding(self):
+    def test_quantum_distance_equals_eucl_distance_padding(self)-> None:
         """
-        Tests that for normalised vectors when padding is needed
+        Test that for normalised vectors when padding is needed
         (lengths of the vecotrs are not a power of 2), the quantum distance
-        and euclidean distance output the same value (up to a small error)
+        and euclidean distance output the same value (up to a small error).
         """
         for n in args.sizes_with_padding:
             for _ in range(args.n_samples):
@@ -72,33 +76,34 @@ class TestQuantumDistance(unittest.TestCase):
                 euclidean_distance = np.linalg.norm(x2 - x1)
                 self.assertAlmostEqual(quantum_distance, euclidean_distance)
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-n", "--n_samples", type = int,
-        help = "Number of random samples to be generated for testing",
+        help = "Number of random samples to be generated for testing.",
         default = 100
     )
     parser.add_argument(
         "-xl", "--x_limit", type = int, 
-        help = "Limits of the generated random vectors to test",
+        help = "Limits of the generated random vectors to test.",
         default = 1000
     )
     parser.add_argument(
         "-sp", "--sizes_without_padding", type = int, 
         help = ("Sizes of the vectors that don't need padding."
-                "All values must be powers of 2" ),
+                "All values must be powers of 2." ),
         nargs = "+", default = [2,4,8]
     )
     parser.add_argument(
         "-swp", "--sizes_with_padding", type = int, 
         help = ("Sizes of the vectors that need padding."
-                "None of the values can be a power of 2" ),
+                "None of the values can be a power of 2." ),
         nargs = "+", default = [3,5,7]
     )
     parser.add_argument(
         "-s", "--seed", type = int,
-        help = "Random seed for generating the vectors",
+        help = "Random seed for generating the vectors.",
         default = 180567
     )
     args, remaining = parser.parse_known_args()

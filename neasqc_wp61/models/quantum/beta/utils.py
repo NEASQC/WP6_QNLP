@@ -2,34 +2,34 @@ import numpy as np
 
 def normalise_vector(x : np.array) -> np.array:
     """
-    Normalises a vector so that it has norm 1
+    Normalise a vector so that it has norm 1.
 
     Parameters
     ----------
     x : np.array
-        Vector to be normalised
+        Vector to be normalised.
 
     Returns
     ------
     np.array
-        Normalised vector
+        Normalised vector.
     """
     return x/np.linalg.norm(x)
 
 def pad_vector_with_zeros(x : np.array) -> np.array:
     """
-    Pads a vector with zeros so that length
-    is a power of 2
+    Pad a vector with zeros so that length
+    is a power of 2.
 
     Parameters
     ----------
     x : np.array
-        Vector to be padded
+        Vector to be padded.
     
     Returns
     -------
     np.array
-        Padded vector
+        Padded vector.
     """
     n = len(x)
     next_power_of_2 = 2 ** int(np.ceil(np.log2(n)))
