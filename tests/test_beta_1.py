@@ -32,19 +32,19 @@ class TestBeta1(unittest.TestCase):
             cls.x_test[j] = pad_vector_with_zeros(xte)
         cls.y_train = np.random.randint(0, args.n_classes, size = args.n_train)
         cls.y_test = np.random.randint(0, args.n_classes, size = args.n_test)
-        cls.beta_1_model = qkn(
+        cls.beta_1 = qkn(
             cls.x_train, cls.x_test, cls.y_train, cls.y_test, args.k
         )
-        cls.beta_1_model.compute_test_train_distances()
-        cls.beta_1_model.compute_closest_vectors_indexes()
-        cls.beta_1_model.compute_test_predictions()
+        cls.beta_1.compute_test_train_distances()
+        cls.beta_1.compute_closest_vectors_indexes()
+        cls.beta_1.compute_test_predictions()
     
     def test_number_of_train_test_distances_is_correct(self)-> None:
         """
         Check that for each train instance, its distance with all the 
         test vectors is computed. 
         """
-        for dist_train in self.beta_1_model.test_train_distances:
+        for dist_train in self.beta_1.test_train_distances:
             self.assertEqual(
                 len(dist_train), args.n_train)
 
@@ -53,7 +53,7 @@ class TestBeta1(unittest.TestCase):
         Check that for each train instance, the length of the list 
         with the closest vectors indexes has length equal to k. 
         """
-        for indexes in self.beta_1_model.closest_vectors_indexes:
+        for indexes in self.beta_1.closest_vectors_indexes:
             self.assertEqual(
                 len(indexes), args.k
             )
@@ -63,22 +63,22 @@ class TestBeta1(unittest.TestCase):
         Check usage of save and load train_test_distances, by ensuring
         that the distances have the same value before and after saving.
         """
-        distances_before_saving = self.beta_1_model.test_train_distances
-        self.beta_1_model.save_test_train_distances(
+        distances_before_saving = self.beta_1.test_train_distances
+        self.beta_1.save_test_train_distances(
             'test_train_distances', './'
         )
-        self.beta_1_model.load_test_train_distances(
+        self.beta_1.load_test_train_distances(
             'test_train_distances.pickle', './'
         )
         self.assertEqual(
-            distances_before_saving, self.beta_1_model.test_train_distances
+            distances_before_saving, self.beta_1.test_train_distances
         )
 
     def test_predictions_are_integers(self)-> None:
         """
         Check that the predictions output by the model are integers.
         """
-        for pred in self.beta_1_model.test_predictions:
+        for pred in self.beta_1.test_predictions:
             self.assertIs(type(pred), np.int64)
             
 

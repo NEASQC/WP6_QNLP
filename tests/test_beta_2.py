@@ -21,25 +21,25 @@ class TestBeta2(unittest.TestCase):
         cls.x_train = [np.random.uniform(
             -args.x_limit, args.x_limit, size=args.x_size) for _ in range(
                 args.n_train)]
-        cls.beta_2_model = qkm(
+        cls.beta_2 = qkm(
             cls.x_train, args.k
         )
         if args.random_cluster_initialiser == 0:
-            cls.beta_2_model.initialise_cluster_centers(
+            cls.beta_2.initialise_cluster_centers(
                 random_initialisation = True,
                 seed = args.seed
             )
         else : 
-            cls.beta_2_model.initialise_cluster_centers(
+            cls.beta_2.initialise_cluster_centers(
                 random_initialisation=False)
-        cls.beta_2_model.run_k_means_algorithm()
+        cls.beta_2.run_k_means_algorithm()
 
     def test_number_of_train_predictions_is_correct(self)-> None:
         """
         Check that the number of predictions output by the model is correct.
         """
         self.assertEqual(
-            len(self.beta_2_model.get_train_predictions()),
+            len(self.beta_2.get_train_predictions()),
             len(self.x_train)
         )
 
@@ -48,7 +48,7 @@ class TestBeta2(unittest.TestCase):
         Check that the number of predictions output by the model is correct.
         """
         self.assertEqual(
-            len(self.beta_2_model.get_clusters_centers()),
+            len(self.beta_2.get_clusters_centers()),
             args.k
         )
     
