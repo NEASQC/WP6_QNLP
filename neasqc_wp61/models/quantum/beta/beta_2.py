@@ -8,7 +8,7 @@ import numpy as np
 
 from pyclustering.cluster.center_initializer import (
     kmeans_plusplus_initializer, random_center_initializer)
-from pyclustering.cluster.kmeans import kmeans
+from pyclustering.cluster.kmeans import kmeans, kmeans_observer
 from pyclustering.utils.metric import distance_metric, type_metric
 
 from quantum_distance import QuantumDistance as qd
@@ -23,6 +23,7 @@ class QuantumKMeans:
 
     def __init__(
         self, x_train : np.array, k : int,
+        tolerance : float = 0.001, itermax : int = 200
     )-> None:
         """
         Initialise the class.
@@ -39,6 +40,9 @@ class QuantumKMeans:
         self.metric = distance_metric(
             type_metric.USER_DEFINED, func = self.quantum_distance
         )
+        self.observer = kmeans_observer()
+        self.tolerance = tolerance
+        self.itermax = itermax
 
     @staticmethod
     def quantum_distance(x1 : np.array, x2 : np.array)-> float:
@@ -94,7 +98,9 @@ class QuantumKMeans:
         Instantiate and run k-means algorithm.
         """
         self.k_means_instance = kmeans(
-            self.x_train, self.initial_centers, metric = self.metric
+            self.x_train, self.initial_centers,
+            tolerance = self.tolerance, observer = self.observer,
+            metric = self.metric, itermax = self.itermax
         )
         self.k_means_instance.process()
 
@@ -131,6 +137,10 @@ class QuantumKMeans:
             List with the centers of each of the clusters.
         """
         return self.k_means_instance.get_centers()
+    
+    def get_cluster_indexes(self):
+
+        return self.k_means_instance.get_clusters()
     
 
     
