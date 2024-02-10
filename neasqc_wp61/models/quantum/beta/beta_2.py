@@ -93,9 +93,9 @@ class QuantumKMeans:
             self.initial_centers = kmeans_plusplus_initializer(
                 self.x_train, self.k).initialize()
 
-    def run_k_means_algorithm(self)-> None:
+    def train_k_means_algorithm(self)-> None:
         """
-        Instantiate and run k-means algorithm.
+        Instantiate and train k-means algorithm.
         """
         self.k_means_instance = kmeans(
             self.x_train, self.initial_centers,
@@ -103,19 +103,11 @@ class QuantumKMeans:
             metric = self.metric, itermax = self.itermax
         )
         self.k_means_instance.process()
-
-    def get_train_predictions(self)-> list[int]:
-        """
-        Get the predictions for the train instances.
-
-        Returns
-        -------
-        list[int]
-            Predictions for each of the train instances. 
-        """
-        return self.k_means_instance.predict(self.x_train) 
+        self.clusters = self.observer._kmeans_observer__evolution_clusters
+        self.centers = self.observer._kmeans_observer__evolution_centers
+        self.n_its = len(self.clusters)
     
-    def get_total_metric_error(self)-> float:
+    def compute_wcss(self):
         """
         Get the sum of metric errors with respect to quantum distance: 
         \f[error=\sum_{i=0}^{N}distance(x_{i}-center(x_{i}))\f].
@@ -125,23 +117,25 @@ class QuantumKMeans:
         float 
             Sum of metric errors wrt to quantum distance.
         """
-        return self.k_means_instance.get_total_wce()
-    
-    def get_clusters_centers(self)-> list[list]:
-        """
-        Get the centers of each cluster.
+        self.total_wcss = []
+        for i in range(self.n_its):
+            wcss = 0
+            for j in range(self.k):
+                for item in self.clusters[i][j]:
+                    wcss += self.quantum_distance(
+                        self.x_train[item], self.centers[i][j]
+                    )
+            self.total_wcss.append(wcss)
 
-        Returns
-        -------
-        list [list]
-            List with the centers of each of the clusters.
-        """
-        return self.k_means_instance.get_centers()
-    
-    def get_cluster_indexes(self):
+    def compute_predictions(self):
+        self.predictions = [
+            [None for _ in range(len(self.x_train))] for _ in range(
+                self.n_its)]
+        for i in range(self.n_its):
+            for j, cluster in enumerate(self.clusters[i]):
+                for item in cluster:
+                    self.predictions[i][item] = j
 
-        return self.k_means_instance.get_clusters()
-    
-
+        
     
 
