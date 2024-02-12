@@ -34,18 +34,25 @@ class QuantumKMeans:
             List with sentence vectors. 
         k : int
             Number of clusters.
+        tolerance : float
+            Value that dictates stopping condition. If for a given iteration,
+            the sum of distances of each item wrt to its cluster
+            is less than the tolerance, the algorithm stops.
+        itermax : int
+            Number of maximum iterations of the algorithm during the training
+            phase.
         """
         self.x_train = x_train
         self.k = k 
         self.metric = distance_metric(
-            type_metric.USER_DEFINED, func = self.quantum_distance
+            type_metric.USER_DEFINED, func = self.wrapper_quantum_distance
         )
         self.observer = kmeans_observer()
         self.tolerance = tolerance
         self.itermax = itermax
 
     @staticmethod
-    def quantum_distance(x1 : np.array, x2 : np.array)-> float:
+    def wrapper_quantum_distance(x1 : np.array, x2 : np.array)-> float:
         """
         Wrapper for implementing the quantum distance as a metric of
         the k-means algorithm.
@@ -81,7 +88,7 @@ class QuantumKMeans:
             If True randomly initialises the cluster centers.
             If False, uses the K-Means++ algorirthm to initialise
             cluster center. More info can be found in pycluster docs
-            https://pyclustering.github.io/docs/0.8.2/html/index.html
+            https://pyclustering.github.io/docs/0.8.2/html/index.html .
         seed : int
             Seed to use when random_center_intializer = True.
         """
@@ -95,7 +102,8 @@ class QuantumKMeans:
 
     def train_k_means_algorithm(self)-> None:
         """
-        Instantiate and train k-means algorithm.
+        Instantiate and train k-means algorithm. Assign the clusters, 
+        centers and n_iterations as attributes of the class.
         """
         self.k_means_instance = kmeans(
             self.x_train, self.initial_centers,
@@ -107,27 +115,28 @@ class QuantumKMeans:
         self.centers = self.observer._kmeans_observer__evolution_centers
         self.n_its = len(self.clusters)
     
-    def compute_wcss(self):
+    def compute_wce(self)-> None:
         """
-        Get the sum of metric errors with respect to quantum distance: 
-        \f[error=\sum_{i=0}^{N}distance(x_{i}-center(x_{i}))\f].
-
-        Returns
-        -------
-        float 
-            Sum of metric errors wrt to quantum distance.
+        For each iteration of the algorithm training process, compute the within cluster
+        sum of errors :  
+        $[error=\sum_{i=0}^{N}quantum_distance(x_{i}-center(x_{i}))$].
         """
-        self.total_wcss = []
+        self.total_wce = []
         for i in range(self.n_its):
-            wcss = 0
+            wce = 0
             for j in range(self.k):
                 for item in self.clusters[i][j]:
-                    wcss += self.quantum_distance(
+                    wce += self.wrapper_quantum_distance(
                         self.x_train[item], self.centers[i][j]
                     )
-            self.total_wcss.append(wcss)
+            self.total_wce.append(wce)
 
-    def compute_predictions(self):
+    def compute_predictions(self)-> None:
+        """
+        For each iteration of the algorithm training process, compute 
+        the predictions of the trainining instances, i.e.,
+        what the index of their closest cluster is. 
+        """
         self.predictions = [
             [None for _ in range(len(self.x_train))] for _ in range(
                 self.n_its)]
