@@ -88,7 +88,7 @@ class QuantumKMeans:
             If True randomly initialises the cluster centers.
             If False, uses the K-Means++ algorirthm to initialise
             cluster center. More info can be found in pycluster docs
-            https://pyclustering.github.io/docs/0.8.2/html/index.html .
+            https://pyclustering.github.io/docs/0.8.2/html/index.html.
         seed : int
             Seed to use when random_center_intializer = True.
         """
@@ -118,7 +118,7 @@ class QuantumKMeans:
     def compute_wce(self)-> None:
         """
         For each iteration of the algorithm training process, compute the within cluster
-        sum of errors :  
+        sum of errors:  
         $[error=\sum_{i=0}^{N}quantum_distance(x_{i}-center(x_{i}))$].
         """
         self.total_wce = []
