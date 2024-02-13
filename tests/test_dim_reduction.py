@@ -28,75 +28,92 @@ class TestDimReduction(unittest.TestCase):
         }
         cls.df = pd.DataFrame(data)
         cls.dim_out = args.reduced_dimension
+        cls.dim_reduction_funcs = [
+            dr.PCA, dr.ICA, dr.TSVD, dr.UMAP, dr.TSNE
+        ]
+        cls.kwargs_dim_reduction_funcs = [
+            {'svd_solver' : 'full', 'tol' : 9.0},
+            {'fun' : 'cube'},
+            {'algorithm' : 'arpack'},
+            {'n_neighbors' : 2},
+            {'perplexity' : 5.0}
+        ]
+        cls.dim_reduction_object_list = []
+        for dim_reduction_func, kwargs in zip(
+            cls.dim_reduction_funcs, cls.kwargs_dim_reduction_funcs
+        ):
+            dim_reduction_object = dim_reduction_func(
+                    cls.df, cls.dim_out, **kwargs
+                )
+            dim_reduction_object.reduce_dimension()
+            cls.dim_reduction_object_list.append(dim_reduction_object)
 
-    def test_PCA_outputs_desired_reduced_dimension(self)-> None:
+    def test_dim_reduction_produces_the_desired_output_dimension(self):
         """
-        Test that PCA outputs the desired reduced dimension. 
+        Test that the available dim reduction techniques output a
+        vector with the desired dimension.
         """
-        PCA_object = dr.PCA(
-            self.df, self.dim_out, svd_solver = 'full', tol = 9.0
-        )
-        PCA_object.reduce_dimension()
-        for value in PCA_object.dataset['reduced_sentence_embedding']:
-            self.assertEqual(len(value), self.dim_out)
-    
-    def test_ICA_outputs_desired_reduced_dimension(self)-> None:
-        """
-        Test that ICA outputs the desired reduced dimension. 
-        """
-        ICA_object = dr.ICA(self.df, self.dim_out, fun = 'cube')
-        ICA_object.reduce_dimension()
-        for value in ICA_object.dataset['reduced_sentence_embedding']:
-            self.assertEqual(len(value), self.dim_out)
-
-    def test_TSVD_outputs_desired_reduced_dimension(self):
-        """
-        Test that TSVD outputs the desired reduced dimension. 
-        """
-        TSVD_object = dr.TSVD(self.df, self.dim_out, algorithm = 'arpack')
-        TSVD_object.reduce_dimension()
-        for value in TSVD_object.dataset['reduced_sentence_embedding']:
-            self.assertEqual(len(value), self.dim_out)
-
-    def test_UMAP_outputs_desired_reduced_dimension(self):
-        """
-        Test that UMAP outputs the desired reduced dimension. 
-        """
-        UMAP_object = dr.UMAP(self.df, self.dim_out, n_neighbors=2)
-        UMAP_object.reduce_dimension()
-        for value in UMAP_object.dataset['reduced_sentence_embedding']:
-            self.assertEqual(len(value), self.dim_out)  
-
-    def test_TSNE_outputs_desired_reduced_dimension(self):
-        """
-        Test that TSNE outputs the desired reduced dimension. 
-        """
-        TSNE_object = dr.TSNE(self.df, self.dim_out, perplexity=5.0)
-        TSNE_object.reduce_dimension()
-        for value in TSNE_object.dataset['reduced_sentence_embedding']:
-            self.assertEqual(len(value), self.dim_out)  
+        for dim_reduction_object in self.dim_reduction_object_list:
+            with self.subTest(
+                dim_reduction_object=dim_reduction_object
+            ):
+                for value in dim_reduction_object.dataset[
+                    'reduced_sentence_embedding'
+                ]:
+                    self.assertEqual(len(value), self.dim_out)
 
     def test_save_and_load_dataset_preserves_desired_dimension(self):
         """
         Test that save dataset function preserves the desired reduced
         dimension after being saved and loaded.
         """
-        UMAP_object = dr.UMAP(self.df, self.dim_out, n_neighbors=2)
-        UMAP_object.reduce_dimension()
-        name_dataset = 'umap_dataset'
-        UMAP_object.save_dataset(name_dataset, './')
-        df = pd.read_csv(name_dataset + '.tsv', sep = '\t')
         ## Convert str to list of floats 
         def str_to_float(x):
             x = x.strip('[]')
             x_i = x.split(',')
             out = [float(i) for i in x_i]
             return out
-        df['reduced_sentence_embedding'] = df[
-            'reduced_sentence_embedding'].apply(str_to_float)
-        
-        for value in df['reduced_sentence_embedding']:
-            self.assertEqual(len(value), self.dim_out)
+        for dim_reduction_object in self.dim_reduction_object_list:
+            with self.subTest(
+                dim_reduction_object=dim_reduction_object
+            ):
+                name_dataset = 'test_dataset'
+                dim_reduction_object.save_dataset(name_dataset, './')
+                df = pd.read_csv(name_dataset + '.tsv', sep = '\t')
+                df['reduced_sentence_embedding'] = df[
+                    'reduced_sentence_embedding'].apply(str_to_float)
+                for value in df['reduced_sentence_embedding']:
+                    self.assertEqual(len(value), self.dim_out)
+
+    def test_reduced_embedding_is_populated_by_float_values(self):
+        """
+        Test that the reduced embedding is populated by float values.
+        """
+        for dim_reduction_object in self.dim_reduction_object_list:
+            with self.subTest(
+                dim_reduction_object=dim_reduction_object
+            ):
+                for sentence_vector in dim_reduction_object.dataset[
+                    'reduced_sentence_embedding'
+                ]:
+                    for value in sentence_vector:
+                        self.assertIs(type(value), float)
+
+    def test_not_all_elements_are_equal_in_reduced_embedding(self):
+        """
+        Test that at least two of the values of the reduced embeddings
+        are different.
+        """
+        for dim_reduction_object in self.dim_reduction_object_list:
+            with self.subTest(
+                dim_reduction_object=dim_reduction_object
+            ):
+                for sentence_vector in dim_reduction_object.dataset[
+                    'reduced_sentence_embedding'
+                ]:
+                    self.assertNotEqual(
+                        len(set(sentence_vector)), 1
+                    )
 
 
 if __name__ == '__main__':

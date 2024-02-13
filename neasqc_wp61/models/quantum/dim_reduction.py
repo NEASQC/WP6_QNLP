@@ -273,7 +273,6 @@ class TSNE(DimReduction):
         sentence_vectors_reduced = self.tsne_sk.fit_transform(
             np.array(self.sentence_vectors)
         )
-        self.reduced_dataset = self.dataset.copy()
         self.dataset[
             'reduced_sentence_embedding'] = sentence_vectors_reduced.tolist()
         
