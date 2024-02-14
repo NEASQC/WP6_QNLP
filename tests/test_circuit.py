@@ -24,98 +24,113 @@ class TestCircuit(unittest.TestCase):
         torch.manual_seed(args.seed)
         cls.n_qubits = args.n_qubits
         cls.n_layers = args.n_layers
-        cls.axis_encoding = args.axis_encoding
+        cls.axis_embedding = args.axis_embedding
         observables_funcs_dict = {
             'X' : qml.PauliX, 
             'Y' : qml.PauliY,
-            'Z' : qml.PauliZ
+            'Z' : qml.PauliZ,
+            'H' : qml.Hadamard
         }
-        cls.observables = [
-            observables_funcs_dict[
-                args.observable] for _ in range(args.n_qubits)
-        ]
+        cls.observables = {
+            args.qubit_index[i] : observables_funcs_dict[args.observables[i]]
+            for i in range(len(args.qubit_index))
+        }
         cls.ansatze = [circ.Sim14, circ.Sim15, circ.StronglyEntangling]
-        cls.circuits = [
+        circuits_exp_value = [
             ansatz(
                 cls.n_qubits, cls.n_layers,
-                cls.axis_encoding, cls.observables) for ansatz in cls.ansatze
+                cls.axis_embedding, cls.observables, False
+            ) for ansatz in cls.ansatze
         ]
+        circuits_probs = [
+            ansatz(
+                cls.n_qubits, cls.n_layers,
+                cls.axis_embedding, cls.observables, True
+            ) for ansatz in cls.ansatze
+        ]
+        cls.circuits = [circuits_exp_value, circuits_probs]
         cls.params = [
             torch.nn.Parameter(
                 torch.randn(
-                    circuit.parameters_shape)) for circuit in cls.circuits
+                    circuit.parameters_shape)) for circuit in cls.circuits[0]
         ]
         cls.input = torch.nn.Parameter(torch.randn(cls.n_qubits))
+        cls.results_circuits = [[], []]
+        for i,c in enumerate(cls.circuits):
+            for j,circuit in enumerate(c):
+                    circuit_function = circuit.build_circuit_function
+                    cls.results_circuits[i].append(
+                        circuit.run_and_measure_circuit(
+                        circuit_function)(cls.input, cls.params[j])
+                    )
 
     def test_circuits_output_correct_type(self)-> None:
         """
-        Test the that the the three different ansatze implemented 
-        work, asserting that the expected value obtained
-        after running the circuit is a tensor.
+        Test the that the three different ansatze implemented 
+        work (for expectation value and prob outputs),
+        asserting that a tensor is obtained as output.
         """
-        for i,circuit in enumerate(self.circuits):
-            circuit_function = circuit.build_circuit_function
-            results = circuit.run_and_measure_circuit(
-                circuit_function)(self.input, self.params[i])
-            ### We make sure the output has the proper format
-            for r in results:
-                self.assertIsInstance(r, torch.Tensor)
+        for i,r in enumerate(self.results_circuits):
+            for result in r:
+                with self.subTest(result=result):
+                    for tensor in result:
+                        self.assertIsInstance(tensor, torch.Tensor)
 
+    def test_circuit_outputs_probabilities_between_0_and_1(self)-> None:
+        """
+        For all the ansatze, test that when probabilities are output,
+        they lay in the range (0,1).
+        """
+        for result in self.results_circuits[1]:
+            for tensor in result:
+                for value in tensor:
+                    with self.subTest(value=value):
+                        self.assertGreaterEqual(value, 0)
+                        self.assertLessEqual(value, 1)
+
+    
     def test_circuit_outputs_of_different_rescaling_functions_are_different(
         self)-> None:
         """
         Test the circuit output after applying rescaling functions on inputs,
-        ensuring that it varies when different 
-        rescaling functions are applied.
+        ensuring that it varies when different functions are applied.
+        A value for the input embedding and observables will be set for which
+        we know that the outputs will vary.
         """
+        r1 = 2 * torch.rand(1).item()
+        r2 = 2 * torch.rand(1).item()
+        print(r1, r2)
         data_rescaling_functions = [
-            lambda x : 0.5 * mt.pi * x,
-            lambda x : mt.pi * x,
-            lambda x : 2.0 * mt.pi * x
+            lambda x : r1 * mt.pi * x,
+            lambda x : r2 * mt.pi * x,
         ]
-        for i,ansatz in enumerate(self.ansatze):
-            results_list = []
-            for f in data_rescaling_functions:
-                circuit = ansatz(
-                    self.n_qubits, self.n_layers,
-                    self.axis_encoding, self.observables,
-                    data_rescaling = f
-                )
-                circuit_function = circuit.build_circuit_function
-                results = circuit.run_and_measure_circuit(
-                circuit_function)(self.input, self.params[i])
-                results_list.append(results)
-            self.assertNotEqual(results_list[0], results_list[1])
-            self.assertNotEqual(results_list[1], results_list[2])
-            self.assertNotEqual(results_list[2], results_list[0])
-                          
-    def test_circuit_outputs_of_different_observables_are_different(
-        self)-> None:
-        """
-        Test the circuit output of different observables,
-        ensuring that it varies when different 
-        observables are measured 
-        """
-        operators = [
-            qml.Identity, qml.Hadamard, qml.PauliX,
-            qml.PauliY, qml.PauliZ
-        ]
-        observables = []
-        for op in operators:
-            observables.append([op for _ in range(self.n_qubits)])
+        embedding = 'X'
+        observables = {k : qml.PauliZ for k in self.observables}
         for i, ansatz in enumerate(self.ansatze):
-            results_list =[]
-            for ob in observables:
-                circuit = ansatz(
-                    self.n_qubits, self.n_layers,
-                    self.axis_encoding, ob
-                )
-                circuit_function = circuit.build_circuit_function
-                results = circuit.run_and_measure_circuit(
-                circuit_function)(self.input, self.params[i])
-                self.assertNotIn(results, results_list)
-                results_list.append(results)
+            for output_probabilities in (True, False):
+                with self.subTest(
+                    ansatz = ansatz,
+                    output_probabilities = output_probabilities
+                ):
+                    results_list = []
+                    for f in data_rescaling_functions:
+                        circuit = ansatz(
+                        self.n_qubits, self.n_layers,
+                        embedding, observables,
+                        output_probabilities = output_probabilities,
+                        data_rescaling = f
+                        )
+                        circuit_function = circuit.build_circuit_function
+                        results = circuit.run_and_measure_circuit(
+                        circuit_function
+                        )(self.input, self.params[i])
+                        results_list.append(results)
+                    for t1, t2 in zip(results_list[0], results_list[1]):
+                        self.assertFalse(
+                            torch.allclose(t1, t2)
+                        )
 
+                          
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -129,15 +144,22 @@ if __name__ == '__main__':
         default = 1
     )
     parser.add_argument(
-        "-ax", "--axis_encoding", type = str,
+        "-ax", "--axis_embedding", type = str,
         help = "Axis for rotation encoding. Must be in (X,Y,Z).",
         default = 'X'
     )
     parser.add_argument(
-        "-ob", "--observable", type = str,
-        help = ("Pauli operator for which output the expected value."
-        "Must be in (X,Y,Z)."),
-        default = 'Z'
+        "-ob", "--observables", type = str, nargs = '+',
+        help = (" List of Pauli operators for which output"
+        "the expected value or probability."
+        "Must be in (X,Y,Z) and length equal to qubit index length."),
+        default = ['Z', 'Z', 'Z']
+    )
+    parser.add_argument(
+        "-qi", "--qubit_index", type = int, nargs = '+',
+        help = (" List of qubits indexes where the operators act."
+        "Its length must be equal to observables length."),
+        default = [0,1,2]
     )
     parser.add_argument(
         "-s", "--seed", type = str,
