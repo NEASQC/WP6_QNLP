@@ -286,7 +286,7 @@ class Sim15(Circuit):
         Returns
         -------
         Callable
-            Function represesting the quantum circuit
+            Function represesting the quantum circuit.
         """
         if self.data_rescaling is not None:
             inputs = self.data_rescaling(inputs)
@@ -392,7 +392,7 @@ class StronglyEntangling(Circuit):
         Returns
         -------
         Callable
-            Function represesting the quantum circuit
+            Function represesting the quantum circuit.
         """
         if self.data_rescaling is not None:
             inputs = self.data_rescaling(inputs)
