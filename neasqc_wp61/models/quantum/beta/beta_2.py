@@ -52,16 +52,16 @@ class QuantumKMeans:
         self.itermax = itermax
 
     @staticmethod
-    def wrapper_quantum_distance(x1 : np.array, x2 : np.array)-> float:
+    def wrapper_quantum_distance(vector_1 : np.array, vector_2 : np.array)-> float:
         """
         Wrapper for implementing the quantum distance as a metric of
         the k-means algorithm.
 
         Parameters
         ----------
-        x1 : np.array
+        vector_1 : np.array
             First of the vectors between which to compute the distance.
-        x2 : np.array
+        vector_2 : np.array
             Second of the vectors between which to compute the distance.
         
         Returns
@@ -69,11 +69,11 @@ class QuantumKMeans:
         float
             Quantum distance between the two vectors.
         """
-        x1 = normalise_vector(x1)
-        x1 = pad_vector_with_zeros(x1)
-        x2 = normalise_vector(x2)
-        x2 = pad_vector_with_zeros(x2)
-        return qd(x1, x2).compute_quantum_distance()
+        vector_1 = normalise_vector(vector_1)
+        vector_1 = pad_vector_with_zeros(vector_1)
+        vector_2 = normalise_vector(vector_2)
+        vector_2 = pad_vector_with_zeros(vector_2)
+        return qd(vector_1, vector_2).compute_quantum_distance()
     
     def initialise_cluster_centers(
         self, random_initialisation = True,

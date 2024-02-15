@@ -30,7 +30,9 @@ class TestBeta1(unittest.TestCase):
         for j,xte in enumerate(cls.x_test):
             xte = normalise_vector(xte)
             cls.x_test[j] = pad_vector_with_zeros(xte)
-        cls.y_train = np.random.randint(0, args.n_classes, size = args.n_train)
+        cls.y_train = np.random.randint(
+            0, args.n_classes, size = args.n_train
+        )
         cls.y_test = np.random.randint(0, args.n_classes, size = args.n_test)
         cls.beta_1 = qkn(
             cls.x_train, cls.x_test, cls.y_train, cls.y_test, args.k
@@ -39,10 +41,12 @@ class TestBeta1(unittest.TestCase):
         cls.beta_1.compute_closest_vectors_indexes()
         cls.beta_1.compute_test_predictions()
     
-    def test_number_of_train_test_distances_is_correct(self)-> None:
+    def test_number_of_test_train_distances_is_correct(self)-> None:
         """
         Check that for each train instance, its distance with all the 
-        test vectors is computed. 
+        test vectors is computed, i.e., the total number of items in
+        self.beta_1.test_train_distances is equal to 
+        the number of train instances * number of test instances.
         """
         for dist_train in self.beta_1.test_train_distances:
             self.assertEqual(
@@ -58,7 +62,7 @@ class TestBeta1(unittest.TestCase):
                 len(indexes), args.k
             )
 
-    def test_save_and_load_train_test_distances(self)-> None:
+    def test_train_distances_dont_change_when_saving_and_loading(self)-> None:
         """
         Check usage of save and load train_test_distances, by ensuring
         that the distances have the same value before and after saving.

@@ -21,51 +21,53 @@ class QuantumDistance:
     learning on superconducting processors."
     arXiv preprint arXiv:1909.04226 (2019).
     """   
-    def __init__(self, x1 : np.array, x2 : np.array)-> None:
+    def __init__(self, vector_1 : np.array, vector_2 : np.array)-> None:
         """
         Initialise the class.
 
         Parameters
         ----------
-        x1 : np.array
-            First of the vectors to compute the distance between.
-        x2 : np. array
-            Second of the vectors to compute the distance between.
+        vector_1 : np.array
+            First of the vectors between which the distance is calculated.
+        vector_2: np. array
+            Second of the vectors between which the distance is calculated.
         """
-        self.x1 = x1
-        self.x2 = x2
+        self.vector_1 = vector_1
+        self.vector_2 = vector_2
         self.verify_vectors_satisfy_conditions()
-        # Number of qubits needed to encode our vectors.
-        self.nq_encoding = int(np.ceil(np.log2(len(self.x1))))
+        self.n_qubits_to_encode_vector = int(
+            np.ceil(np.log2(len(self.vector_1)))
+        )
         # Number of total qubits in the quantum circuit.
-        self.nq = self.nq_encoding + 3
-        self.qc = QuantumCircuit(self.nq)
+        self.n_qubits_quantum_circuit = self.n_qubits_to_encode_vector + 3
+        self.qc = QuantumCircuit(self.n_qubits_quantum_circuit)
 
     def verify_vectors_satisfy_conditions(self)-> None:
         """
-        Checks if vectors x1 and x2 satisfy the conditions needed 
+        Checks if vector_1 and vector_2 satisfy the conditions needed 
         in order to compute the quantum distance between them.
         """
-        if len(self.x1) != len(self.x2):
+        if len(self.vector_1) != len(self.vector_2):
             raise ValueError('Vectors must be the same length.')
         elif (
-            abs(np.linalg.norm(self.x1) - 1.0) > 1e-09
-            or (np.linalg.norm(self.x1) - 1.0) > 1e-09
+            abs(np.linalg.norm(self.vector_1) - 1.0) > 1e-09
+            or (np.linalg.norm(self.vector_1) - 1.0) > 1e-09
         ):
             raise ValueError('Both vectors must have norm 1.')
         elif (
-            not np.log2(len(self.x1)).is_integer()
-            or not np.log2(len(self.x2)).is_integer()
+            not np.log2(len(self.vector_1)).is_integer()
+            or not np.log2(len(self.vector_2)).is_integer()
         ):
             raise ValueError('Both vectors lengths must be power of 2.')
         else:
             pass
         
-    def build_gate_state_preparation(self, x : np.array)-> ControlledGate:
+    def build_gate_state_preparation(
+        self, vector : np.array
+    )-> ControlledGate:
         """
-        Build a gate that embbeds the vector
-        x using amplitude encoding. The gate will be controlled 
-        on an ancilla qubit. 
+        Build a gate that embbed a vector using amplitude encoding
+        The gate will be controlled on an ancilla qubit. 
 
         Parameters
         ----------
@@ -78,8 +80,10 @@ class QuantumDistance:
         xgate : ControlledGate
             A controlled gate that embbeds x using amplitude encoding.
         """
-        qcx = QuantumCircuit(self.nq_encoding)
-        qcx.prepare_state(x.tolist(), range(self.nq_encoding))
+        qcx = QuantumCircuit(self.n_qubits_to_encode_vector)
+        qcx.prepare_state(
+            vector.tolist(), range(self.n_qubits_to_encode_vector)
+        )
         xgate = qcx.to_gate().control(1)
         return xgate
     
@@ -87,12 +91,20 @@ class QuantumDistance:
         """
         Build the \psi state defined in [1].
         """
-        x1gate = self.build_gate_state_preparation(self.x1)
-        x2gate = self.build_gate_state_preparation(self.x2)
+        vector_1_embedding_gate = self.build_gate_state_preparation(
+            self.vector_1
+        )
+        vector_2_embedding_gate = self.build_gate_state_preparation(
+            self.vector_2
+        )
         self.qc.h(0)
-        self.qc.append(x2gate, range(self.nq_encoding + 1))
+        self.qc.append(
+            vector_2_embedding_gate, range(self.n_qubits_to_encode_vector + 1)
+        )
         self.qc.x(0)
-        self.qc.append(x1gate, range(self.nq_encoding + 1))
+        self.qc.append(
+            vector_1_embedding_gate, range(self.n_qubits_to_encode_vector + 1)
+        )
         self.qc.x(0)
 
     def build_phi_state(self)-> None:
@@ -100,16 +112,18 @@ class QuantumDistance:
         Build the \phi state defined in [1].
         """
         phi = np.array([1/np.sqrt(2), -1/np.sqrt(2)])
-        self.qc.prepare_state(phi, self.nq_encoding + 1)
+        self.qc.prepare_state(phi, self.n_qubits_to_encode_vector + 1)
     
     def apply_swap_test(self)-> None:
         """
         Apply a swap test between the first qubit of state \psi 
         and the state \phi.
         """
-        self.qc.h(self.nq_encoding + 2)
-        self.qc.cswap(self.nq_encoding + 2, 0, self.nq_encoding + 1)
-        self.qc.h(self.nq_encoding + 2)
+        self.qc.h(self.n_qubits_to_encode_vector + 2)
+        self.qc.cswap(
+            self.n_qubits_to_encode_vector + 2, 0, self.n_qubits_to_encode_vector + 1
+        )
+        self.qc.h(self.n_qubits_to_encode_vector + 2)
     
     def execute_qc(
         self, method : str = 'statevector', device : str = 'CPU'
@@ -122,8 +136,8 @@ class QuantumDistance:
         method : str, default : statevector
             Simulator method to use. More info can be found in
             https://github.com/Qiskit/qiskit-aer/blob/main/qiskit_aer/backends/aer_simulator.py.
-        device : str, default : CPU
-            Decides whether to use CPU or GPU.
+        device : str
+            Decides whether to use CPU or GPU. (Default = CPU).
         """
         self.qc.save_statevector()
         sim = AerSimulator(method=method, device=device)
@@ -143,7 +157,7 @@ class QuantumDistance:
             Simulator method to use. More info can be found in
             https://github.com/Qiskit/qiskit-aer/blob/main/qiskit_aer/backends/aer_simulator.py.
         device : str, default : CPU
-            Decides whether to use CPU or GPU.
+            Decides whether to use CPU or GPU. (Default = CPU).
 
         Returns
         -------
@@ -154,7 +168,9 @@ class QuantumDistance:
         self.build_phi_state()
         self.apply_swap_test()
         self.execute_qc(method=method, device=device)
-        quantum_distance = self.distance_prob_relation(self.state_probabilities)
+        quantum_distance = self.distance_prob_relation(
+            self.state_probabilities
+        )
         return quantum_distance
 
     @staticmethod
@@ -171,7 +187,7 @@ class QuantumDistance:
         
         Returns
         -------
-        quantum_distance : 
+        float 
             Estimation of the quantum distance.
         """
         prob0 = 0

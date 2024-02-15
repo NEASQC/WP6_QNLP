@@ -75,7 +75,7 @@ class QuantumKNearestNeighbours:
 
     def load_test_train_distances(self, filename : str, path : str)-> None:
         """
-        Load pre-computed test_train distances from a pickle file and assigns
+        Load pre-computed test_train distances from a pickle file and assign
         them as object attribute.
 
         Parameters
@@ -105,7 +105,7 @@ class QuantumKNearestNeighbours:
         """
         Compute the test predictions by majority vote of the labels
         of the closest vectors to each test instance.
-        In case of tie, a random choice between the labels who are 
+        In case of tie, a random choice between the labels which are 
         tied will be assigned as prediction.
         """
         self.test_predictions = []

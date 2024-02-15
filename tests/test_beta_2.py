@@ -68,7 +68,9 @@ class TestBeta2(unittest.TestCase):
 
     def test_wce_is_float(self)-> None:
         """
-        Check that wce values are a float.
+        Check that the within clusters sum of errors values (WCE):
+        $[error=\sum_{i=0}^{N}quantum_distance(x_{i}-center(x_{i}))$]
+        are floats.
         """
         for i in range(self.beta_2.n_its):
             self.assertIs(

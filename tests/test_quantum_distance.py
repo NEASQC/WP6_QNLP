@@ -20,17 +20,74 @@ class TestQuantumDistance(unittest.TestCase):
         """
         Set up the class for testing.
         """
+        cls.n_sizes = len(args.sizes_that_dont_need_padding)
+        cls.vectors_that_dont_need_padding = [
+            [] for _ in range(cls.n_sizes)
+        ]
+        cls.vectors_that_need_padding = [
+            [] for _ in range(cls.n_sizes)
+        ]
+        for i,(size_vector_1,size_vector_2) in enumerate(zip(
+            args.sizes_that_dont_need_padding,
+            args.sizes_that_need_padding
+        )):
+            for _ in range(args.n_samples):
+                cls.vectors_that_dont_need_padding[i].append(
+                    np.random.uniform(
+                        -args.x_limit, args.x_limit, size = size_vector_1
+                    )
+                )
+                cls.vectors_that_need_padding[i].append(
+                    np.random.uniform(
+                        -args.x_limit, args.x_limit, size = size_vector_2
+                    )
+                )
         np.random.seed(args.seed)
 
-    def test_proper_state_preparation(self)-> None:
+    def test_value_error_is_raised_if_vectors_dont_have_same_length(
+        self
+    )-> None:
         """
-        Test that the script is doing the correct state 
-        preparation.
+        Test that a ValueError is raised when computing the quantum distance
+        for two vectors with different length.
         """
-        x1 = np.array([1/np.sqrt(2), 1/np.sqrt(2)])
-        x2 = [1,1]
-        circuit = qd(x1,x2)
-        gate = circuit.build_gate_state_preparation(x1)
+        for i in range (self.n_sizes):
+            for vector_1,vector_2 in zip(
+                self.vectors_that_dont_need_padding[i],
+                self.vectors_that_need_padding[i]
+            ):
+                with self.assertRaises(ValueError):
+                    quantum_distance = qd(
+                        vector_1,vector_2
+                    ).compute_quantum_distance()
+
+    def test_value_error_is_raised_if_vectors_dont_have_norm_1(
+        self
+    )-> None:
+        """
+        For two vectors with same length, test that a ValueError is
+        raised when computing the quantum distance if one or both of
+        them have norm different from 1.
+        """
+        for i in range (self.n_sizes):
+            for j in range(args.n_samples -1):
+                vector_1 = self.vectors_that_dont_need_padding[i][j]
+                vector_2 = self.vectors_that_dont_need_padding[i][j + 1]
+                with self.assertRaises(ValueError):
+                    quantum_distance = qd(
+                        vector_1,vector_2
+                    ).compute_quantum_distance()
+             
+    def test_model_encode_vectors_correctly(self)-> None:
+        """
+        Test that for a given vector the model encodes it correctly
+        in a quantum circuit, i.e., the amplitudes of the quantum states
+        of the circuit represent the input vector.
+        """
+        vector_1 = np.array([1/np.sqrt(2), 1/np.sqrt(2)])
+        vector_2 = [1,1]
+        circuit = qd(vector_1,vector_2)
+        gate = circuit.build_gate_state_preparation(vector_1)
         qc = QuantumCircuit(2)
         qc.x(0)
         qc.append(gate,[0,1])
@@ -43,39 +100,33 @@ class TestQuantumDistance(unittest.TestCase):
 
     def test_quantum_distance_equals_eucl_distance(self)-> None:
         """
-        Test that for normalised vectors that don't need padding
-        (their lengths are a power of 2), the 
-        quantum distance and the euclidean distance output 
+        Test that the quantum distance and the euclidean distance output 
         the same value (up to a small error).
         """
-        for n in args.sizes_without_padding:
-            for _ in range(args.n_samples):
-                x1 = np.random.uniform(-args.x_limit,args.x_limit, size=n)
-                x2 = np.random.uniform(-args.x_limit,args.x_limit, size=n)
-                x1 = normalise_vector(x1)
-                x2 = normalise_vector(x2)
-                quantum_distance = qd(x1,x2).compute_quantum_distance()
-                euclidean_distance = np.linalg.norm(x2 - x1)
-                self.assertAlmostEqual(quantum_distance, euclidean_distance)
-
-    def test_quantum_distance_equals_eucl_distance_padding(self)-> None:
-        """
-        Test that for normalised vectors when padding is needed
-        (lengths of the vecotrs are not a power of 2), the quantum distance
-        and euclidean distance output the same value (up to a small error).
-        """
-        for n in args.sizes_with_padding:
-            for _ in range(args.n_samples):
-                x1 = np.random.uniform(-args.x_limit,args.x_limit, size=n)
-                x2 = np.random.uniform(-args.x_limit,args.x_limit, size=n)
-                x1 = normalise_vector(x1)
-                x2 = normalise_vector(x2)
-                x1 = pad_vector_with_zeros(x1)
-                x2 = pad_vector_with_zeros(x2)
-                quantum_distance = qd(x1, x2).compute_quantum_distance()
-                euclidean_distance = np.linalg.norm(x2 - x1)
-                self.assertAlmostEqual(quantum_distance, euclidean_distance)
-
+        for i,vectors_list in enumerate(
+            (
+                self.vectors_that_dont_need_padding,
+                self.vectors_that_need_padding
+            )
+        ):
+            for j in range(self.n_sizes):
+                for k in range(args.n_samples -1):
+                    vector_1 = vectors_list[j][k]
+                    vector_2 = vectors_list[j][k + 1]
+                    vector_1 = normalise_vector(vector_1)
+                    vector_2 = normalise_vector(vector_2)
+                    if i == 1:
+                        vector_1 = pad_vector_with_zeros(vector_1)
+                        vector_2 = pad_vector_with_zeros(vector_2)
+                    quantum_distance = qd(
+                        vector_1,vector_2
+                    ).compute_quantum_distance()
+                    euclidean_distance = np.linalg.norm(vector_2 - vector_1)
+                    self.assertAlmostEqual(
+                        quantum_distance,
+                        euclidean_distance
+                    )
+                
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -90,15 +141,17 @@ if __name__ == '__main__':
         default = 1000
     )
     parser.add_argument(
-        "-sp", "--sizes_without_padding", type = int, 
-        help = ("Sizes of the vectors that don't need padding."
-                "All values must be powers of 2." ),
+        "-spf", "--sizes_that_dont_need_padding", type = int, 
+        help = ("List with sizes of the vectors that don't need padding."
+                "All values must be powers of 2." 
+                "It must have the same length as sizes_with_padding."),
         nargs = "+", default = [2,4,8]
     )
     parser.add_argument(
-        "-swp", "--sizes_with_padding", type = int, 
-        help = ("Sizes of the vectors that need padding."
-                "None of the values can be a power of 2." ),
+        "-spt", "--sizes_that_need_padding", type = int, 
+        help = ("List with sizes of the vectors that need padding."
+                "None of the values can be a power of 2." 
+                "It must have the same length as sizes_without_padding."),
         nargs = "+", default = [3,5,7]
     )
     parser.add_argument(
