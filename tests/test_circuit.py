@@ -39,13 +39,15 @@ class TestCircuit(unittest.TestCase):
         circuits_exp_value = [
             ansatz(
                 cls.n_qubits, cls.n_layers,
-                cls.axis_embedding, cls.observables, False
+                cls.axis_embedding, cls.observables, 
+                output_probabilities = False
             ) for ansatz in cls.ansatze
         ]
         circuits_probs = [
             ansatz(
                 cls.n_qubits, cls.n_layers,
-                cls.axis_embedding, cls.observables, True
+                cls.axis_embedding, cls.observables,
+                output_probabilities = True
             ) for ansatz in cls.ansatze
         ]
         cls.circuits = [circuits_exp_value, circuits_probs]
@@ -64,7 +66,7 @@ class TestCircuit(unittest.TestCase):
                         circuit_function)(cls.input, cls.params[j])
                     )
 
-    def test_circuits_output_correct_type(self)-> None:
+    def test_circuits_return_a_tensor(self)-> None:
         """
         Test the that the three different ansatze implemented 
         work (for expectation value and prob outputs),
@@ -83,12 +85,11 @@ class TestCircuit(unittest.TestCase):
         """
         for result in self.results_circuits[1]:
             for tensor in result:
-                for value in tensor:
-                    with self.subTest(value=value):
-                        self.assertGreaterEqual(value, 0)
-                        self.assertLessEqual(value, 1)
-
-    
+                with self.subTest(tensor=tensor):
+                    self.assertIs(
+                        bool((tensor >= 0).all() and (tensor <=1).all()), True
+                    )
+                
     def test_circuit_outputs_of_different_rescaling_functions_are_different(
         self)-> None:
         """
