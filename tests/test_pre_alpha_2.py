@@ -38,7 +38,7 @@ class TestPreAlpha2(unittest.TestCase):
         cls.pre_alpha_2.fit()
         cls.pre_alpha_2.compute_probabilities()
         cls.pre_alpha_2.compute_predictions()
-        cls.probabilites = [
+        cls.probabilities = [
             cls.pre_alpha_2.probs_train,
             cls.pre_alpha_2.probs_val,
         ]
@@ -81,7 +81,7 @@ class TestPreAlpha2(unittest.TestCase):
         Test that the number of predictions and probabilities is equal
         to the the number of epochs in traininig.
         """
-        for probs,preds in zip(self.probabilites, self.predictions):
+        for probs,preds in zip(self.probabilities, self.predictions):
             with self.subTest(probs=probs):
                 self.assertEqual(self.pre_alpha_2.epochs, len(probs))
             with self.subTest(pred=preds):
@@ -91,21 +91,43 @@ class TestPreAlpha2(unittest.TestCase):
         """
         Test that the values predicted are integers.
         """
-        for preds in self.predictions:
-            for p1 in preds:
-                for p2 in p1:
-                    with self.subTest(p2 = p2):
-                        self.assertIs(type(p2), int)
+        preds_train_list = self.predictions[0]
+        preds_val_list = self.predictions[1]
+        for preds_single_iteration_train, preds_single_iteration_val in zip(
+            preds_train_list, preds_val_list
+        ):
+            for pred_value_train, pred_value_val in zip(
+                preds_single_iteration_train, preds_single_iteration_val
+            ):
+                with self.subTest(
+                    pred_value_train = pred_value_train,
+                    pred_value_val = pred_value_val
+                ):
+                    self.assertIs(type(pred_value_train), int)
+                    self.assertIs(type(pred_value_val), int)
     
     def test_probs_add_up_to_1(self):
         """
         Test that the probabilities predicted for each instance add up to one.
         """
-        for probs in self.probabilites:
-            for p1 in probs:
-                for p2 in p1:
-                    with self.subTest(p2 = p2):
-                        self.assertLessEqual(abs(sum(p2) -1), 1e-06)
+        probs_train_list = self.probabilities[0]
+        probs_val_list = self.probabilities[1]
+        for probs_single_iteration_train, probs_single_iteration_val in zip(
+            probs_train_list, probs_val_list
+        ):
+            for prob_value_train, prob_value_val in zip(
+                probs_single_iteration_train, probs_single_iteration_val
+            ):
+                with self.subTest(
+                    pred_value_train = prob_value_train,
+                    pred_value_val = prob_value_val
+                ):
+                        self.assertLessEqual(
+                            abs(sum(prob_value_train) -1), 1e-06
+                        )
+                        self.assertLessEqual(
+                            abs(sum(prob_value_val) -1), 1e-06
+                        )
 
     
 if __name__ == '__main__':

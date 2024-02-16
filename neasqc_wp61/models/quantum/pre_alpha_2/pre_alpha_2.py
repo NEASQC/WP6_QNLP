@@ -32,12 +32,20 @@ class PreAlpha2:
         'SGD' : torch.optim.SGD
     }
     def __init__(
-        self, sentences : list[list[str]], labels : list[list[int]],
-        n_classes : int, ansatz : lambeq.ansatz.CircuitAnsatz,
-        n_qubits_noun : int, n_qubits_sentence : int, n_layers : int,
-        n_single_qubits_params : int, optimiser : torch.optim.Optimizer,
-        epochs : int, batch_size : int, loss_function : Callable = None, 
-        optimiser_args : dict = {'lr' : 0.001}, device : int = -1,
+        self, sentences : list[list[str]],
+        labels : list[list[int]],
+        n_classes : int,
+        ansatz : lambeq.ansatz.CircuitAnsatz,
+        n_qubits_noun : int,
+        n_qubits_sentence : int,
+        n_layers : int,
+        n_single_qubits_params : int,
+        optimiser : torch.optim.Optimizer,
+        epochs : int,
+        batch_size : int,
+        loss_function : Callable = None, 
+        optimiser_args : dict = {'lr' : 0.001},
+        device : int = -1,
         seed : int = 30031935
     )-> None:
         """
@@ -120,7 +128,7 @@ class PreAlpha2:
         return cross_entropy_loss
     
     def reshape_output_lambeq_model(
-        self, x : torch.tensor, epsilon : float = 1e-13
+        self, tensor : torch.tensor, epsilon : float = 1e-13
     )-> None:
         """
         Reshape the probabilities ouput from a lambeq circuit
@@ -135,11 +143,11 @@ class PreAlpha2:
         epsilon : float
             Value to clip x with.
         """
-        x = x.view(x.shape[0], 2 ** self.n_qubits_sentence)
-        x = x[:,:self.n_classes]
-        x = torch.nn.functional.normalize(x, p=1)
-        x = torch.clip(x, epsilon, 1 - epsilon)
-        return x
+        tensor = tensor.view(tensor.shape[0], 2 ** self.n_qubits_sentence)
+        tensor = tensor[:,:self.n_classes]
+        tensor = torch.nn.functional.normalize(tensor, p=1)
+        tensor = torch.clip(tensor, epsilon, 1 - epsilon)
+        return tensor
             
     def create_diagrams(
         self, kwargs_parser : dict = {}, kwargs_diagrams : dict = {}
