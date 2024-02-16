@@ -66,6 +66,20 @@ class TestCircuit(unittest.TestCase):
                         circuit_f)(cls.input, cls.params[j])
                     )
 
+    def test_model_raises_an_error_if_one_of_qubit_index_observables_is_out_of_range(
+        self
+    ):
+        """
+        Test that if one the qubit indexes in the observables argument is out of range,
+        the model raises a value error.
+        """
+        with self.assertRaises(ValueError):
+            observables = self.observables
+            observables[args.n_qubits + 1] = qml.PauliZ
+            circuit = self.ansatze[0](
+                self.n_qubits, self.n_layers,
+                self.axis_embedding, observables)
+            
     def test_circuits_returns_a_tensor(self)-> None:
         """
         Test the that the three different ansatze implemented 
