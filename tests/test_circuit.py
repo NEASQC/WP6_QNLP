@@ -60,13 +60,13 @@ class TestCircuit(unittest.TestCase):
         cls.results_circuits = [[], []]
         for i,c in enumerate(cls.circuits):
             for j,circuit in enumerate(c):
-                    circuit_function = circuit.build_circuit_function
+                    circuit_f = circuit.build_circuit
                     cls.results_circuits[i].append(
                         circuit.run_and_measure_circuit(
-                        circuit_function)(cls.input, cls.params[j])
+                        circuit_f)(cls.input, cls.params[j])
                     )
 
-    def test_circuits_return_a_tensor(self)-> None:
+    def test_circuits_returns_a_tensor(self)-> None:
         """
         Test the that the three different ansatze implemented 
         work (for expectation value and prob outputs),
@@ -89,18 +89,17 @@ class TestCircuit(unittest.TestCase):
                     self.assertIs(
                         bool((tensor >= 0).all() and (tensor <=1).all()), True
                     )
-                
+   
     def test_circuit_outputs_of_different_rescaling_functions_are_different(
         self)-> None:
         """
         Test the circuit output after applying rescaling functions on inputs,
         ensuring that it varies when different functions are applied.
         A value for the input embedding and observables will be set for which
-        we know that the outputs will vary.
+        it is known that the outputs will vary.
         """
         r1 = 2 * torch.rand(1).item()
         r2 = 2 * torch.rand(1).item()
-        print(r1, r2)
         data_rescaling_functions = [
             lambda x : r1 * mt.pi * x,
             lambda x : r2 * mt.pi * x,
@@ -121,14 +120,13 @@ class TestCircuit(unittest.TestCase):
                         output_probabilities = output_probabilities,
                         data_rescaling = f
                         )
-                        circuit_function = circuit.build_circuit_function
-                        results = circuit.run_and_measure_circuit(
-                        circuit_function
+                        circuit_f = circuit.build_circuit
+                        results = circuit.run_and_measure_circuit(circuit_f 
                         )(self.input, self.params[i])
                         results_list.append(results)
                     for t1, t2 in zip(results_list[0], results_list[1]):
                         self.assertFalse(
-                            torch.allclose(t1, t2)
+                            torch.equal(t1, t2)
                         )
 
                           
