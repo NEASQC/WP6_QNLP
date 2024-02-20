@@ -54,7 +54,6 @@ def set_up_test_parameters(test_args : dict)-> list:
     for _ in range(test_args['n_runs']):
         params_run = []
         vector_length = np.random.randint(1, test_args['vectors_size_limit'])
-        print(vector_length)
         k = np.random.randint(1, test_args['k_limit'])
         tol = np.random.uniform(
             test_args['tolerance_range'][0],
