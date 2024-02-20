@@ -1,9 +1,9 @@
-import unittest 
 import os 
 import sys 
-import argparse
+import unittest 
 
 import numpy as np 
+from parameterized import parameterized_class
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import Statevector
 
@@ -13,36 +13,77 @@ sys.path.append(current_path + "/../neasqc_wp61/models/quantum/beta/")
 from quantum_distance import QuantumDistance as qd
 from utils import normalise_vector, pad_vector_with_zeros
 
+test_args = {
+    'n_runs' : 5,
+    'seed' : 30031935,
+    'n_samples' : 100,
+    'vectors_limit_value' : 1000
+}
 
+def set_up_test_parameters(test_args : dict)-> list:
+    """
+    Generate parameters for different test runs. 
+
+    Parameters
+    ----------
+    test_args : dict
+        Dictionary with test arguments to generate the test parameters of the 
+        different runs. Its keys are the following: 
+            n_runs : Number of test runs.
+            seed : Random seed for generating the different parameters.
+            n_samples : Number of vectors to generate in each test run.
+            vectors_limit_value : Limit value that the components of the vectors
+        can have.
+    
+    Return
+    ------
+    params_list : list 
+        List with the parameters to be used 
+        on each run.
+    """
+    params_list = []
+    np.random.seed(test_args['seed'])
+    powers_of_two = [2,4,8]
+    not_powers_of_two = [3,5,6,7]
+    for _ in range(test_args['n_runs']):
+        params_run = []
+        size_that_doesnt_need_padding = np.random.choice(
+            powers_of_two
+        )
+        size_that_needs_padding = np.random.choice(
+            not_powers_of_two
+        )
+        vectors_that_dont_need_padding = [np.random.uniform(
+            -test_args['vectors_limit_value'],
+            test_args['vectors_limit_value'],
+            size = size_that_doesnt_need_padding
+        ) for _ in range(test_args['n_samples'])]
+        vectors_that_need_padding = [np.random.uniform(
+            -test_args['vectors_limit_value'],
+            test_args['vectors_limit_value'],
+            size = size_that_needs_padding
+        ) for _ in range(test_args['n_samples'])]
+        params_run.append(vectors_that_need_padding)
+        params_run.append(vectors_that_dont_need_padding)
+        params_run.append(test_args['n_runs'])
+        params_run.append(test_args['n_samples'])
+        params_list.append(params_run)
+    return params_list
+
+names_parameters = (
+'vectors_that_need_padding',
+'vectors_that_dont_need_padding',
+'n_runs', 'n_samples'
+)
+@parameterized_class(names_parameters, set_up_test_parameters(test_args))
 class TestQuantumDistance(unittest.TestCase):
     @classmethod
     def setUpClass(cls)-> None:
         """
-        Set up the class for testing.
+        Set up the class for testing. The attributes are defined 
+        with the decorator on line 77. 
         """
-        cls.n_sizes = len(args.sizes_that_dont_need_padding)
-        cls.vectors_that_dont_need_padding = [
-            [] for _ in range(cls.n_sizes)
-        ]
-        cls.vectors_that_need_padding = [
-            [] for _ in range(cls.n_sizes)
-        ]
-        for i,(size_vector_1,size_vector_2) in enumerate(zip(
-            args.sizes_that_dont_need_padding,
-            args.sizes_that_need_padding
-        )):
-            for _ in range(args.n_samples):
-                cls.vectors_that_dont_need_padding[i].append(
-                    np.random.uniform(
-                        -args.x_limit, args.x_limit, size = size_vector_1
-                    )
-                )
-                cls.vectors_that_need_padding[i].append(
-                    np.random.uniform(
-                        -args.x_limit, args.x_limit, size = size_vector_2
-                    )
-                )
-        np.random.seed(args.seed)
+        pass
 
     def test_value_error_is_raised_if_vectors_dont_have_same_length(
         self
@@ -51,15 +92,14 @@ class TestQuantumDistance(unittest.TestCase):
         Test that a ValueError is raised when computing the quantum distance
         for two vectors with different length.
         """
-        for i in range (self.n_sizes):
-            for vector_1,vector_2 in zip(
-                self.vectors_that_dont_need_padding[i],
-                self.vectors_that_need_padding[i]
-            ):
-                with self.assertRaises(ValueError):
-                    quantum_distance = qd(
-                        vector_1,vector_2
-                    ).compute_quantum_distance()
+        for vector_1,vector_2 in zip(
+            self.vectors_that_dont_need_padding,
+            self.vectors_that_need_padding
+        ):
+            with self.assertRaises(ValueError):
+                quantum_distance = qd(
+                    vector_1,vector_2
+                ).compute_quantum_distance()
 
     def test_value_error_is_raised_if_vectors_dont_have_norm_1(
         self
@@ -69,30 +109,50 @@ class TestQuantumDistance(unittest.TestCase):
         raised when computing the quantum distance if one or both of
         them have norm different from 1.
         """
-        for i in range (self.n_sizes):
-            for j in range(args.n_samples -1):
-                vector_1 = self.vectors_that_dont_need_padding[i][j]
-                vector_2 = self.vectors_that_dont_need_padding[i][j + 1]
-                with self.assertRaises(ValueError):
-                    quantum_distance = qd(
-                        vector_1,vector_2
-                    ).compute_quantum_distance()
-             
-    def test_model_encode_vectors_correctly(self)-> None:
+        for j in range(self.n_samples -1):
+            vector_1 = self.vectors_that_dont_need_padding[j]
+            vector_2 = self.vectors_that_dont_need_padding[j + 1]
+            with self.assertRaises(ValueError):
+                quantum_distance = qd(
+                    vector_1,vector_2
+                ).compute_quantum_distance()
+
+    def test_value_error_is_raised_if_vectors_are_not_powers_of_two(
+        self
+    )-> None:
         """
-        Test that for a given vector the model encodes it correctly
-        in a quantum circuit, i.e., the amplitudes of the quantum states
-        of the circuit represent the input vector.
+        For two vectors with same length, test that a ValueError is
+        raised when computing the quantum distance if one or both of
+        them have norm different from 1.
+        """
+        for j in range(self.n_samples -1):
+            vector_1 = self.vectors_that_need_padding[j]
+            vector_1 = normalise_vector(vector_1)
+            vector_2 = self.vectors_that_need_padding[j + 1]
+            vector_2 = normalise_vector(vector_2)
+            with self.assertRaises(ValueError):
+                quantum_distance = qd(
+                    vector_1,vector_2
+                ).compute_quantum_distance()
+             
+    def test_input_vectors_are_encoded_correctly_in_quantum_circuit(
+        self
+    )-> None:
+        """
+        Test that input vectors are encoded correctly in the quantum circuit
+        to compute the quantum distance, i.e., the amplitudes of the
+        quantum states of the circuit represent the input vector.
         """
         vector_1 = np.array([1/np.sqrt(2), 1/np.sqrt(2)])
-        vector_2 = [1,1]
+        vector_2 = np.array([1/np.sqrt(2), 1/np.sqrt(2)])
         circuit = qd(vector_1,vector_2)
         gate = circuit.build_gate_state_preparation(vector_1)
         qc = QuantumCircuit(2)
         qc.x(0)
         qc.append(gate,[0,1])
         probabilities_dict = Statevector(qc).probabilities_dict()
-        # We know the statevector of this circuit is 1/sqrt(2)|01> + 1/sqrt(2)|11>
+        # We know the statevector of this circuit
+        # is 1/sqrt(2)|01> + 1/sqrt(2)|11>
         for k,v in probabilities_dict.items():
             self.assertAlmostEqual(v,0.5)
         self.assertIn('01', list(probabilities_dict.keys()))
@@ -109,56 +169,23 @@ class TestQuantumDistance(unittest.TestCase):
                 self.vectors_that_need_padding
             )
         ):
-            for j in range(self.n_sizes):
-                for k in range(args.n_samples -1):
-                    vector_1 = vectors_list[j][k]
-                    vector_2 = vectors_list[j][k + 1]
-                    vector_1 = normalise_vector(vector_1)
-                    vector_2 = normalise_vector(vector_2)
-                    if i == 1:
-                        vector_1 = pad_vector_with_zeros(vector_1)
-                        vector_2 = pad_vector_with_zeros(vector_2)
-                    quantum_distance = qd(
-                        vector_1,vector_2
-                    ).compute_quantum_distance()
-                    euclidean_distance = np.linalg.norm(vector_2 - vector_1)
-                    self.assertAlmostEqual(
-                        quantum_distance,
-                        euclidean_distance
-                    )
+            for k in range(self.n_samples -1):
+                vector_1 = vectors_list[k]
+                vector_2 = vectors_list[k + 1]
+                vector_1 = normalise_vector(vector_1)
+                vector_2 = normalise_vector(vector_2)
+                if i == 1:
+                    vector_1 = pad_vector_with_zeros(vector_1)
+                    vector_2 = pad_vector_with_zeros(vector_2)
+                quantum_distance = qd(
+                    vector_1,vector_2
+                ).compute_quantum_distance()
+                euclidean_distance = np.linalg.norm(vector_2 - vector_1)
+                self.assertAlmostEqual(
+                    quantum_distance,
+                    euclidean_distance
+                )
                 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-n", "--n_samples", type = int,
-        help = "Number of random samples to be generated for testing.",
-        default = 100
-    )
-    parser.add_argument(
-        "-xl", "--x_limit", type = int, 
-        help = "Limits of the generated random vectors to test.",
-        default = 1000
-    )
-    parser.add_argument(
-        "-spf", "--sizes_that_dont_need_padding", type = int, 
-        help = ("List with sizes of the vectors that don't need padding."
-                "All values must be powers of 2." 
-                "It must have the same length as sizes_with_padding."),
-        nargs = "+", default = [2,4,8]
-    )
-    parser.add_argument(
-        "-spt", "--sizes_that_need_padding", type = int, 
-        help = ("List with sizes of the vectors that need padding."
-                "None of the values can be a power of 2." 
-                "It must have the same length as sizes_without_padding."),
-        nargs = "+", default = [3,5,7]
-    )
-    parser.add_argument(
-        "-s", "--seed", type = int,
-        help = "Random seed for generating the vectors.",
-        default = 180567
-    )
-    args, remaining = parser.parse_known_args()
-    remaining.insert(0, sys.argv[0])
-    unittest.main(argv=remaining)
+    unittest.main()

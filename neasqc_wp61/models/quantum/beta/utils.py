@@ -32,7 +32,10 @@ def pad_vector_with_zeros(vector : np.array) -> np.array:
         Padded vector.
     """
     n = len(vector)
-    next_power_of_2 = 2 ** int(np.ceil(np.log2(n)))
-    zero_padding = np.zeros(next_power_of_2 - n)
-    return np.concatenate((vector, zero_padding), axis = 0)
+    if n == 1:
+        return np.concatenate((vector, np.zeros(1)), axis = 0)
+    else:
+        next_power_of_2 = 2 ** int(np.ceil(np.log2(n)))
+        zero_padding = np.zeros(next_power_of_2 - n)
+        return np.concatenate((vector, zero_padding), axis = 0)
 

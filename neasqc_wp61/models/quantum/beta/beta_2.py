@@ -5,7 +5,6 @@ Module containing the base class for the k-means algorithm using
 the quantum distance.
 """
 import numpy as np 
-
 from pyclustering.cluster.center_initializer import (
     kmeans_plusplus_initializer, random_center_initializer)
 from pyclustering.cluster.kmeans import kmeans, kmeans_observer
@@ -22,7 +21,7 @@ class QuantumKMeans:
     """
 
     def __init__(
-        self, x_train : np.array, k : int,
+        self, vectors_train : np.array, k : int,
         tolerance : float = 0.001, itermax : int = 200
     )-> None:
         """
@@ -30,7 +29,7 @@ class QuantumKMeans:
 
         Parameters
         ----------
-        x_train : list[np.array]
+        vectors_train : list[np.array]
             List with sentence vectors. 
         k : int
             Number of clusters.
@@ -38,11 +37,13 @@ class QuantumKMeans:
             Value that dictates stopping condition. If for a given iteration,
             the sum of distances of each item wrt to its cluster
             is less than the tolerance, the algorithm stops.
+            (Default = 0.001).
         itermax : int
             Number of maximum iterations of the algorithm during the training
-            phase.
+            phase. (Default = 200).
         """
-        self.x_train = x_train
+        self.vectors_train = vectors_train
+        self.n_vectors_train = len(vectors_train)
         self.k = k 
         self.metric = distance_metric(
             type_metric.USER_DEFINED, func = self.wrapper_quantum_distance
@@ -52,7 +53,9 @@ class QuantumKMeans:
         self.itermax = itermax
 
     @staticmethod
-    def wrapper_quantum_distance(vector_1 : np.array, vector_2 : np.array)-> float:
+    def wrapper_quantum_distance(
+        vector_1 : np.array, vector_2 : np.array
+    )-> float:
         """
         Wrapper for implementing the quantum distance as a metric of
         the k-means algorithm.
@@ -89,16 +92,19 @@ class QuantumKMeans:
             If False, uses the K-Means++ algorirthm to initialise
             cluster center. More info can be found in pycluster docs
             https://pyclustering.github.io/docs/0.8.2/html/index.html.
+            (Default = True).
         seed : int
             Seed to use when random_center_intializer = True.
+            (Default = 30031935).
         """
         if random_initialisation == True:
             self.initial_centers = random_center_initializer(
-                self.x_train, self.k, random_state = seed
+                self.vectors_train, self.k, random_state = seed
             ).initialize()
         else:
             self.initial_centers = kmeans_plusplus_initializer(
-                self.x_train, self.k).initialize()
+                self.vectors_train, self.k
+            ).initialize()
 
     def train_k_means_algorithm(self)-> None:
         """
@@ -106,7 +112,7 @@ class QuantumKMeans:
         centers and n_iterations as attributes of the class.
         """
         self.k_means_instance = kmeans(
-            self.x_train, self.initial_centers,
+            self.vectors_train, self.initial_centers,
             tolerance = self.tolerance, observer = self.observer,
             metric = self.metric, itermax = self.itermax
         )
@@ -117,8 +123,8 @@ class QuantumKMeans:
     
     def compute_wce(self)-> None:
         """
-        For each iteration of the algorithm training process, compute the within cluster
-        sum of errors:  
+        For each iteration of the algorithm training process,
+        compute the within cluster sum of errors (WCE):  
         $[error=\sum_{i=0}^{N}quantum_distance(x_{i}-center(x_{i}))$].
         """
         self.total_wce = []
@@ -127,7 +133,7 @@ class QuantumKMeans:
             for j in range(self.k):
                 for item in self.clusters[i][j]:
                     wce += self.wrapper_quantum_distance(
-                        self.x_train[item], self.centers[i][j]
+                        self.vectors_train[item], self.centers[i][j]
                     )
             self.total_wce.append(wce)
 
@@ -138,8 +144,9 @@ class QuantumKMeans:
         what the index of their closest cluster is. 
         """
         self.predictions = [
-            [None for _ in range(len(self.x_train))] for _ in range(
-                self.n_its)]
+            [None] * self.n_vectors_train for _ in range(
+                self.n_its)
+        ]
         for i in range(self.n_its):
             for j, cluster in enumerate(self.clusters[i]):
                 for item in cluster:

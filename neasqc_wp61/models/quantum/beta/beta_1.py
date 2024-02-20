@@ -18,34 +18,36 @@ class QuantumKNearestNeighbours:
     using the quantum distance.
     """
     def __init__(
-        self, x_train : list[np.array], x_test : list[np.array],
-        y_train : list[int], y_test : list[int], k : int, seed : int = 300330
+        self, vectors_train : list[np.array], vectors_test : list[np.array],
+        labels_train : list[int], labels_test : list[int], k : int,
+        seed : int = 300330
     )-> None:
         """
         Initialise the class.
 
         Parameters
         ----------
-        x_train : list[np.array]
+        vectors_train : list[np.array]
             Train vectors.
-        x_test : list[np.array]
-            Testing vectors.
-        y_train : list[int]
+        vectors_test : list[np.array]
+            Test vectors.
+        labels_train : list[int]
             Train labels.
-        y_test = list[int]
+        labels_test = list[int]
             Test labels.
         k : int
             k closest vectors to make predictions with.
         seed : int
-            Random seed.
+            Random seed. (Default = 300330)
         """
-        self.x_train = x_train
-        self.x_test = x_test
-        self.y_train = y_train
-        self.y_test = y_test
+        self.vectors_train = vectors_train
+        self.vectors_test = vectors_test
+        self.labels_train = labels_train
+        self.labels_test = labels_test
         self.k = k
-        self.n_train = len(self.x_train)
-        self.n_test = len(self.x_test)
+        self.n_train = len(self.vectors_train)
+        self.n_test = len(self.vectors_test)
+        np.random.seed(seed)
 
     def compute_test_train_distances(self)-> None:
         """
@@ -53,15 +55,15 @@ class QuantumKNearestNeighbours:
         between each pair of test/train instances.
         """
         self.test_train_distances = [[] for _ in range(self.n_test)]
-        for i,xte in enumerate(self.x_test):
-            for xtr in self.x_train:
+        for i,xte in enumerate(self.vectors_test):
+            for xtr in self.vectors_train:
                 self.test_train_distances[i].append(
                     qd(xte, xtr).compute_quantum_distance()
                 )
 
     def save_test_train_distances(self, filename : str, path : str)-> None:
         """
-        Save the computed test_train distances as pickle file.
+        Save the computed test_train distances as a pickle file.
 
         Parameters
         ----------
@@ -75,8 +77,8 @@ class QuantumKNearestNeighbours:
 
     def load_test_train_distances(self, filename : str, path : str)-> None:
         """
-        Load pre-computed test_train distances from a pickle file and assign
-        them as object attribute.
+        Load pre-computed test_train distances list from a pickle file and 
+        assign it as object attribute.
 
         Parameters
         ----------
@@ -105,13 +107,13 @@ class QuantumKNearestNeighbours:
         """
         Compute the test predictions by majority vote of the labels
         of the closest vectors to each test instance.
-        In case of tie, a random choice between the labels which are 
+        In case of a tie, a random choice between the labels which are 
         tied will be assigned as prediction.
         """
         self.test_predictions = []
         for cv in self.closest_vectors_indexes:
             cv_labels = [
-                self.y_train[cv[i]] for i in range(self.k)
+                self.labels_train[cv[i]] for i in range(self.k)
             ]
             c = Counter(cv_labels)
             counter = c.most_common()

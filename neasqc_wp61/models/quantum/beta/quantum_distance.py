@@ -38,27 +38,26 @@ class QuantumDistance:
         self.n_qubits_to_encode_vector = int(
             np.ceil(np.log2(len(self.vector_1)))
         )
-        # Number of total qubits in the quantum circuit.
         self.n_qubits_quantum_circuit = self.n_qubits_to_encode_vector + 3
         self.qc = QuantumCircuit(self.n_qubits_quantum_circuit)
 
     def verify_vectors_satisfy_conditions(self)-> None:
         """
-        Checks if vector_1 and vector_2 satisfy the conditions needed 
+        Check if vector_1 and vector_2 satisfy the conditions needed 
         in order to compute the quantum distance between them.
         """
         if len(self.vector_1) != len(self.vector_2):
             raise ValueError('Vectors must be the same length.')
         elif (
             abs(np.linalg.norm(self.vector_1) - 1.0) > 1e-09
-            or (np.linalg.norm(self.vector_1) - 1.0) > 1e-09
+            or abs(np.linalg.norm(self.vector_2) - 1.0) > 1e-09
         ):
             raise ValueError('Both vectors must have norm 1.')
         elif (
             not np.log2(len(self.vector_1)).is_integer()
             or not np.log2(len(self.vector_2)).is_integer()
         ):
-            raise ValueError('Both vectors lengths must be power of 2.')
+            raise ValueError('Both vectors lengths must be powers of 2.')
         else:
             pass
         
@@ -71,14 +70,15 @@ class QuantumDistance:
 
         Parameters
         ----------
-        x : np.array
+        vector : np.array
             The vector to encode. Must be normalised so that the 
             sum of the squares of its components is equal to 1.
         
         Returns
         -------
         xgate : ControlledGate
-            A controlled gate that embbeds x using amplitude encoding.
+            A controlled gate that embbeds the vector using amplitude
+            encoding.
         """
         qcx = QuantumCircuit(self.n_qubits_to_encode_vector)
         qcx.prepare_state(
@@ -121,7 +121,8 @@ class QuantumDistance:
         """
         self.qc.h(self.n_qubits_to_encode_vector + 2)
         self.qc.cswap(
-            self.n_qubits_to_encode_vector + 2, 0, self.n_qubits_to_encode_vector + 1
+            self.n_qubits_to_encode_vector + 2, 0,
+            self.n_qubits_to_encode_vector + 1
         )
         self.qc.h(self.n_qubits_to_encode_vector + 2)
     
@@ -133,9 +134,10 @@ class QuantumDistance:
 
         Parameters
         ----------
-        method : str, default : statevector
+        method : str
             Simulator method to use. More info can be found in
             https://github.com/Qiskit/qiskit-aer/blob/main/qiskit_aer/backends/aer_simulator.py.
+            (Default = statevector).
         device : str
             Decides whether to use CPU or GPU. (Default = CPU).
         """
@@ -153,10 +155,12 @@ class QuantumDistance:
 
         Parameters
         ----------
-        method : str, default : statevector
+        method : str
             Simulator method to use. More info can be found in
             https://github.com/Qiskit/qiskit-aer/blob/main/qiskit_aer/backends/aer_simulator.py.
-        device : str, default : CPU
+            (Default = statevector).
+
+        device : str
             Decides whether to use CPU or GPU. (Default = CPU).
 
         Returns
@@ -174,7 +178,7 @@ class QuantumDistance:
         return quantum_distance
 
     @staticmethod
-    def distance_prob_relation(probabilities_dict : dict)-> float:
+    def distance_prob_relation(state_probabilities_dict : dict)-> float:
         """
         Compute the relation between the probability of measuring 0
         in the ancilla qubit of the SWAP test, and the euclidean distance
@@ -182,7 +186,7 @@ class QuantumDistance:
 
         Parameters
         ----------
-        probabilities_dict : dict
+        state_probabilities_dict : dict
             Dictionary with the probabilities of each state.
         
         Returns
@@ -191,7 +195,7 @@ class QuantumDistance:
             Estimation of the quantum distance.
         """
         prob0 = 0
-        for k,v in probabilities_dict.items():
+        for k,v in state_probabilities_dict.items():
             if k[0] == '0':
                 prob0 += v
         quantum_distance = abs(cmath.sqrt((8 * prob0 -4)))
