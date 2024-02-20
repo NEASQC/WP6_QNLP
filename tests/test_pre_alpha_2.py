@@ -4,7 +4,9 @@ import random
 import sys 
 import unittest
 
+import numpy as np
 import torch
+from parameterized import parameterized_class
 
 # The two lines below will be removed when converting the library to a package.
 current_path = os.path.dirname(os.path.abspath(__file__))
@@ -16,9 +18,51 @@ test_args = {
     'train_dataset_path' : "./../neasqc_wp61/data/datasets/toy_datasets/multiclass_toy_train.tsv",
     'val_dataset_path' : "./../neasqc_wp61/data/datasets/toy_datasets/multiclass_toy_validation.tsv",
     'test_dataset_path' : "./../neasqc_wp61/data/datasets/toy_datasets/multiclass_toy_test.tsv",
+    'seed' : 1924, 
+    'n_qubits_noun_range' : [1,2],
+    'n_qubits_sentence_range' : [3,4],
+    'n_layers_range' : [1,2],
+    'n_single_qubit_params_range' : [1,2],
+    'epochs_range' : [1,10],
+    'lr_range' : [1e-05, 1e-01],
+    'batch_size_range' : [1,4]
 }
 
 def set_up_test_parameters(test_args : dict)-> list:
+    """
+    Generate parameters for different test runs. 
+
+    Parameters
+    ----------
+    test_args : dict
+        Dictionary with test arguments to generate the test parameters of the 
+        different runs. Its keys are the following: 
+           train_dataset_path : Path of the train dataset used for testing.
+           val_dataset_path : Path of the val dataset used for testing.
+           test_dataset_path : Path of the test dataset used for testing.
+           seed : Random seed for generating the different parameters. 
+           n_qubits_noun_range : Range of values of the number of qubits per
+        noun type.
+            n_qubits_sentence_range : Range of values of the number of qubits
+        per sentence type.
+            n_layers_range : Range of values of the number of layers of
+        the circuits.
+            n_single_qubit_params_range : Range of values of the number
+        of rotational parameters per single qubit.
+            epochs_range : Range of values of the number of epochs in training.
+            lr_range : Range of values of the learning rate of the 
+        optimiser.
+            batch_size_range : Range of values of the batch size in training.
+        Its lower value has to be less than the number of sentences of the
+        validation dataset.
+    Return
+    ------
+    params_list : list 
+        List with the parameters to be used 
+        on each run.
+    """
+    params_list = []
+    np.random.seed(test_args['seed'])
     sentences_train, labels_train = load_dataset(
         test_args['train_dataset_path']
     )
@@ -28,44 +72,102 @@ def set_up_test_parameters(test_args : dict)-> list:
     sentences_test, labels_test = load_dataset(
         test_args['test_dataset_path']
     )
-    
+    labels_one_hot_encoding = get_labels_one_hot_encoding(
+        labels_train, labels_val, labels_test
+    )[0]
+    n_labels = get_labels_one_hot_encoding(
+        labels_train, labels_val, labels_test
+    )[1]
+    sentences = [sentences_train, sentences_val, sentences_test]
+    optimisers_list = [
+        'Adadelta', 'Adagrad', 'Adam', 'Adamax',
+        'AdamW', 'ASGD', 'NAdam', 'RAdam',
+        'RMSprop', 'Rprop', 'SGD'
+    ]
+    ansatze_list = [
+        'IQP', 'Sim14', 'Sim15', 'StronglyEntangling'
+    ]
 
+    for optimiser in optimisers_list:
+        for ansatz in ansatze_list:
+            print('optimiser = ', optimiser)
+            print('anstaz = ', ansatz)
+            params_run = []
+            n_qubits_noun = np.random.randint(
+                test_args['n_qubits_noun_range'][0],
+                test_args['n_qubits_noun_range'][1]
+            )
+            n_qubits_sentence = np.random.randint(
+                test_args['n_qubits_sentence_range'][0],
+                test_args['n_qubits_sentence_range'][1]
+            )
+            n_layers = np.random.randint(
+                test_args['n_layers_range'][0],
+                test_args['n_layers_range'][1]
+            )
+            n_single_qubit_params = np.random.randint(
+                test_args['n_single_qubit_params_range'][0],
+                test_args['n_single_qubit_params_range'][1]
+            )
+            epochs = np.random.randint(
+                test_args['epochs_range'][0],
+                test_args['epochs_range'][1]
+            )
+            lr = np.random.uniform(
+                test_args['lr_range'][0],
+                test_args['lr_range'][1]
+            )
+            batch_size = np.random.randint(
+                test_args['batch_size_range'][0],
+                test_args['batch_size_range'][1]
+            )
+            seed = np.random.randint(
+                0,1e10
+            )
+            pre_alpha_2_model = pre_alpha_2(
+                sentences, labels_one_hot_encoding, n_labels,
+                ansatz, n_qubits_noun, n_qubits_sentence,
+                n_layers, n_single_qubit_params, optimiser,
+                epochs, batch_size,
+                optimiser_args = {'lr' : lr}, seed = seed
+            )
+            pre_alpha_2_model.fit()
+            pre_alpha_2_model.compute_probabilities()
+            pre_alpha_2_model.compute_predictions()
+            preds = [
+                pre_alpha_2_model.preds_train,
+                pre_alpha_2_model.preds_val
+            ]
+            probs = [
+                pre_alpha_2_model.probs_train,
+                pre_alpha_2_model.probs_val
+            ]
+            params_run.append(pre_alpha_2_model)
+            params_run.extend([
+                sentences, labels_one_hot_encoding, n_labels,
+                ansatz, n_qubits_noun, n_qubits_sentence,
+                n_layers, n_single_qubit_params, optimiser,
+                epochs, batch_size, lr, seed, preds, probs
+            ])
+            params_list.append(params_run)
+    return params_list
 
+names_parameters = (
+    'pre_alpha_2_model', 'sentences', 'labels_one_hot_encoding',
+    'n_labels', 'ansatz', 'n_qubits_noun', 'n_qubits_sentence',
+    'n_layers', 'n_single_qubit_params', 'optimiser',
+    'epochs', 'batch_size', 'lr', 'seed', 'preds', 'probs'
+)
+
+@parameterized_class(names_parameters, set_up_test_parameters(test_args))
 class TestPreAlpha2(unittest.TestCase):
     @classmethod
     def setUpClass(cls)-> None:
         """
-        Set up the class for testing.
+        Set up the class for testing. The attributes of the class are defined
+        with the decorator in line 130.
         """
-        sentences_train, labels_train = load_dataset(args.train_dataset_path)
-        sentences_val, labels_val = load_dataset(args.val_dataset_path)
-        sentences_test, labels_test = load_dataset(args.test_dataset_path)
-        cls.labels_one_hot_encoding = get_labels_one_hot_encoding(
-            labels_train, labels_val, labels_test
-        )[0]
-        cls.n_labels = get_labels_one_hot_encoding(
-            labels_train, labels_val, labels_test
-        )[1]
-        cls.sentences = [sentences_train, sentences_val, sentences_test]
-        cls.pre_alpha_2 = pre_alpha_2(
-            cls.sentences, cls.labels_one_hot_encoding, cls.n_labels, 
-            args.ansatz, args.n_qubits_noun, args.n_qubits_sentence,
-            args.n_layers, args.n_single_qubit_parameters,args.optimiser,
-            args.epochs, args.batch_size,
-            optimiser_args = {'lr' : args.learning_rate}, seed = args.seed
-        )
-        cls.pre_alpha_2.fit()
-        cls.pre_alpha_2.compute_probabilities()
-        cls.pre_alpha_2.compute_predictions()
-        cls.probabilities = [
-            cls.pre_alpha_2.probs_train,
-            cls.pre_alpha_2.probs_val,
-        ]
-        cls.predictions = [
-            cls.pre_alpha_2.preds_train,
-            cls.pre_alpha_2.preds_val,
-        ]
-        torch.manual_seed(args.seed)
+        pass
 
     def test_model_raises_error_if_not_enough_sentence_qubits(self)-> None:
         """
@@ -74,44 +176,42 @@ class TestPreAlpha2(unittest.TestCase):
         with self.assertRaises(ValueError):
             pre_alpha_2_ = pre_alpha_2(
             self.sentences, self.labels_one_hot_encoding, self.n_labels, 
-            args.ansatz, args.n_qubits_noun, 0,
-            args.n_layers, args.n_single_qubit_parameters,args.optimiser,
-            args.epochs, args.batch_size,
-            optimiser_args = {'lr' : args.learning_rate}, seed = args.seed
+            self.ansatz, self.n_qubits_noun, 0,
+            self.n_layers, self.n_single_qubit_params, self.optimiser,
+            self.epochs, self.batch_size,
+            optimiser_args = {'lr' : self.lr}, seed = self.seed
             )
 
     def test_cross_entropy_loss_returns_positive_values(self)->None:
         """
         Test that the cross entropy loss return positive values.
         """
-        cross_entropy = self.pre_alpha_2.cross_entropy_loss_wrapper()
+        cross_entropy = self.pre_alpha_2_model.cross_entropy_loss_wrapper()
         for _ in range (1024):
-            y = torch.zeros(args.batch_size,self.n_labels)
+            y = torch.zeros(self.batch_size,self.n_labels)
             random_index = random.randint(0, self.n_labels - 1)
-            y[0,random_index] = 1
-            size_y_hat = [2] * args.n_qubits_sentence
-            y_hat = torch.rand(args.batch_size,*size_y_hat)
-            sum_dims = y_hat.view(1, -1).sum(dim=1, keepdim=True)
-            y_hat_normalised = y_hat / sum_dims
-            self.assertGreater(cross_entropy(y_hat_normalised, y)[0], 0)
+            y[:,random_index] = 1
+            size_y_hat = [2] * self.n_qubits_sentence
+            y_hat = torch.rand(self.batch_size,*size_y_hat)
+            self.assertGreater(cross_entropy(y_hat, y)[0], 0)
     
     def test_number_of_preds_and_probs_is_correct(self):
         """
         Test that the number of predictions and probabilities is equal
         to the the number of epochs in traininig.
         """
-        for probs,preds in zip(self.probabilities, self.predictions):
+        for probs,preds in zip(self.probs, self.preds):
             with self.subTest(probs=probs):
-                self.assertEqual(self.pre_alpha_2.epochs, len(probs))
+                self.assertEqual(self.epochs, len(probs))
             with self.subTest(pred=preds):
-                self.assertEqual(self.pre_alpha_2.epochs, len(preds))
+                self.assertEqual(self.epochs, len(preds))
     
     def test_preds_are_integers(self):
         """
         Test that the values predicted are integers.
         """
-        preds_train_list = self.predictions[0]
-        preds_val_list = self.predictions[1]
+        preds_train_list = self.preds[0]
+        preds_val_list = self.preds[1]
         for preds_single_iteration_train, preds_single_iteration_val in zip(
             preds_train_list, preds_val_list
         ):
@@ -129,8 +229,8 @@ class TestPreAlpha2(unittest.TestCase):
         """
         Test that the probabilities predicted for each instance add up to one.
         """
-        probs_train_list = self.probabilities[0]
-        probs_val_list = self.probabilities[1]
+        probs_train_list = self.probs[0]
+        probs_val_list = self.probs[1]
         for probs_single_iteration_train, probs_single_iteration_val in zip(
             probs_train_list, probs_val_list
         ):
@@ -150,72 +250,4 @@ class TestPreAlpha2(unittest.TestCase):
 
     
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-tr", "--train_dataset_path", type = str,
-        help = "Path of the train dataset.",
-        default = "./../neasqc_wp61/data/datasets/toy_datasets/multiclass_toy_train.tsv"
-    )
-    parser.add_argument(
-        "-val", "--val_dataset_path", type = str,
-        help = "Path of the validation dataset.",
-        default = "./../neasqc_wp61/data/datasets/toy_datasets/multiclass_toy_validation.tsv"
-    )
-    parser.add_argument(
-        "-te", "--test_dataset_path", type = str,
-        help = "Path of the test dataset.",
-        default = "./../neasqc_wp61/data/datasets/toy_datasets/multiclass_toy_test.tsv"
-    )
-    parser.add_argument(
-        "-an", "--ansatz", type = str,
-        help = "Ansatz to use.",
-        default = "IQP"
-    )
-    parser.add_argument(
-        "-qn", "--n_qubits_noun", type = int,
-        help = "Number of qubits to use per noun type.",
-        default = 1
-    )
-    parser.add_argument(
-        "-qs", "--n_qubits_sentence", type = int,
-        help = "Number of qubits to use per sentence type.",
-        default = 3
-    )
-    parser.add_argument(
-        "-nl", "--n_layers", type = int,
-        help = "Number of layers in the circuit.",
-        default = 1
-    )
-    parser.add_argument(
-        "-np", "--n_single_qubit_parameters", type = int,
-        help = "Number of single qubit parameteres.",
-        default = 1
-    )
-    parser.add_argument(
-        "-op", "--optimiser", type = str,
-        help = "Optimiser to use.",
-        default = "Adam"
-    )
-    parser.add_argument(
-        "-ep", "--epochs", type = int,
-        help = "Number of training epochs to perform.",
-        default = 10
-    )
-    parser.add_argument(
-        "-bs", "--batch_size", type = int,
-        help = "Batch size to use.",
-        default = 2
-    )
-    parser.add_argument(
-        "-lr", "--learning_rate", type = float,
-        help = "Learning rate to use in optimisation.",
-        default = 0.001
-    )
-    parser.add_argument(
-        "-s", "--seed", type = int,
-        help = "Random initial seed.",
-        default = 3003
-    )
-    args, remaining = parser.parse_known_args()
-    remaining.insert(0, sys.argv[0])
-    unittest.main(argv=remaining)
+    unittest.main()
