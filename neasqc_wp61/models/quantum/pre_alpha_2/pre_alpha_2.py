@@ -128,7 +128,7 @@ class PreAlpha2:
         return cross_entropy_loss
     
     def reshape_output_lambeq_model(
-        self, tensor : torch.tensor, epsilon : float = 1e-13
+        self, probs : torch.tensor, epsilon : float = 1e-13
     )-> None:
         """
         Reshape the probabilities ouput from a lambeq circuit
@@ -138,16 +138,16 @@ class PreAlpha2:
 
         Parameters
         ----------
-        x : torch.tensor
+        probs : torch.tensor
             Tensor with probabilities output from a lambeq circuit.
         epsilon : float
             Value to clip x with.
         """
-        tensor = tensor.view(tensor.shape[0], 2 ** self.n_qubits_sentence)
-        tensor = tensor[:,:self.n_classes]
-        tensor = torch.nn.functional.normalize(tensor, p=1)
-        tensor = torch.clip(tensor, epsilon, 1 - epsilon)
-        return tensor
+        probs = probs.view(probs.shape[0], 2 ** self.n_qubits_sentence)
+        probs = probs[:,:self.n_classes]
+        probs = torch.nn.functional.normalize(probs, p=1)
+        probs = torch.clip(probs, epsilon, 1 - epsilon)
+        return probs
             
     def create_diagrams(
         self, kwargs_parser : dict = {}, kwargs_diagrams : dict = {}

@@ -12,6 +12,25 @@ sys.path.append(current_path + "/../neasqc_wp61/models/quantum/pre_alpha_2/")
 from pre_alpha_2 import PreAlpha2 as pre_alpha_2
 from utils import get_labels_one_hot_encoding, load_dataset
 
+test_args = {
+    'train_dataset_path' : "./../neasqc_wp61/data/datasets/toy_datasets/multiclass_toy_train.tsv",
+    'val_dataset_path' : "./../neasqc_wp61/data/datasets/toy_datasets/multiclass_toy_validation.tsv",
+    'test_dataset_path' : "./../neasqc_wp61/data/datasets/toy_datasets/multiclass_toy_test.tsv",
+}
+
+def set_up_test_parameters(test_args : dict)-> list:
+    sentences_train, labels_train = load_dataset(
+        test_args['train_dataset_path']
+    )
+    sentences_val, labels_val = load_dataset(
+        test_args['val_dataset_path']
+    )
+    sentences_test, labels_test = load_dataset(
+        test_args['test_dataset_path']
+    )
+    
+
+
 class TestPreAlpha2(unittest.TestCase):
     @classmethod
     def setUpClass(cls)-> None:
