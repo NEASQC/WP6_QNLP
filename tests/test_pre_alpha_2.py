@@ -161,14 +161,7 @@ names_parameters = (
 
 @parameterized_class(names_parameters, set_up_test_parameters(test_args))
 class TestPreAlpha2(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls)-> None:
-        """
-        Set up the class for testing. The attributes of the class are defined
-        with the decorator in line 130.
-        """
-        pass
-
+    
     def test_model_raises_error_if_not_enough_sentence_qubits(self)-> None:
         """
         Test that the model raises an error when thre are not enough sentence qubits.
