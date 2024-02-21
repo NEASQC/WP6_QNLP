@@ -57,32 +57,32 @@ def set_up_class_attributes(test_args : dict)-> list:
         vector_length = np.random.randint(1,test_args['vectors_size_limit'])
         n_classes = np.random.randint(2,test_args['n_classes_limit'])
         k = np.random.randint(1,test_args['k_limit'])
-        x_train = [np.random.uniform(
+        vectors_train = [np.random.uniform(
             -test_args['vectors_limit_value'],
             test_args['vectors_limit_value'],
             size=vector_length
         ) for _ in range(
                 test_args['n_vectors_train'])]
-        x_test = [np.random.uniform(
+        vectors_test = [np.random.uniform(
             -test_args['vectors_limit_value'],
             test_args['vectors_limit_value'],
             size=vector_length
         ) for _ in range(
                 test_args['n_vectors_test'])]
-        for i,xtr in enumerate(x_train):
-            xtr = normalise_vector(xtr)
-            x_train[i] = pad_vector_with_zeros(xtr)
-        for j,xte in enumerate(x_test):
-            xte = normalise_vector(xte)
-            x_test[j] = pad_vector_with_zeros(xte)
-        y_train = np.random.randint(
+        for i,vector_train in enumerate(vectors_train):
+            vector_train = normalise_vector(vector_train)
+            vectors_train[i] = pad_vector_with_zeros(vector_train)
+        for j,vector_test in enumerate(vectors_test):
+            vector_test = normalise_vector(vector_test)
+            vectors_test[j] = pad_vector_with_zeros(vector_test)
+        labels_train = np.random.randint(
             0, n_classes, size = test_args['n_vectors_train']
         )
-        y_test = np.random.randint(
+        labels_test = np.random.randint(
             0, n_classes, size = test_args['n_vectors_train']
         )
         beta_1_model = qkn(
-            x_train, x_test, y_train, y_test, k
+            vectors_train, vectors_test, labels_train, labels_test, k
         )
         beta_1_model.compute_test_train_distances()
         beta_1_model.compute_closest_vectors_indexes()
@@ -99,14 +99,6 @@ names_parameters = ('beta_1_model', 'n_vectors_train', 'k')
     set_up_class_attributes(test_args)
 )
 class TestBeta1(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        """
-        Set up the class for testing. The attributes are defined 
-        with the decorator on line 93.
-        """
-    pass
-    
     def test_number_of_test_train_distances_is_correct(self)-> None:
         """
         Check that for each train instance, its distance with all the 

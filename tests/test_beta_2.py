@@ -92,14 +92,6 @@ def set_up_test_parameters(test_args : dict)-> list:
 names_parameters = ('beta_2_model', 'vectors_train', 'k')
 @parameterized_class(names_parameters, set_up_test_parameters(test_args))
 class TestBeta2(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls)-> None:
-        """
-        Set up the class for testing. The attributes are defined 
-        with the decorator on line 90.
-        """
-        pass
-
     def test_number_of_train_predictions_is_correct(self)-> None:
         """
         Check that the number of predictions output by the model is correct.

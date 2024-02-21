@@ -55,10 +55,10 @@ class QuantumKNearestNeighbours:
         between each pair of test/train instances.
         """
         self.test_train_distances = [[] for _ in range(self.n_test)]
-        for i,xte in enumerate(self.vectors_test):
-            for xtr in self.vectors_train:
+        for i,vector_test in enumerate(self.vectors_test):
+            for vector_train in self.vectors_train:
                 self.test_train_distances[i].append(
-                    qd(xte, xtr).compute_quantum_distance()
+                    qd(vector_test, vector_train).compute_quantum_distance()
                 )
 
     def save_test_train_distances(self, filename : str, path : str)-> None:

@@ -77,14 +77,6 @@ names_parameters = (
 )
 @parameterized_class(names_parameters, set_up_test_parameters(test_args))
 class TestQuantumDistance(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls)-> None:
-        """
-        Set up the class for testing. The attributes are defined 
-        with the decorator on line 77. 
-        """
-        pass
-
     def test_value_error_is_raised_if_vectors_dont_have_same_length(
         self
     )-> None:
@@ -158,33 +150,51 @@ class TestQuantumDistance(unittest.TestCase):
         self.assertIn('01', list(probabilities_dict.keys()))
         self.assertIn('11', list(probabilities_dict.keys()))
 
-    def test_quantum_distance_equals_eucl_distance(self)-> None:
+    def test_quantum_distance_equals_eucl_distance_vectors_that_dont_need_padding(
+        self
+    )-> None:
         """
         Test that the quantum distance and the euclidean distance output 
-        the same value (up to a small error).
+        the same value (up to a small error) for vectors that don't need 
+        padding.
         """
-        for i,vectors_list in enumerate(
-            (
-                self.vectors_that_dont_need_padding,
-                self.vectors_that_need_padding
+        for k in range(self.n_samples -1):
+            vector_1 = self.vectors_that_dont_need_padding[k]
+            vector_2 = self.vectors_that_dont_need_padding[k + 1]
+            vector_1 = normalise_vector(vector_1)
+            vector_2 = normalise_vector(vector_2)
+            quantum_distance = qd(
+                vector_1,vector_2
+            ).compute_quantum_distance()
+            euclidean_distance = np.linalg.norm(vector_2 - vector_1)
+            self.assertAlmostEqual(
+                quantum_distance,
+                euclidean_distance
             )
-        ):
-            for k in range(self.n_samples -1):
-                vector_1 = vectors_list[k]
-                vector_2 = vectors_list[k + 1]
-                vector_1 = normalise_vector(vector_1)
-                vector_2 = normalise_vector(vector_2)
-                if i == 1:
-                    vector_1 = pad_vector_with_zeros(vector_1)
-                    vector_2 = pad_vector_with_zeros(vector_2)
-                quantum_distance = qd(
-                    vector_1,vector_2
-                ).compute_quantum_distance()
-                euclidean_distance = np.linalg.norm(vector_2 - vector_1)
-                self.assertAlmostEqual(
-                    quantum_distance,
-                    euclidean_distance
-                )
+
+    def test_quantum_distance_equals_eucl_distance_vectors_that_need_padding(
+        self
+    )-> None:
+        """
+        Test that the quantum distance and the euclidean distance output 
+        the same value (up to a small error) for vectors that need 
+        padding.
+        """
+        for k in range(self.n_samples -1):
+            vector_1 = self.vectors_that_need_padding[k]
+            vector_2 = self.vectors_that_need_padding[k + 1]
+            vector_1 = normalise_vector(vector_1)
+            vector_2 = normalise_vector(vector_2)
+            vector_1 = pad_vector_with_zeros(vector_1)
+            vector_2 = pad_vector_with_zeros(vector_2)
+            quantum_distance = qd(
+                vector_1,vector_2
+            ).compute_quantum_distance()
+            euclidean_distance = np.linalg.norm(vector_2 - vector_1)
+            self.assertAlmostEqual(
+                quantum_distance,
+                euclidean_distance
+            )
                 
 
 if __name__ == '__main__':
