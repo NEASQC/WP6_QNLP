@@ -1,9 +1,9 @@
-import argparse 
 import os
 import random 
 import sys 
 import unittest
 
+import lambeq
 import numpy as np
 import torch
 from parameterized import parameterized_class
@@ -80,14 +80,15 @@ def set_up_test_parameters(test_args : dict)-> list:
     )[1]
     sentences = [sentences_train, sentences_val, sentences_test]
     optimisers_list = [
-        'Adadelta', 'Adagrad', 'Adam', 'Adamax',
-        'AdamW', 'ASGD', 'NAdam', 'RAdam',
-        'RMSprop', 'Rprop', 'SGD'
+        torch.optim.Adadelta, torch.optim.Adagrad, torch.optim.Adam,
+        torch.optim.Adamax, torch.optim.AdamW, torch.optim.ASGD,
+        torch.optim.NAdam, torch.optim.RAdam, torch.optim.RMSprop,
+        torch.optim.Rprop, torch.optim.SGD
     ]
     ansatze_list = [
-        'IQP', 'Sim14', 'Sim15', 'StronglyEntangling'
+        lambeq.IQPAnsatz, lambeq.Sim14Ansatz, 
+        lambeq.Sim15Ansatz, lambeq.StronglyEntanglingAnsatz
     ]
-
     for optimiser in optimisers_list:
         for ansatz in ansatze_list:
             print('optimiser = ', optimiser)

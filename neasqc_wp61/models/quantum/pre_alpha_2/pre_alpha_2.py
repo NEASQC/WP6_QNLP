@@ -16,21 +16,6 @@ class PreAlpha2:
     A class to implement sentence classification 
     using lambeq library.
     """
-    # Define function dictionaries for ansatze and optimisers.
-    ansatz_functions_dict = {
-        'IQP' : lambeq.IQPAnsatz,
-        'Sim14' : lambeq.Sim14Ansatz,
-        'Sim15' : lambeq.Sim15Ansatz,
-        'StronglyEntangling' : lambeq.StronglyEntanglingAnsatz
-    }
-    optimisers_functions_dict = {
-        'Adadelta' : torch.optim.Adadelta, 'Adagrad' : torch.optim.Adagrad,
-        'Adam' : torch.optim.Adam, 'Adamax' : torch.optim.Adamax,
-        'AdamW' : torch.optim.AdamW, 'ASGD' : torch.optim.ASGD,
-        'NAdam' : torch.optim.NAdam, 'RAdam' : torch.optim.RAdam,
-        'RMSprop' : torch.optim.RMSprop, 'Rprop' : torch.optim.Rprop,
-        'SGD' : torch.optim.SGD
-    }
     def __init__(
         self, sentences : list[list[str]],
         labels : list[list[int]],
@@ -97,7 +82,7 @@ class PreAlpha2:
         self.labels_test = labels[2]
         self.n_classes = n_classes
         self.n_qubits_sentence = n_qubits_sentence
-        self.ansatz = self.ansatz_functions_dict[ansatz](
+        self.ansatz = ansatz(
             {
                 lambeq.AtomicType.NOUN : n_qubits_noun,
                 lambeq.AtomicType.SENTENCE : n_qubits_sentence
@@ -105,7 +90,7 @@ class PreAlpha2:
             n_layers = n_layers,
             n_single_qubit_params = n_single_qubits_params
         )
-        self.optimiser = self.optimisers_functions_dict[optimiser]
+        self.optimiser = optimiser
         self.epochs = epochs
         self.batch_size = batch_size
         if loss_function == None:
