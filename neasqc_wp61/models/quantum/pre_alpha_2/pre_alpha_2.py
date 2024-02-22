@@ -61,7 +61,10 @@ class PreAlpha2:
         loss_function : Callable
             Loss function to use in training. If None,
             a class default method (cross_entropy_loss_wrapper)
-            defined in the class will be used.
+            defined in the class will be used. If other function
+            is chosen, a wrapper similar to the one 
+            in cross_entropy_loss_wrapper should be applied 
+            to the cost function.
         optimiser_args : dict
             Optional arguments for the optmiser. 
         device : int
@@ -298,6 +301,8 @@ class PreAlpha2:
         self.create_trainer(kwargs_trainer)
         self.trainer.fit(
             self.dataset_train, self.dataset_val)
+        self.loss_train = self.trainer.train_epoch_costs
+        self.loss_val = self.trainer.val_costs
         
     def compute_probabilities(self)-> None:
         """
