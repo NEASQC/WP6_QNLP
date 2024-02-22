@@ -2,6 +2,7 @@
 Embedder
 ============
 Module containing the base class for transforming sentences in a dataset into embeddings.
+
 """
 
 from abc import ABC, abstractmethod
@@ -22,7 +23,9 @@ class Embedder(ABC):
     comprising a dataset.
     """
 
-    def __init__(self, dataset: DataFrame, sentence_embedding: bool = True) -> None:
+    def __init__(
+        self, dataset: DataFrame, is_sentence_embedding: bool = True
+    ) -> None:
         """
         Initialises the embedder class.
 
@@ -31,14 +34,26 @@ class Embedder(ABC):
         dataset : pd.DataFrame
             Pandas dataset. Each row of the dataset correspods to a
             sentence.
-        sentence_embedding : bool
+        is_sentence_embedding : bool
             A bool controllig whether we want to produce a sentence
             embedding or word embedding vector for each sentence in the
             dataset. True is for sentence embedding, False is for word
             embedding.
+
+        Raises
+        ------
+        ValueError
+            If the dataset does not contain a "sentence" column with the
+            sentences to be vectorised.
         """
         self.dataset = dataset
-        self.sentence_embedding = sentence_embedding
+        try:
+            self.sentences = dataset["sentence"].tolist()
+        except KeyError:
+            raise ValueError(
+                "Sentences to be vectorised are not present in the dataset."
+            )
+        self.is_sentence_embedding = is_sentence_embedding
 
     @abstractmethod
     def compute_embeddings(self) -> DataFrame:
@@ -52,8 +67,15 @@ class Embedder(ABC):
             dataset, but with an additional column containing the
             embeddings corresponding to the sentence contained in each
             row.
+
+        Raises
+        ------
+        NotImplementedError
+            If the method has not been implemented by subclasses.
         """
-        pass
+        raise NotImplementedError(
+            "Subclasses must implement compute_embeddings method."
+        )
 
     @abstractmethod
     def save_embedding_dataset(self, path: str, filename: str) -> None:
@@ -70,8 +92,27 @@ class Embedder(ABC):
             The name with which the generated dataset containing the
             embeddings will be saved (it should not include .csv or any
             other file extension).
+
+        Raises
+        ------
+        ValueError
+            If the dataset has not been vectorised. You must call
+            compute_embeddings before attempting to save the dataset.
+        NotImplementedError
+            If the method has not been implemented by subclasses.
         """
-        pass
+        try:
+            self.vectorised_sentences = self.dataset[
+                "sentence_vectorised"
+            ].tolist()
+        except KeyError:
+            raise ValueError(
+                "This dataset has not been vectorised. "
+                "You must call compute_embeddings before attempting to save the dataset."
+            )
+        raise NotImplementedError(
+            "Subclasses must implement save_embedding_dataset method."
+        )
 
 
 class Bert(Embedder):
@@ -82,7 +123,7 @@ class Bert(Embedder):
     def __init__(
         self,
         dataset: DataFrame,
-        sentence_embedding: bool = True,
+        is_sentence_embedding: bool = True,
         cased: bool = False,
         **kwargs
     ) -> None:
@@ -94,7 +135,7 @@ class Bert(Embedder):
         dataset : pd.DataFrame
             Pandas dataset. Each row of the dataset correspods to a
             sentence.
-        sentence_embedding : bool
+        is_sentence_embedding : bool
             States whether we want to produce a sentence embedding or
             word embedding vector for each sentence in the dataset. True
             is for sentence embedding, False is for word embedding.
@@ -107,7 +148,7 @@ class Bert(Embedder):
             object. These can be found in
             https://huggingface.co/docs/transformers/main_classes/tokenizer#transformers.PreTrainedTokenizer.
         """
-        super().__init__(dataset, sentence_embedding)
+        super().__init__(dataset, is_sentence_embedding)
         self.cased = cased
         self.kwargs = kwargs
 
@@ -141,8 +182,7 @@ class Bert(Embedder):
             param.requires_grad = False
         bert_model.eval()
 
-        if self.sentence_embedding:
-            print("Generating sentence embeddings. Please wait...")
+        if self.is_sentence_embedding:
             vectorised_sentence_list = []
             for sentence in embeddings_df.sentence.values:
                 inputs = tokenizer.encode_plus(sentence).input_ids
@@ -162,10 +202,7 @@ class Bert(Embedder):
 
             embeddings_df["sentence_vectorised"] = vectorised_sentence_list
 
-            print("Done!")
-
         else:
-            print("Generating word embeddings. Please wait...")
             vectorised_sentence_list = []
             for sentence in embeddings_df.sentence.values:
                 # List storing the word embeddings of each word in a sentence
@@ -187,7 +224,6 @@ class Bert(Embedder):
                 vectorised_sentence_list.append(sentence_word_embeddings)
 
             embeddings_df["sentence_vectorised"] = vectorised_sentence_list
-            print("Done!")
 
         self.dataset = embeddings_df
 
@@ -207,7 +243,9 @@ class Bert(Embedder):
             embeddings will be saved (it should not include .csv or any
             other file extension).
         """
-        self.dataset.to_csv(path + "/" + filename + ".tsv", index=False, sep="\t")
+        self.dataset.to_csv(
+            path + "/" + filename + ".tsv", index=False, sep="\t"
+        )
 
 
 class FastText(Embedder):
@@ -218,7 +256,7 @@ class FastText(Embedder):
     def __init__(
         self,
         dataset: DataFrame,
-        sentence_embedding: bool = True,
+        is_sentence_embedding: bool = True,
         dim: int = 300,
         cased: bool = True,
     ) -> None:
@@ -230,20 +268,31 @@ class FastText(Embedder):
         dataset : pd.DataFrame
             Pandas dataset. Each row of the dataset correspods to a
             sentence.
-        sentence_embedding : bool
-            States whether we want to produce a sentence embedding or word
-            embedding vector for each sentence in the dataset. True is for
-            sentence embedding, False is for word embedding.
+        is_sentence_embedding : bool
+            States whether we want to produce a sentence embedding or
+            word embedding vector for each sentence in the dataset. True
+            is for sentence embedding, False is for word embedding.
         dim : int
             The output dimension of FastText's word/sentence vectors.
-            Default value is 300, but can be set to any value below that.
+            Default value is 300, but can be set to any value below
+            that.
         cased: bool
             Controls whether we casefold our input sentences before
-            vectorising them using FastText. FastText's pretrained model is
-            case sensitive so casefolding will produce different embeddings.
+            vectorising them using FastText. FastText's pretrained model
+            is case sensitive so casefolding will produce different
+            embeddings.
+
+        Raises
+        ------
+        ValueError
+            If the dim attribute is initialised to an integer value
+            larger than 300.
         """
-        super().__init__(dataset, sentence_embedding)
-        self.dim = dim
+        super().__init__(dataset, is_sentence_embedding)
+        if self.dim <= 300:
+            self.dim = dim
+        else:
+            raise ValueError("Error: dimension must be <= 300")
         self.cased = cased
 
     def compute_embeddings(self) -> DataFrame:
@@ -262,27 +311,22 @@ class FastText(Embedder):
         model = ft.load_model("cc.en.300.bin")
         if self.dim < 300:
             ftu.reduce_model(model, self.dim)
-        elif self.dim > 300:
-            print("Error: dimension must be <= 300")
-            return
-
         embeddings_df = self.dataset.copy()
         embeddings_df.columns = ["class", "sentence", "sentence_structure"]
 
-        if self.sentence_embedding:
-            print("Generating sentence embeddings. Please wait...")
+        if self.is_sentence_embedding:
             vectorised_sentence_list = []
             for sentence in embeddings_df.sentence.values:
                 if not self.cased:
                     sentence = sentence.casefold()
-                sentence_embedding = model.get_sentence_vector(sentence).tolist()
+                sentence_embedding = model.get_sentence_vector(
+                    sentence
+                ).tolist()
                 vectorised_sentence_list.append(sentence_embedding)
 
             embeddings_df["sentence_vectorised"] = vectorised_sentence_list
-            print("Done!")
 
         else:
-            print("Generating word embeddings. Please wait...")
             vectorised_sentence_list = []
             for sentence in embeddings_df.sentence.values:
                 word_embeddings_list = []
@@ -292,7 +336,6 @@ class FastText(Embedder):
                 vectorised_sentence_list.append(word_embeddings_list)
 
             embeddings_df["sentence_vectorised"] = vectorised_sentence_list
-            print("Done!")
 
         self.dataset = embeddings_df
 
@@ -313,4 +356,6 @@ class FastText(Embedder):
             embeddings will be saved (it should not include .csv or any
             other file extension).
         """
-        self.dataset.to_csv(path + "/" + filename + ".tsv", index=False, sep="\t")
+        self.dataset.to_csv(
+            path + "/" + filename + ".tsv", index=False, sep="\t"
+        )
