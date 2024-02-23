@@ -48,7 +48,7 @@ class Alpha3(torch.nn.Module):
 
         Parameters
         ----------
-        sentence_vectors_list : list[list[np.array]]
+        sentence_vectors : list[list[np.array]]
             List with the train, validation and test sentence vectors.
         labels : list[list[int]]
             List with the train, validation and test labels.
@@ -115,12 +115,12 @@ class Alpha3(torch.nn.Module):
         ) == False: 
             raise ValueError(
                 'Every vector length must be equal to the number of qubits'
-                'in the circuit.'
+                ' in the circuit.'
             )
         if self.circuit.output_probabilities == True:
             raise ValueError(
                 'The circuit must have output_probabilities = False'
-                'for Alpha3 model.'
+                ' for Alpha3 model.'
             )
         quantum_node = qml.QNode(
             self.circuit.build_circuit,
