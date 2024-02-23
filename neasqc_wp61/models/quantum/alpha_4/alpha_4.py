@@ -215,7 +215,7 @@ class Alpha4(torch.nn.Module):
                             self.compute_preds(vector)[j].item()
                         )
                         probs_epoch_train_val[i].append(
-                            self.forward(vector)[j,:].tolist()
+                            self.compute_probs(vector)[j,:].tolist()
                         )
                     if i == 0:
                         batch_loss.backward()
