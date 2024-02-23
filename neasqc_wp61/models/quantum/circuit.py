@@ -71,13 +71,16 @@ class Circuit(ABC):
                     self.operators_tensor_product = operator(qubit)
                 else:
                     self.operators_tensor_product @= operator(qubit)
-                
-        if not all(x < self.n_qubits for x in self.observables.keys()): 
-            raise ValueError('Qubit index out of range.')
         self.device = qml.device(
             device_name, wires=self.n_qubits, **kwargs)
         self.output_probabilities = output_probabilities
         self.data_rescaling = data_rescaling
+        if self.n_qubits <= 2:
+            raise ValueError(
+                'The number of qubits must be greater or equal 2.'
+            )
+        if not all(x < self.n_qubits for x in self.observables.keys()): 
+            raise ValueError('Qubit index out of range.')
 
     def rescale_circuit_inputs(self, input)-> None:
         """
