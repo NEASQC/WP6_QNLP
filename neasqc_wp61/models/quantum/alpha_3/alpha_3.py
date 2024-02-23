@@ -29,14 +29,14 @@ class Alpha3(torch.nn.Module):
     """
     def __init__(
         self,
-        sentence_tensors_list : list[list[torch.tensor]],
+        sentence_vectors : list[list[np.array]],
         labels : list[list[int]],
         n_classes : int,
         circuit : Circuit,
         optimiser : torch.optim.Optimizer,
         epochs : int,
         batch_size : int,
-        loss_function : Callable,
+        loss_function : Callable = torch.nn.CrossEntropyLoss,
         optimiser_args : dict = {},
         device : str = "cpu",
         seed : int = 1906,
@@ -48,7 +48,7 @@ class Alpha3(torch.nn.Module):
 
         Parameters
         ----------
-        sentence_tensors_list : list[list[torch.tensor]]
+        sentence_vectors_list : list[list[np.array]]
             List with the train, validation and test sentence vectors.
         labels : list[list[int]]
             List with the train, validation and test labels.
@@ -68,6 +68,7 @@ class Alpha3(torch.nn.Module):
             Batch size to use in training.
         loss_function : Callable
             Loss function to use in training.
+            (Default = torch.nn.CrossEntropyLoss)
         optimiser_args : dict
             Optional arguments for the optmiser. (Default = {}).
         device : str
@@ -86,15 +87,15 @@ class Alpha3(torch.nn.Module):
         torch.manual_seed(seed)
         super().__init__()
         self.data_loader_train = DataLoader(
-            Dataset(sentence_tensors_list[0], labels[0]),
+            Dataset(sentence_vectors[0], labels[0]),
             batch_size = batch_size
         )
         self.data_loader_val = DataLoader(
-            Dataset(sentence_tensors_list[1], labels[1]),
+            Dataset(sentence_vectors[1], labels[1]),
             batch_size = batch_size
         )
         self.data_loader_test = DataLoader(
-            Dataset(sentence_tensors_list[2], labels[2]),
+            Dataset(sentence_vectors[2], labels[2]),
             batch_size = batch_size
         )
         self.n_classes = n_classes
@@ -109,7 +110,7 @@ class Alpha3(torch.nn.Module):
         )
         if all(
             len(vector_instance) == self.circuit.n_qubits
-                for vector_partition in sentence_tensors_list
+                for vector_partition in sentence_vectors
                 for vector_instance in vector_partition
         ) == False: 
             raise ValueError(
