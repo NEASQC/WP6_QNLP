@@ -75,7 +75,7 @@ class Circuit(ABC):
             device_name, wires=self.n_qubits, **kwargs)
         self.output_probabilities = output_probabilities
         self.data_rescaling = data_rescaling
-        if self.n_qubits <= 2:
+        if self.n_qubits < 2:
             raise ValueError(
                 'The number of qubits must be greater or equal 2.'
             )
