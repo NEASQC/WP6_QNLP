@@ -1,10 +1,7 @@
 """
 Alpha3
 ======
-Module containing the class for Alpha3 model,
-which implements a circuit classifier using a 
-quantum circuit and post-processing neural network
-layer.
+Module containing the class for Alpha3 model.
 """
 import os
 import sys
@@ -24,8 +21,8 @@ from utils import Dataset
 
 class Alpha3(torch.nn.Module):
     """
-    A class to implement Alpha3Model, that implement a circuit 
-    classifier with a post-processing linear layer.
+    A class to implement Alpha3 class, which implements a classifier
+    using a circuit with a post-processing linear layer.
     """
     def __init__(
         self,
@@ -114,7 +111,7 @@ class Alpha3(torch.nn.Module):
                 for vector_instance in vector_partition
         ) == False: 
             raise ValueError(
-                'Every vector length must be equal to the number of qubits'
+                'All vector lengths must be equal to the number of qubits'
                 ' in the circuit.'
             )
         if self.circuit.output_probabilities == True:
@@ -144,7 +141,7 @@ class Alpha3(torch.nn.Module):
 
     def forward(self, sentence_tensors : torch.tensor)-> None:
         """
-        Compute the output of the network for a a tensor 
+        Compute the output of the model for a tensor 
         containing a number of sentence vectors equal to
         the batch size.
 
@@ -163,8 +160,8 @@ class Alpha3(torch.nn.Module):
     
     def compute_probs(self, sentence_tensors : torch.tensor)-> None:
         """
-        Compute the output probabilities of the network for a a tensor 
-        containing a number of sentence tensors equal to
+        Compute the output probabilities of the model for a tensor 
+        containing a number of sentence vectors equal to
         the batch size.
 
         Parameters
@@ -181,8 +178,8 @@ class Alpha3(torch.nn.Module):
 
     def compute_preds(self, sentence_tensors : torch.tensor)-> None:
         """
-        Compute the output predictions of the network for a a tensor 
-        containing a number of sentence tensors equal to
+        Compute the output predictions of the model for a tensor 
+        containing a number of sentence vectors equal to
         the batch size.
 
         Parameters

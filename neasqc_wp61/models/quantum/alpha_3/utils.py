@@ -1,37 +1,6 @@
 import pandas as pd 
 import torch
 
-def load_dataset(
-    dataset_path : str,
-) -> list[str,list[int]]:
-    """
-    Given a dataset path, loads it as a pd.DataFrame and 
-    outputs both sentences and labels as lists.
-    The .tsv file containing the dataset must contain three columns : 
-    label, sentence and sentence structure, in this order, and it can't 
-    have headers. The labels must be integers 0,1...,number_of_classes.
-    Parameters
-    ----------
-    dataset_path : str
-        Path of the dataset to be loaded 
-
-    Returns
-    -------
-    sentences : list[str]
-        List with the sentences of the dataset
-    labels: list[list[int]]
-        List with the one-hot encoding labels of the dataset.
-    """
-    df = pd.read_csv(
-        dataset_path, sep='\t+',
-        header=None, names=['label', 'sentence', 'structure_tilde'],
-        engine='python'
-    )
-    sentences = df['sentence'].tolist()
-    labels = df['label'].tolist()
-    return sentences, labels
-
-
 def get_labels_one_hot_encoding(
     labels_train : list[int], labels_val : list[int],
     labels_test : list[int]
