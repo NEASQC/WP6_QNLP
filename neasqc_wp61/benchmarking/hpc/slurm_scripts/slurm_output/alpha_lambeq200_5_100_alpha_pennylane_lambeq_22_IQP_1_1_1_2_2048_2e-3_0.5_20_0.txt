@@ -1,0 +1,2716 @@
+/ichec/home/staff/ylalou
+	 To load the default (base) conda environment, for python 2, use the following command. 
+		 source activate
+ 
+	 To list other available environments, use the following command
+		 conda info --envs
+ 
+	 To load a non-default environment, e.g. for python3,  use the following command
+		 source activate python3
+ 
+11:17:17
+This script classifies examples using quantum classifier model.
+train: ./data/toy_dataset/toy_dataset_bert_sentence_embedding_train.csv
+test: ./data/toy_dataset/toy_dataset_bert_sentence_embedding_test.csv
+seed: 200
+model: alpha_lambeq
+epochs: 
+runs: 5
+optimiser: 
+iterations: 100
+outfile: ./benchmarking/results/raw/
+ansatz: IQP
+Number of qubits per noun: 1
+number of circuit layers: 1
+:number of single qubit parameters 2
+Number of qubits in our circuit: 
+Initial spread of the parameters: 
+Batch size: 2048
+Learning rate: 2e-3
+Weight decay: 0.5
+Step size for the learning rate scheduler: 20
+Gamma for the learning rate scheduler: 0
+Version between alpha_pennylane_lambeq and alpha_pennylane_lambeq_original: alpha_pennylane_lambeq
+Reduced dimension for the word embeddings: 22
+Number of qubits per SENTENCE type: 1
+running alpha_lambeq
+2023-07-27 11:17:55.415481: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 AVX512F FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2023-07-27 11:18:00.129168: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2023-07-27 11:18:14.980135: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer.so.7'; dlerror: libnvinfer.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /ichec/packages/cuda/11.4/compat/:/ichec/packages/cuda/11.4/extras/Debugger/lib64/:/ichec/packages/cuda/11.4/extras/CUPTI/lib64/:/ichec/packages/cuda/11.4/lib64/
+2023-07-27 11:18:14.986052: W tensorflow/stream_executor/platform/default/dso_loader.cc:64] Could not load dynamic library 'libnvinfer_plugin.so.7'; dlerror: libnvinfer_plugin.so.7: cannot open shared object file: No such file or directory; LD_LIBRARY_PATH: /ichec/packages/cuda/11.4/compat/:/ichec/packages/cuda/11.4/extras/Debugger/lib64/:/ichec/packages/cuda/11.4/extras/CUPTI/lib64/:/ichec/packages/cuda/11.4/lib64/
+2023-07-27 11:18:14.986137: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Cannot dlopen some TensorRT libraries. If you would like to use Nvidia GPU with TensorRT, please make sure the missing libraries mentioned above are installed properly.
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/utils.py:36: FutureWarning: The series.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  label_encoder.fit(df_train['class'].append(df_test['class']))
+Tagging sentences.
+Parsing tagged sentences.
+Turning parse trees to diagrams.
+Tagging sentences.
+Parsing tagged sentences.
+Turning parse trees to diagrams.
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+	- Avoid using `tokenizers` before the fork if possible
+	- Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:115: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_model.py:81: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  self.weights[index] = torch.nn.Parameter(torch.tensor(value))
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:153: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:201: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/utils.py:36: FutureWarning: The series.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  label_encoder.fit(df_train['class'].append(df_test['class']))
+Tagging sentences.
+Parsing tagged sentences.
+Turning parse trees to diagrams.
+Tagging sentences.
+Parsing tagged sentences.
+Turning parse trees to diagrams.
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:115: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_model.py:81: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  self.weights[index] = torch.nn.Parameter(torch.tensor(value))
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:153: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:201: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/utils.py:36: FutureWarning: The series.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  label_encoder.fit(df_train['class'].append(df_test['class']))
+Tagging sentences.
+Parsing tagged sentences.
+Turning parse trees to diagrams.
+Tagging sentences.
+Parsing tagged sentences.
+Turning parse trees to diagrams.
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:115: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_model.py:81: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  self.weights[index] = torch.nn.Parameter(torch.tensor(value))
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:153: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:201: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/utils.py:36: FutureWarning: The series.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  label_encoder.fit(df_train['class'].append(df_test['class']))
+Tagging sentences.
+Parsing tagged sentences.
+Turning parse trees to diagrams.
+Tagging sentences.
+Parsing tagged sentences.
+Turning parse trees to diagrams.
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:115: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_model.py:81: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  self.weights[index] = torch.nn.Parameter(torch.tensor(value))
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:153: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:201: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/utils.py:36: FutureWarning: The series.append method is deprecated and will be removed from pandas in a future version. Use pandas.concat instead.
+  label_encoder.fit(df_train['class'].append(df_test['class']))
+Tagging sentences.
+Parsing tagged sentences.
+Turning parse trees to diagrams.
+Tagging sentences.
+Parsing tagged sentences.
+Turning parse trees to diagrams.
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:115: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_model.py:81: UserWarning: To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+  self.weights[index] = torch.nn.Parameter(torch.tensor(value))
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:153: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+/ichec/home/staff/ylalou/WP6_QNLP/neasqc_wp61/data/data_processing/../../models/quantum/alpha/module/alpha_pennylane_lambeq_trainer.py:201: VisibleDeprecationWarning: Creating an ndarray from ragged nested sequences (which is a list-or-tuple of lists-or-tuples-or ndarrays with different lengths or shapes) is deprecated. If you meant to do this, you must specify 'dtype=object' when creating the ndarray.
+  circuits, embeddings = np.array(input).T
+
+
+-----------------------------------
+run =  1
+-----------------------------------
+
+
+Epoch: 0
+Train loss: 0.7132227085691625
+Valid loss: 0.624828018132836
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 1
+Train loss: 0.7126101566400045
+Valid loss: 0.626066912826643
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 2
+Train loss: 0.712090513424003
+Valid loss: 0.6273064209691073
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 3
+Train loss: 0.7115562331860061
+Valid loss: 0.6285406616822347
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 4
+Train loss: 0.7105911445319361
+Valid loss: 0.629776495382098
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 5
+Train loss: 0.709263407029235
+Valid loss: 0.6310240873885482
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 6
+Train loss: 0.7088558555550609
+Valid loss: 0.6322704388402889
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 7
+Train loss: 0.7084572227321427
+Valid loss: 0.6335121940888743
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 8
+Train loss: 0.7079623586839473
+Valid loss: 0.6347460522421579
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 9
+Train loss: 0.7074349625744016
+Valid loss: 0.635969231874992
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 10
+Train loss: 0.7069017723683739
+Valid loss: 0.6371792800849359
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 11
+Train loss: 0.7063760567710022
+Valid loss: 0.6383738836680917
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 12
+Train loss: 0.7058644064370114
+Valid loss: 0.6395507598957857
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 13
+Train loss: 0.7053678906707441
+Valid loss: 0.6407077540853832
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 14
+Train loss: 0.7048852592797771
+Valid loss: 0.6418430416592344
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 15
+Train loss: 0.7044153440376479
+Valid loss: 0.6429553843858649
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 16
+Train loss: 0.7039574960012407
+Valid loss: 0.6440442857130301
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 17
+Train loss: 0.7035114044301223
+Valid loss: 0.6451100693156449
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 18
+Train loss: 0.7030769047497898
+Valid loss: 0.6461538305474618
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 19
+Train loss: 0.7026539432477465
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 20
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 21
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 22
+Train loss: 0.7022428186966907
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 23
+Train loss: 0.7022428186966907
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 24
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 25
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 26
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 27
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 28
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 29
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 30
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 31
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 32
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 33
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 34
+Train loss: 0.7022428186966907
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 35
+Train loss: 0.7022428186966907
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 36
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 37
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 38
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 39
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 40
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 41
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 42
+Train loss: 0.7022428186966907
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 43
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 44
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 45
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 46
+Train loss: 0.7022428186966907
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 47
+Train loss: 0.7022428186966907
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 48
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 49
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 50
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 51
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 52
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 53
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 54
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 55
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 56
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 57
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 58
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 59
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 60
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 61
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 62
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 63
+Train loss: 0.7022428186966907
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 64
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 65
+Train loss: 0.7022428186966907
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 66
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 67
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 68
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 69
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 70
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 71
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 72
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 73
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 74
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 75
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 76
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 77
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 78
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 79
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 80
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 81
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 82
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 83
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 84
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 85
+Train loss: 0.7022428186966907
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 86
+Train loss: 0.7022428186966907
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 87
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 88
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 89
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 90
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 91
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 92
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 93
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 94
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 95
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 96
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 97
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 98
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300212
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 99
+Train loss: 0.7022428186966906
+Valid loss: 0.6471773334300213
+Train acc: 0.4375
+Valid acc: 0.85
+Time taken for this run =  109.25955033302307 
+
+
+
+-----------------------------------
+run =  2
+-----------------------------------
+
+
+Epoch: 0
+Train loss: 0.6965899407786241
+Valid loss: 0.6712817108656632
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 1
+Train loss: 0.6966178729792796
+Valid loss: 0.6711904202813703
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 2
+Train loss: 0.6966420954102013
+Valid loss: 0.6711019853288122
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 3
+Train loss: 0.696663320388664
+Valid loss: 0.67101701302185
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 4
+Train loss: 0.6966815240601729
+Valid loss: 0.6709358301629618
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 5
+Train loss: 0.6966965927407782
+Valid loss: 0.6708584339279366
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 6
+Train loss: 0.6967080754685916
+Valid loss: 0.6707845428545409
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 7
+Train loss: 0.6967154774657895
+Valid loss: 0.6707137522810511
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 8
+Train loss: 0.6967183982507292
+Valid loss: 0.6706457186371358
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 9
+Train loss: 0.6967165914629644
+Valid loss: 0.6705802892754134
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 10
+Train loss: 0.6967100696217973
+Valid loss: 0.6705175174160096
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 11
+Train loss: 0.6966990668096702
+Valid loss: 0.6704575937923845
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 12
+Train loss: 0.6966839556454699
+Valid loss: 0.6704007814920508
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 13
+Train loss: 0.6966651808768102
+Valid loss: 0.6703473837426248
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 14
+Train loss: 0.6966431680609982
+Valid loss: 0.6702977249277877
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 15
+Train loss: 0.6966182708260839
+Valid loss: 0.6702521462210517
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 16
+Train loss: 0.6965907847131467
+Valid loss: 0.6702110037298601
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 17
+Train loss: 0.6965609760327066
+Valid loss: 0.6701746727977216
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 18
+Train loss: 0.6965291197029797
+Valid loss: 0.6701435326133627
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 19
+Train loss: 0.6964955347681496
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 20
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 21
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 22
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 23
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 24
+Train loss: 0.6964605857626808
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 25
+Train loss: 0.6964605857626808
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 26
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 27
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 28
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 29
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 30
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 31
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 32
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 33
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 34
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 35
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 36
+Train loss: 0.6964605857626808
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 37
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 38
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 39
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 40
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 41
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 42
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 43
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 44
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 45
+Train loss: 0.6964605857626808
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 46
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 47
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 48
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 49
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 50
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 51
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 52
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 53
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 54
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 55
+Train loss: 0.6964605857626808
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 56
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 57
+Train loss: 0.6964605857626808
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 58
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 59
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 60
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 61
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 62
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 63
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 64
+Train loss: 0.6964605857626808
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 65
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 66
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 67
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347834
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 68
+Train loss: 0.6964605857626808
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 69
+Train loss: 0.6964605857626808
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 70
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 71
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 72
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347834
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 73
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 74
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 75
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 76
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 77
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 78
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 79
+Train loss: 0.6964605857626808
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 80
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 81
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 82
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 83
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 84
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 85
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347834
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 86
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 87
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 88
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 89
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 90
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 91
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 92
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 93
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 94
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 95
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 96
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 97
+Train loss: 0.6964605857626806
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 98
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347833
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 99
+Train loss: 0.6964605857626807
+Valid loss: 0.6701179491347834
+Train acc: 0.4375
+Valid acc: 0.85
+Time taken for this run =  97.38301062583923 
+
+
+
+-----------------------------------
+run =  3
+-----------------------------------
+
+
+Epoch: 0
+Train loss: 0.8270592556138743
+Valid loss: 0.48702292325351815
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 1
+Train loss: 0.8258394856305517
+Valid loss: 0.48760499402490415
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 2
+Train loss: 0.8246161769663404
+Valid loss: 0.4881863847902682
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 3
+Train loss: 0.8233556139590046
+Valid loss: 0.4887680136081645
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 4
+Train loss: 0.8220130986313455
+Valid loss: 0.48935115593785605
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 5
+Train loss: 0.8205497569436545
+Valid loss: 0.48994099106374217
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 6
+Train loss: 0.8189794432180761
+Valid loss: 0.4905459559293391
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 7
+Train loss: 0.8173867660750812
+Valid loss: 0.4911653169070174
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 8
+Train loss: 0.8158615949422294
+Valid loss: 0.4917965621895485
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 9
+Train loss: 0.8144331783724678
+Valid loss: 0.4924382035371435
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 10
+Train loss: 0.8130853554444599
+Valid loss: 0.4930893807792461
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 11
+Train loss: 0.8117940604577856
+Valid loss: 0.4937495260092456
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 12
+Train loss: 0.8105433167146785
+Valid loss: 0.49441815211159135
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 13
+Train loss: 0.8093263804560358
+Valid loss: 0.49509474777232454
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 14
+Train loss: 0.8081434053074193
+Valid loss: 0.49577871161561793
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 15
+Train loss: 0.8069994889816361
+Valid loss: 0.49646931190773147
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 16
+Train loss: 0.8059034559762474
+Valid loss: 0.49716563213783715
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 17
+Train loss: 0.8048669242506599
+Valid loss: 0.49786654493247795
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 18
+Train loss: 0.803902718855903
+Valid loss: 0.4985706888109239
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 19
+Train loss: 0.803020796518782
+Valid loss: 0.4992764678458636
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 20
+Train loss: 0.8022193916851512
+Valid loss: 0.4992764678458636
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 21
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 22
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 23
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 24
+Train loss: 0.8022193916851512
+Valid loss: 0.4992764678458636
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 25
+Train loss: 0.8022193916851512
+Valid loss: 0.4992764678458636
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 26
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 27
+Train loss: 0.8022193916851512
+Valid loss: 0.4992764678458636
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 28
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 29
+Train loss: 0.8022193916851513
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 30
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 31
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 32
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 33
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 34
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 35
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 36
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586344
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 37
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 38
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 39
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 40
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 41
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 42
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 43
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 44
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 45
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586344
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 46
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 47
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 48
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 49
+Train loss: 0.8022193916851512
+Valid loss: 0.4992764678458636
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 50
+Train loss: 0.8022193916851512
+Valid loss: 0.4992764678458636
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 51
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 52
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 53
+Train loss: 0.802219391685151
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 54
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 55
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 56
+Train loss: 0.802219391685151
+Valid loss: 0.49927646784586344
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 57
+Train loss: 0.8022193916851512
+Valid loss: 0.4992764678458636
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 58
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 59
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 60
+Train loss: 0.802219391685151
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 61
+Train loss: 0.802219391685151
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 62
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 63
+Train loss: 0.802219391685151
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 64
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 65
+Train loss: 0.8022193916851513
+Valid loss: 0.49927646784586344
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 66
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 67
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 68
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 69
+Train loss: 0.802219391685151
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 70
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 71
+Train loss: 0.802219391685151
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 72
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 73
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 74
+Train loss: 0.802219391685151
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 75
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 76
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586344
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 77
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586344
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 78
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 79
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 80
+Train loss: 0.8022193916851512
+Valid loss: 0.4992764678458636
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 81
+Train loss: 0.802219391685151
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 82
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 83
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 84
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 85
+Train loss: 0.8022193916851512
+Valid loss: 0.4992764678458636
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 86
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 87
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 88
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 89
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 90
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586344
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 91
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 92
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 93
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 94
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 95
+Train loss: 0.8022193916851512
+Valid loss: 0.4992764678458636
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 96
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 97
+Train loss: 0.8022193916851512
+Valid loss: 0.4992764678458636
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 98
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 99
+Train loss: 0.8022193916851512
+Valid loss: 0.49927646784586355
+Train acc: 0.4375
+Valid acc: 0.85
+Time taken for this run =  97.39474177360535 
+
+
+
+-----------------------------------
+run =  4
+-----------------------------------
+
+
+Epoch: 0
+Train loss: 0.7386782805340614
+Valid loss: 0.5640274496502526
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 1
+Train loss: 0.738123802445684
+Valid loss: 0.5647959755230496
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 2
+Train loss: 0.7375999805317303
+Valid loss: 0.5655545658541248
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 3
+Train loss: 0.737105270430004
+Valid loss: 0.5663028414363185
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 4
+Train loss: 0.7366293196551249
+Valid loss: 0.5670403847767487
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 5
+Train loss: 0.7361597010283842
+Valid loss: 0.5677668054006969
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 6
+Train loss: 0.7356814570445432
+Valid loss: 0.5684818265244519
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 7
+Train loss: 0.735172861973276
+Valid loss: 0.5691853633679911
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 8
+Train loss: 0.7346002309791186
+Valid loss: 0.5698774748450475
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 9
+Train loss: 0.7339277097057277
+Valid loss: 0.5705583319063977
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 10
+Train loss: 0.7331582997352404
+Valid loss: 0.5712283887261156
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 11
+Train loss: 0.732368460098396
+Valid loss: 0.5718883483891639
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 12
+Train loss: 0.731660164683341
+Valid loss: 0.5725387793881742
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 13
+Train loss: 0.7310812540964248
+Valid loss: 0.5731799230679977
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 14
+Train loss: 0.7306145136757459
+Valid loss: 0.5738119400535371
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 15
+Train loss: 0.7302193395050249
+Valid loss: 0.5744350598460436
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 16
+Train loss: 0.7298632287096485
+Valid loss: 0.575049706017111
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 17
+Train loss: 0.729529992839562
+Valid loss: 0.5756564483584979
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 18
+Train loss: 0.7292224481713239
+Valid loss: 0.5762559347443553
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 19
+Train loss: 0.7289840572254721
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 20
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 21
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 22
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 23
+Train loss: 0.7289369814920575
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 24
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 25
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 26
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 27
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 28
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 29
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 30
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 31
+Train loss: 0.7289369814920575
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 32
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 33
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 34
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 35
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 36
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 37
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 38
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 39
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 40
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 41
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 42
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 43
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 44
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 45
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 46
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 47
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 48
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 49
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 50
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 51
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 52
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 53
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 54
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 55
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 56
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 57
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 58
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 59
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 60
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 61
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 62
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 63
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 64
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 65
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 66
+Train loss: 0.7289369814920575
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 67
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 68
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 69
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 70
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 71
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 72
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 73
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 74
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 75
+Train loss: 0.7289369814920575
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 76
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 77
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 78
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 79
+Train loss: 0.7289369814920575
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 80
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 81
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 82
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 83
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 84
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 85
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 86
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 87
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 88
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 89
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 90
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 91
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 92
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 93
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 94
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 95
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 96
+Train loss: 0.7289369814920575
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 97
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975808
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 98
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 99
+Train loss: 0.7289369814920577
+Valid loss: 0.5768486768975809
+Train acc: 0.4375
+Valid acc: 0.85
+Time taken for this run =  98.40212655067444 
+
+
+
+-----------------------------------
+run =  5
+-----------------------------------
+
+
+Epoch: 0
+Train loss: 0.7533514554124091
+Valid loss: 0.5424939705294978
+Train acc: 0.425
+Valid acc: 0.8
+Epoch: 1
+Train loss: 0.752405207765103
+Valid loss: 0.5435952877569129
+Train acc: 0.4125
+Valid acc: 0.8
+Epoch: 2
+Train loss: 0.7514347340716256
+Valid loss: 0.5447074747393793
+Train acc: 0.425
+Valid acc: 0.8
+Epoch: 3
+Train loss: 0.7504324777629974
+Valid loss: 0.5458324578678808
+Train acc: 0.4375
+Valid acc: 0.8
+Epoch: 4
+Train loss: 0.7493923372191361
+Valid loss: 0.5469719678622285
+Train acc: 0.4375
+Valid acc: 0.8
+Epoch: 5
+Train loss: 0.7483106065461765
+Valid loss: 0.5481275693062468
+Train acc: 0.4375
+Valid acc: 0.8
+Epoch: 6
+Train loss: 0.7471882095884381
+Valid loss: 0.5493006487198194
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 7
+Train loss: 0.7460341382473243
+Valid loss: 0.5504924291808706
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 8
+Train loss: 0.7448710837339675
+Valid loss: 0.551704001345944
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 9
+Train loss: 0.7437400720983816
+Valid loss: 0.5529363026562559
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 10
+Train loss: 0.7426981195405644
+Valid loss: 0.5541901433509839
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 11
+Train loss: 0.7418036575386967
+Valid loss: 0.555466205328775
+Train acc: 0.45
+Valid acc: 0.85
+Epoch: 12
+Train loss: 0.7410948932230415
+Valid loss: 0.5567649313391989
+Train acc: 0.45
+Valid acc: 0.85
+Epoch: 13
+Train loss: 0.7405771601206541
+Valid loss: 0.5580865394693217
+Train acc: 0.45
+Valid acc: 0.85
+Epoch: 14
+Train loss: 0.7402289250918888
+Valid loss: 0.5594309327276368
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 15
+Train loss: 0.7400188150933088
+Valid loss: 0.5607976972580181
+Train acc: 0.425
+Valid acc: 0.85
+Epoch: 16
+Train loss: 0.7399191597766164
+Valid loss: 0.5621860944597041
+Train acc: 0.425
+Valid acc: 0.85
+Epoch: 17
+Train loss: 0.7399099045363313
+Valid loss: 0.563595143655129
+Train acc: 0.425
+Valid acc: 0.85
+Epoch: 18
+Train loss: 0.739976472962247
+Valid loss: 0.5650236158436064
+Train acc: 0.425
+Valid acc: 0.85
+Epoch: 19
+Train loss: 0.7401065944173508
+Valid loss: 0.5664701359035769
+Train acc: 0.425
+Valid acc: 0.85
+Epoch: 20
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 21
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 22
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 23
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 24
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 25
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 26
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 27
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 28
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 29
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 30
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 31
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 32
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 33
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 34
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 35
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 36
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 37
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 38
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 39
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 40
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 41
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 42
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 43
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 44
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 45
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 46
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 47
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 48
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 49
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 50
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 51
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 52
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 53
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 54
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 55
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 56
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 57
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 58
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 59
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 60
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 61
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 62
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 63
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 64
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 65
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 66
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035771
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 67
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 68
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 69
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 70
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 71
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 72
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 73
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 74
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 75
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 76
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 77
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 78
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 79
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 80
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 81
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 82
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 83
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 84
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 85
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 86
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 87
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 88
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 89
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 90
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 91
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 92
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 93
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 94
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 95
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 96
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 97
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 98
+Train loss: 0.7402883646132421
+Valid loss: 0.566470135903577
+Train acc: 0.4375
+Valid acc: 0.85
+Epoch: 99
+Train loss: 0.7402883646132421
+Valid loss: 0.5664701359035769
+Train acc: 0.4375
+Valid acc: 0.85
+Time taken for this run =  99.82170724868774 
+
+11:27:27
