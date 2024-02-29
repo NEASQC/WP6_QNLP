@@ -1,3 +1,4 @@
+import ast
 import os
 import random
 import sys
@@ -6,107 +7,161 @@ import numpy as np
 import pandas as pd
 import unittest
 
-current_path = os.path.dirname(os.path.abspath(__file__))
-dataset_path = current_path + "/../neasqc_wp61/data/datasets/"
-sys.path.append(current_path + "/../neasqc_wp61/models/quantum/")
+from itertools import product
+from typing import Union
 
-from embedder import *
+current_path = os.path.dirname(os.path.abspath(__file__))
+embedder_path = current_path + "/../neasqc_wp61/models/quantum/"
+
+sys.path.append(embedder_path)
+
+import embedder as emb
+
+dataset_path = (
+    current_path + "/../neasqc_wp61/data/datasets/amazonreview_train.tsv"
+)
 
 
 # Define helper functions
 
 
-def is_sentence_embedding(x: list) -> bool:
+def random_dataset_sample(dataset: pd.DataFrame, nrows: int) -> pd.DataFrame:
     """
-    Checks if a list is of type list[float], the expected type for
-    a sentence embedding.
+    Returns a randomly selected subset of a dataset.
 
     Parameters
     ----------
-    x: list
-        The list to check.
+    dataset: pd.DataFrame
+        The dataset containing the natural language data we wish to
+        sample from in order to perform our tests.
+    nrows: int
+        The number of rows that we want to randomly select. This will be
+        the number of rows of the output DataFrame.
+
+    Returns
+    -------
+    random_subset:
+        A Dataframe consisting of a randomly selected subset of rows
+        from the input dataset.
+    """
+    shuffled_df = dataset.sample(frac=1)
+    random_subset = shuffled_df.head(nrows)
+
+    return random_subset
+
+
+def check_dimension(
+    vectors: list, is_sentence_embedding: bool, dim: int
+) -> bool:
+    """
+    Checks that the dimensions of a sentence or word embedding are
+    correct.
+
+    Parameters
+    ----------
+    vectors: list
+        The vectorised sentences whose dimensions we want to check. Can
+        be a list of float values (sentence embedding) or a list of
+        lists of float values (vector of word embeddings).
+    is_sentence_embedding: bool
+        Specifies whether we are checking for the dimension of a
+        sentence embedding vector or a vector of word embeddings.
+    dim: int
+        The dimension we wish to check matches the size of our vectors.
 
     Returns
     -------
     bool
-        True if x is of type list[list[float]], False otherwise.
+        True if all vectors have the correct dimension, False otherwise.
     """
-    if isinstance(x, list):
-        return all(isinstance(element, float) for element in x)
-    return False
+    for vector in vectors:
+        if is_sentence_embedding:
+            if len(vector) != dim:
+                return False
+        else:
+            for element in vector:
+                if len(element) != dim:
+                    return False
+    return True
 
 
-def is_word_embedding(x: list) -> bool:
+def check_sentence_embedding_type(x: Union[list, pd.Series]) -> bool:
     """
-    Checks if a list is of type list[list[float]], the expected type for
-    a word embedding.
+    Checks if a list (or a pandas Series casted to a list) is of
+    type list[float], the expected type for a sentence embedding.
 
     Parameters
     ----------
-    x: list
-        The list to check.
+    x: Union[list, pd.Series]
+        The list or pandas Series to check.
 
     Returns
     -------
     bool
-        True if x is of type list[list[float]], False otherwise.
+        True if x (or x.tolist() if x is a pandas Series) is of type
+        list[list[float]], False otherwise.
     """
+    x = x.tolist()
+    for embedding in x:
+        if isinstance(embedding, list):
+            return all(isinstance(element, float) for element in embedding)
 
-    if isinstance(x, list):
-        if all(isinstance(sublist, list) for sublist in x):
-            return all(
-                isinstance(element, float) for sublist in x for element in sublist
-            )
     return False
 
 
-def str_to_sentence_embedding(x: str) -> list[float]:
+def check_word_embedding_type(x: Union[list, pd.Series]) -> bool:
     """
-    Converts a string into a list ofq floats. Helps read sentence
-    embeddings off a TSV file.
+    Checks if a list (or a pandas Series casted to a list) is of type
+    list[list[float]], the expected type for a word embedding.
 
     Parameters
     ----------
-    x: str
-        The str that we wish to convert to a readable sentence
-        embedding.
+    x: Union[list, pd.Series]
+        The list or pandas Series to check.
 
     Returns
     -------
-    embedding: list[float]
-        The resulting embedding with the desired type.
+    bool
+        True if x (or x.tolist() if x is a pandas Series) is of type
+        list[list[float]], False otherwise.
     """
-    x = x.strip("[]")
-    x_i = x.split(",")
-    embedding = [float(i) for i in x_i]
-    return embedding
+    x = x.tolist()
+    for vector in x:
+        if isinstance(vector, list):
+            if all(isinstance(sublist, list) for sublist in vector):
+                return all(
+                    isinstance(element, float)
+                    for sublist in vector
+                    for element in sublist
+                )
+
+    return False
 
 
-def str_to_word_embedding(x: str) -> list[list[float]]:
+def parse_series(s: pd.Series):
     """
-    Converts a string into a list of lists of floats. Helps read word
-    embeddings off a TSV file.
+    Parses a pandas Series object to a Python list object. Thanks to
+    ast.literal_eval, we can read off embedding vectors as lists of
+    floats rather than lists of strings, which is how Series are read by
+    default from a CSV/TSV file.
 
     Parameters
     ----------
-    x: str
-        The str that we wish to convert to a readable word embedding.
+    s: pd.Series
+        The pandas series to be parsed.
 
     Returns
     -------
-    embedding: list[list[[float]]
-        The resulting embedding with the desired type.
+    Union[list, list[float], list[list[float]]]
+        An empty list if there are errors in parsing, a list of floats
+        if the series is comprised of sentence embeddings and a list of
+        lists of floats if the series is comprised of word embeddings.
     """
-    x = x.strip("[]")
-    x_lists = x.split("], [")
-    float_lists = []
-    for sublist_str in x_lists:
-        sublist_str = sublist_str.strip("[]")
-        float_strings = sublist_str.split(",")
-        float_sublist = [float(float_str) for float_str in float_strings]
-        float_lists.append(float_sublist)
-
-    return float_lists
+    try:
+        return ast.literal_eval(s)
+    except (SyntaxError, ValueError):
+        # Return an empty list if there's an error in parsing
+        return []
 
 
 # Define unit tests
@@ -114,240 +169,126 @@ def str_to_word_embedding(x: str) -> list[list[float]]:
 
 class TestEmbedder(unittest.TestCase):
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         """
-        Load test dataset to perform our tests on.
+        Generates a test dataset and a list of all different embedder
+        objects in order to perform unit tests on them.
         """
+        full_dataset = pd.read_csv(dataset_path, delimiter="\t")
 
-        self.dataset = pd.read_csv(
-            dataset_path + "amazonreview_train.tsv", delimiter="\t", nrows=5
-        )
+        # Generate a random subset of the full dataset, from which we
+        # will generate further random subsets for our tests
+        cls.dataset = random_dataset_sample(full_dataset, nrows=100)
+        embedding_type_params = [True, False]
+        casing_params = [True, False]
+        embedder_params = [
+            (x, y) for x, y in product(embedding_type_params, casing_params)
+        ]
+        # Bert embedder objects to be tested
+        cls.bert_object_list = [
+            emb.Bert(
+                dataset=random_dataset_sample(cls.dataset, nrows=5),
+                is_sentence_embedding=params[0],
+                cased=params[1],
+            )
+            for params in embedder_params
+        ]
+        # FastText embedder objects to be tested
+        cls.fasttext_object_list = [
+            emb.FastText(
+                dataset=random_dataset_sample(cls.dataset, nrows=5),
+                is_sentence_embedding=params[0],
+                cased=params[1],
+            )
+            for params in embedder_params
+        ]
+        # FastText embedder objects with reduced dimensions to be tested
+        cls.fasttext_dim_object_list = [
+            emb.FastText(
+                dataset=random_dataset_sample(cls.dataset, nrows=5),
+                is_sentence_embedding=params[0],
+                cased=params[1],
+                dim=random.randint(1, 299),
+            )
+            for params in embedder_params
+        ]
 
-    def testBertSentenceUncasedDim(self):
+    def testDimensionOfBertEmbeddingsIsCorrect(self):
         """
-        Test that the dimension of the BERT uncased model sentence
-        embeddings is 768.
+        Test that the dimension of the BERT embeddings is 768.
         """
         dim_bert = 768
-        sentence_embeddings_df = Bert(self.dataset).compute_embeddings()
-        embeddings_list = list(sentence_embeddings_df["sentence_vectorised"])
-        for embedding in embeddings_list:
-            self.assertEqual(len(embedding), dim_bert)
+        for embedder in self.bert_object_list:
+            with self.subTest(embedder=embedder):
+                embedder.compute_embeddings()
+                vectorised_df = embedder.dataset
+                vectors = vectorised_df["sentence_vectorised"]
+                self.assertTrue(
+                    check_dimension(
+                        vectors, embedder.is_sentence_embedding, dim_bert
+                    )
+                )
 
-    def testBertSentenceCasedDim(self):
+    def testDimensionOfFastTextEmbeddingsIsCorrect(self):
         """
-        Test that the dimension of the BERT cased model sentence
-        embeddings is 768.
-        """
-        dim_bert = 768
-        sentence_embeddings_df = Bert(self.dataset, cased=True).compute_embeddings()
-        embeddings_list = list(sentence_embeddings_df["sentence_vectorised"])
-        for embedding in embeddings_list:
-            self.assertEqual(len(embedding), dim_bert)
-
-    def testBertWordUncasedDim(self):
-        """
-        Test that the dimension of the BERT uncased model word
-        embeddings is 768.
-        """
-        dim_bert = 768
-        word_embeddings_df = Bert(
-            self.dataset, sentence_embedding=False
-        ).compute_embeddings()
-        embeddings_list = list(word_embeddings_df["sentence_vectorised"])
-        for vector in embeddings_list:
-            for embedding in vector:
-                self.assertEqual(len(embedding), dim_bert)
-
-    def testBertWordCasedDim(self):
-        """
-        Test that the dimension of the BERT cased model word embeddings
-        is 768.
-        """
-        dim_bert = 768
-        word_embeddings_df = Bert(
-            self.dataset, cased=True, sentence_embedding=False
-        ).compute_embeddings()
-        embeddings_list = list(word_embeddings_df["sentence_vectorised"])
-        for vector in embeddings_list:
-            for embedding in vector:
-                self.assertEqual(len(embedding), dim_bert)
-
-    def testBertSentenceCasedUncased(self):
-        """
-        Test that the cased and uncased models of Bert generate
-        different sentence embeddings for the same sentence.
-        """
-        uncased_embeddings_df = Bert(self.dataset).compute_embeddings()
-        cased_embeddings_df = Bert(self.dataset, cased=True).compute_embeddings()
-        uncased_embeddings_list = list(uncased_embeddings_df["sentence_vectorised"])
-        cased_embeddings_list = list(cased_embeddings_df["sentence_vectorised"])
-        for i in range(len(uncased_embeddings_list)):
-            self.assertNotEqual(uncased_embeddings_list[i], cased_embeddings_list[i])
-
-    def testBertWordCasedUncased(self):
-        """
-        Test that the cased and uncased models of Bert generate
-        different word embeddings for the same words.
-        """
-        uncased_embeddings_df = Bert(
-            self.dataset, sentence_embedding=False
-        ).compute_embeddings()
-        cased_embeddings_df = Bert(
-            self.dataset, sentence_embedding=False, cased=True
-        ).compute_embeddings()
-        uncased_embeddings_list = list(uncased_embeddings_df["sentence_vectorised"])
-        cased_embeddings_list = list(cased_embeddings_df["sentence_vectorised"])
-        for i in range(len(uncased_embeddings_list)):
-            self.assertNotEqual(uncased_embeddings_list[i], cased_embeddings_list[i])
-
-    def testFastTextSentenceDim(self):
-        """
-        Tests that the generated FastText sentence embeddings have
-        dimension = 300, which is the FastText standard output
-        dimension. Note that there is no need to try cased and uncased
-        scenarios separately as in FastText the pretrained model is
-        cased and so the choice of cased or uncased only affects the
-        casefolding of the input, and has no impact on the output
-        dimension of the embeddings that are generated.
+        Test that the dimension of the FastText embeddings is 300.
         """
         dim_ft = 300
-        sentence_embeddings_df = FastText(self.dataset).compute_embeddings()
-        embeddings_list = list(sentence_embeddings_df["sentence_vectorised"])
-        for embedding in embeddings_list:
-            self.assertEqual(len(embedding), dim_ft)
+        for embedder in self.fasttext_object_list:
+            with self.subTest(embedder=embedder):
+                embedder.compute_embeddings()
+                vectorised_df = embedder.dataset
+                vectors = vectorised_df["sentence_vectorised"]
+                self.assertTrue(
+                    check_dimension(
+                        vectors, embedder.is_sentence_embedding, dim_ft
+                    )
+                )
 
-    def testFastTextWordDim(self):
+    def testFastTextReducesDimensionOfEmbeddingsCorrectly(self):
         """
-        Tests that the generated FastText word embeddings have
-        dimension = 300, which is the FastText standard output
-        dimension. Note that there is no need to try cased and uncased
-        scenarios separately as in FastText the pretrained model is
-        cased and so the choice of cased or uncased only affects the
-        casefolding of the input, and has no impact on the output
-        dimension of the embeddings that are generated.
+        Test that FastText's inbuilt dimensionality reduction tool
+        outputs embeddings of the desired target dimension dimension.
         """
-        dim_ft = 300
-        word_embeddings_df = FastText(
-            self.dataset, sentence_embedding=False
-        ).compute_embeddings()
-        embeddings_list = list(word_embeddings_df["sentence_vectorised"])
-        for vector in embeddings_list:
-            for embedding in vector:
-                self.assertEqual(len(embedding), dim_ft)
+        for embedder in self.fasttext_dim_object_list:
+            with self.subTest(embedder=embedder):
+                embedder.compute_embeddings()
+                vectorised_df = embedder.dataset
+                vectors = vectorised_df["sentence_vectorised"]
+                self.assertTrue(
+                    check_dimension(
+                        vectors, embedder.is_sentence_embedding, embedder.dim
+                    )
+                )
 
-    def testFastTextSentenceDimReduction(self):
+    def testSavedEmbeddingsCanBeReadCorrectly(self):
         """
-        Tests that FastText's tool for reducing the dimension of the
-        sentence embeddings works for a random dimension in the range
-        [1, 299].
+        Tests that our vectorised sentences are saved correctly on the
+        TSV files by ensuring that what we are reading from the file is
+        indeed a sentence or word embedding vector.
         """
-        out_dim = random.randint(1, 299)
-        sentence_embeddings_df = FastText(
-            self.dataset, dim=out_dim
-        ).compute_embeddings()
-        embeddings_list = list(sentence_embeddings_df["sentence_vectorised"])
-        for embedding in embeddings_list:
-            self.assertEqual(len(embedding), out_dim)
+        for embedder in self.bert_object_list + self.fasttext_object_list:
+            with self.subTest(embedder=embedder):
+                filename = "test_file"
+                file_path = os.path.join(current_path, filename + ".tsv")
+                embedder.save_embedding_dataset(
+                    path=current_path, filename=filename
+                )
+                saved_df = pd.read_csv(
+                    file_path,
+                    sep="\t",
+                    header=0,
+                )
 
-    def testFastTextWordDimReduction(self):
-        """
-        Tests that FastText's tool for reducing the dimension of the
-        word embeddings works for a random dimension in the range [1,
-        299].
-        """
-        out_dim = random.randint(1, 299)
-        sentence_embeddings_df = FastText(
-            self.dataset, sentence_embedding=False, dim=out_dim
-        ).compute_embeddings()
-        embeddings_list = list(sentence_embeddings_df["sentence_vectorised"])
-        for vector in embeddings_list:
-            for embedding in vector:
-                self.assertEqual(len(embedding), out_dim)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
 
-    def testReadSavedSentenceBertEmbeddings(self):
-        """
-        Tests whether the BERT sentence embeddings in the saved TSV
-        dataset can be read as lists without issues.
-        """
-        path = "./"
-        filename = "test_sentence_embeddings"
-        embedder = Bert(self.dataset)
-        embedder.compute_embeddings()
-        embedder.save_embedding_dataset(path, filename)
-        saved_sentence_embedding_df = pd.read_csv(
-            path + filename + ".tsv", sep="\t", header=0
-        )
-        sentence_embeddings_list = saved_sentence_embedding_df["sentence_vectorised"]
-        for vector in sentence_embeddings_list:
-            self.assertTrue(is_sentence_embedding(str_to_sentence_embedding(vector)))
-
-        file_path = path + filename + ".tsv"
-        if os.path.exists(file_path):
-            os.remove(file_path)
-
-    def testReadSavedWordBertEmbeddings(self):
-        """
-        Tests whether the BERT word embeddings in the saved TSV
-        dataset can be read as lists without issues.
-        """
-        path = "./"
-        filename = "test_word_embeddings"
-        embedder = Bert(self.dataset, sentence_embedding=False)
-        embedder.compute_embeddings()
-        embedder.save_embedding_dataset(path, filename)
-        saved_word_embedding_df = pd.read_csv(
-            path + filename + ".tsv", sep="\t", header=0
-        )
-        word_embeddings_list = saved_word_embedding_df["sentence_vectorised"]
-        for vector in word_embeddings_list:
-            self.assertTrue(is_word_embedding(str_to_word_embedding(vector)))
-
-        file_path = path + filename + ".tsv"
-        if os.path.exists(file_path):
-            os.remove(file_path)
-
-    def testReadSavedFastTextSentenceEmbeddings(self):
-        """
-        Tests whether the FastText sentence embeddings in the saved TSV
-        datasets can be read as lists without issues.
-        """
-        path = "./"
-        filename = "test_sentence_embeddings"
-        embedder = FastText(self.dataset)
-        embedder.compute_embeddings()
-        embedder.save_embedding_dataset(path, filename)
-        saved_sentence_embedding_df = pd.read_csv(
-            path + filename + ".tsv", sep="\t", header=0
-        )
-        sentence_embeddings_list = saved_sentence_embedding_df["sentence_vectorised"]
-        for vector in sentence_embeddings_list:
-            self.assertTrue(is_sentence_embedding(str_to_sentence_embedding(vector)))
-
-        file_path = path + filename + ".tsv"
-        if os.path.exists(file_path):
-            os.remove(file_path)
-
-    def testReadSavedFastTextWordEmbeddings(self):
-        """
-        Tests whether the FastText word embeddings in the saved TSV
-        datasets can be read as lists without issues.
-        """
-        path = "./"
-        filename = "test_word_embeddings"
-        embedder = FastText(self.dataset, sentence_embedding=False)
-        embedder.compute_embeddings()
-        embedder.save_embedding_dataset(path, filename)
-        saved_word_embedding_df = pd.read_csv(
-            path + filename + ".tsv", sep="\t", header=0
-        )
-        word_embeddings_list = saved_word_embedding_df["sentence_vectorised"]
-        for vector in word_embeddings_list:
-            self.assertTrue(is_word_embedding(str_to_word_embedding(vector)))
-
-        file_path = path + filename + ".tsv"
-        if os.path.exists(file_path):
-            os.remove(file_path)
+                vectors = saved_df["sentence_vectorised"].apply(parse_series)
+                if embedder.is_sentence_embedding:
+                    self.assertTrue(check_sentence_embedding_type(vectors))
+                else:
+                    self.assertTrue(check_word_embedding_type(vectors))
 
 
 if __name__ == "__main__":

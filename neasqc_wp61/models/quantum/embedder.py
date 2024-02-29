@@ -10,6 +10,7 @@ from abc import ABC, abstractmethod
 import fasttext as ft
 import fasttext.util as ftu
 import numpy as np
+import os
 import pandas as pd
 import torch
 
@@ -47,12 +48,12 @@ class Embedder(ABC):
             sentences to be vectorised.
         """
         self.dataset = dataset
-        try:
-            self.sentences = dataset["sentence"].tolist()
-        except KeyError:
-            raise ValueError(
-                "Sentences to be vectorised are not present in the dataset."
-            )
+        # try:
+        #    self.sentences = dataset["sentence"].tolist()
+        # except KeyError:
+        #    raise ValueError(
+        #        "Sentences to be vectorised are not present in the dataset."
+        #    )
         self.is_sentence_embedding = is_sentence_embedding
 
     @abstractmethod
@@ -244,7 +245,7 @@ class Bert(Embedder):
             other file extension).
         """
         self.dataset.to_csv(
-            path + "/" + filename + ".tsv", index=False, sep="\t"
+            os.path.join(path, filename) + ".tsv", index=False, sep="\t"
         )
 
 
@@ -289,7 +290,7 @@ class FastText(Embedder):
             larger than 300.
         """
         super().__init__(dataset, is_sentence_embedding)
-        if self.dim <= 300:
+        if dim <= 300:
             self.dim = dim
         else:
             raise ValueError("Error: dimension must be <= 300")
@@ -357,5 +358,5 @@ class FastText(Embedder):
             other file extension).
         """
         self.dataset.to_csv(
-            path + "/" + filename + ".tsv", index=False, sep="\t"
+            os.path.join(path, filename) + ".tsv", index=False, sep="\t"
         )
