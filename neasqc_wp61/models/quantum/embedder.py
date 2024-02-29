@@ -48,12 +48,6 @@ class Embedder(ABC):
             sentences to be vectorised.
         """
         self.dataset = dataset
-        # try:
-        #    self.sentences = dataset["sentence"].tolist()
-        # except KeyError:
-        #    raise ValueError(
-        #        "Sentences to be vectorised are not present in the dataset."
-        #    )
         self.is_sentence_embedding = is_sentence_embedding
 
     @abstractmethod
