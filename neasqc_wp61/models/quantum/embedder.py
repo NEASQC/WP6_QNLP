@@ -15,6 +15,7 @@ import pandas as pd
 import torch
 
 from pandas.core.api import DataFrame as DataFrame
+from sentence_transformers import SentenceTransformer
 from transformers import BertTokenizer, BertModel
 
 
@@ -149,7 +150,8 @@ class Bert(Embedder):
 
     def compute_embeddings(self, **kwargs) -> DataFrame:
         """
-        Creates BERT embeddings for sentences in a dataset.
+        Creates BERT embeddings for sentences in a dataset and adds them
+        to a new column in the dataset.
 
         Parameters
         ----------
@@ -157,14 +159,6 @@ class Bert(Embedder):
             Additional arguments to be passed to the BertTokenizer
             object. These can be found in
             https://huggingface.co/docs/transformers/main_classes/tokenizer#transformers.PreTrainedTokenizer.
-
-        Returns
-        -------
-        embeddings_df : pd.DataFrame
-            A pandas dataframe with the same structure as the original
-            dataset, but with an additional column containing the
-            BERT embeddings corresponding to the sentence contained in each
-            row.
         """
         embeddings_df = self.dataset.copy()
         embeddings_df.columns = ["class", "sentence", "sentence_structure"]
@@ -222,11 +216,9 @@ class Bert(Embedder):
 
         self.dataset = embeddings_df
 
-        return self.dataset
-
     def save_embedding_dataset(self, path: str, filename: str) -> None:
         """
-        Saves the dataset containing the BERT embeddings as a CSV file.
+        Saves the dataset containing the BERT embeddings as a TSV file.
 
         Parameters
         ----------
@@ -292,15 +284,8 @@ class FastText(Embedder):
 
     def compute_embeddings(self) -> DataFrame:
         """
-        Creates FastText embeddings for sentences in a dataset
-
-        Returns
-        -------
-        embeddings_df : pd.DataFrame
-            A pandas dataframe with the same structure as the original
-            dataset, but with an additional column containing the
-            FastText embeddings corresponding to the sentence contained
-            in each row.
+        Creates FastText embeddings for sentences in a dataset and adds
+        them to a new column in the dataset.
         """
         ftu.download_model("en", if_exists="ignore")
         model = ft.load_model("cc.en.300.bin")
@@ -334,11 +319,83 @@ class FastText(Embedder):
 
         self.dataset = embeddings_df
 
-        return self.dataset
+    def save_embedding_dataset(self, path: str, filename: str) -> None:
+        """
+        Saves the dataset containing the FastText embeddings as a TSV
+        file.
+
+        Parameters
+        ----------
+        path : str
+            The path to the location where the user wishes to save the
+            generated dataset containing the embeddings.
+         filename: str
+            The name with which the generated dataset containing the
+            embeddings will be saved (it should not include .csv or any
+            other file extension).
+        """
+        self.dataset.to_csv(
+            os.path.join(path, filename) + ".tsv", index=False, sep="\t"
+        )
+
+
+class Ember(Embedder):
+    """
+    Class for generating llmrails/ember-v1 embeddings.
+    """
+
+    def __init__(
+        self,
+        dataset: DataFrame,
+        is_sentence_embedding: bool = True,
+        cased: bool = False,
+    ) -> None:
+        """
+        Initialises the Ember embedder class
+
+        Parameters
+        ----------
+        dataset : pd.DataFrame
+            Pandas dataset. Each row of the dataset correspods to a
+            sentence.
+        is_sentence_embedding : bool
+            States whether we want to produce a sentence embedding or
+            word embedding vector for each sentence in the dataset. True
+            is for sentence embedding, False is for word embedding.
+        """
+        super().__init__(dataset, is_sentence_embedding)
+
+    def compute_embeddings(self) -> None:
+        """
+        Creates ember-v1 embeddings for sentences in a dataset and adds them
+        as a new column in the dataset.
+        """
+        embeddings_df = self.dataset.copy()
+        embeddings_df.columns = ["class", "sentence", "sentence_structure"]
+
+        model = SentenceTransformer("llmrails/ember-v1")
+        sentences = embeddings_df.sentence.values.tolist()
+
+        if self.is_sentence_embedding:
+            vectorised_sentence_list = model.encode(sentences).tolist()
+            embeddings_df["sentence_vectorised"] = vectorised_sentence_list
+
+        else:
+            vectorised_sentence_list = []
+            for sentence in sentences:
+                word_embeddings_list = []
+                for word in sentence.split():
+                    word_embedding = model.encode(word).tolist()
+                    word_embeddings_list.append(word_embedding)
+                vectorised_sentence_list.append(word_embeddings_list)
+
+            embeddings_df["sentence_vectorised"] = vectorised_sentence_list
+
+        self.dataset = embeddings_df
 
     def save_embedding_dataset(self, path: str, filename: str) -> None:
         """
-        Saves the dataset containing the FastText embeddings as a CSV
+        Saves the dataset containing the ember-v1 embeddings as a TSV
         file.
 
         Parameters

@@ -213,6 +213,14 @@ class TestEmbedder(unittest.TestCase):
             )
             for params in embedder_params
         ]
+        # Ember embedder objects to be tested
+        cls.ember_object_list = [
+            emb.Ember(
+                dataset=random_dataset_sample(cls.dataset, nrows=5),
+                is_sentence_embedding=param,
+            )
+            for param in embedding_type_params
+        ]
 
     def testDimensionOfBertEmbeddingsIsCorrect(self):
         """
@@ -246,6 +254,22 @@ class TestEmbedder(unittest.TestCase):
                     )
                 )
 
+    def testDimensionOfEmberEmbeddingsIsCorrect(self):
+        """
+        Test that the dimension of the ember-v1 embeddings is 1024.
+        """
+        dim_ember = 1024
+        for embedder in self.ember_object_list:
+            with self.subTest(embedder=embedder):
+                embedder.compute_embeddings()
+                vectorised_df = embedder.dataset
+                vectors = vectorised_df["sentence_vectorised"]
+                self.assertTrue(
+                    check_dimension(
+                        vectors, embedder.is_sentence_embedding, dim_ember
+                    )
+                )
+
     def testFastTextReducesDimensionOfEmbeddingsCorrectly(self):
         """
         Test that FastText's inbuilt dimensionality reduction tool
@@ -268,7 +292,12 @@ class TestEmbedder(unittest.TestCase):
         TSV files by ensuring that what we are reading from the file is
         indeed a sentence or word embedding vector.
         """
-        for embedder in self.bert_object_list + self.fasttext_object_list:
+        embedders = (
+            self.bert_object_list
+            + self.fasttext_object_list
+            + self.ember_object_list
+        )
+        for embedder in embedders:
             with self.subTest(embedder=embedder):
                 filename = "test_file"
                 file_path = os.path.join(current_path, filename + ".tsv")
