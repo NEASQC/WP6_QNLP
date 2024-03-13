@@ -252,8 +252,8 @@ class TestEmbedder(unittest.TestCase):
 
         for embedder in self.embedders_list:
             with self.subTest(embedder=embedder):
-                embedder.compute_embeddings()
-                embedder.add_embeddings_to_dataset()
+                embeddings = embedder.compute_embeddings()
+                embedder.add_embeddings_to_dataset(embeddings)
                 vectorised_df = embedder.dataset
                 vectors = vectorised_df["sentence_vectorised"]
 
@@ -282,8 +282,8 @@ class TestEmbedder(unittest.TestCase):
         """
         for embedder in self.fasttext_dim_object_list:
             with self.subTest(embedder=embedder):
-                embedder.compute_embeddings()
-                embedder.add_embeddings_to_dataset()
+                embeddings = embedder.compute_embeddings()
+                embedder.add_embeddings_to_dataset(embeddings)
                 vectorised_df = embedder.dataset
                 vectors = vectorised_df["sentence_vectorised"]
                 self.assertTrue(
@@ -341,7 +341,7 @@ class TestEmbedder(unittest.TestCase):
                     ].values.tolist()
                     self.assertNotEqual(embedding_list_1, embedding_list_2)
 
-    def checkAddingEmbeddingsToDatasetRaisesAttributeErrorIfEmbeddingsNotComputed(
+    def checkAddingEmbeddingsToDatasetRaisesRuntimeErrorIfEmbeddingsNotComputed(
         self,
     ):
         """
@@ -352,8 +352,35 @@ class TestEmbedder(unittest.TestCase):
         for embedder in self.error_embedder_list:
             with self.subTest(embedder=embedder):
                 self.assertRaises(
-                    AttributeError, embedder.add_embedding_to_dataset()
+                    RuntimeError,
+                    embedder.add_embedding_to_dataset(embeddings=[]),
                 )
+
+    def checkAddingEmbeddingsToDatasetRaisesTypeErrorIfEmbeddingsNotList(
+        self,
+    ):
+        """
+        Checks that if one calls the add_embeddings_to_dataset method
+        with an embeddings parameter that is not a list, it raises a
+        TypeError.
+        """
+        invalid_types = [
+            123,
+            "string",
+            (1, 2, 3),
+            {"a": 1, "b": 2},
+            True,
+            None,
+        ]
+        for embedder in self.error_embedder_list:
+            with self.subTest(embedder=embedder, invalid_type=invalid_type):
+                for invalid_type in invalid_types:
+                    self.assertRaises(
+                        TypeError,
+                        embedder.add_embedding_to_dataset(
+                            embeddings=invalid_type
+                        ),
+                    )
 
     def checkSavingEmbeddingsDatasetRaisesAttributeErrorIfEmbeddingsNotAddedToDataset(
         self,
@@ -366,7 +393,6 @@ class TestEmbedder(unittest.TestCase):
 
         for embedder in self.error_embedder_list:
             with self.subTest(embedder=embedder):
-                embedder.compute_embeddings()
                 self.assertRaises(
                     ValueError, embedder.save_embedding_dataset()
                 )
