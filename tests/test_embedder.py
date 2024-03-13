@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import unittest
 
-from itertools import product
+from itertools import product, combinations
 from typing import Union
 
 current_path = os.path.dirname(os.path.abspath(__file__))
@@ -222,51 +222,56 @@ class TestEmbedder(unittest.TestCase):
             for param in embedding_type_params
         ]
 
-    def testDimensionOfBertEmbeddingsIsCorrect(self):
+        # Group all different embedders into a list for testing
+        cls.embedders_list = (
+            cls.bert_object_list
+            + cls.fasttext_object_list
+            + cls.ember_object_list
+        )
+
+        # Create a list of embedder objects only for error raising tests
+        cls.error_embedder_list = [
+            emb.Bert(dataset=random_dataset_sample(cls.dataset, nrows=5)),
+            emb.FastText(dataset=random_dataset_sample(cls.dataset, nrows=5)),
+            emb.Ember(dataset=random_dataset_sample(cls.dataset, nrows=5)),
+        ]
+
+    def testDimensionOfEmbeddingsIsCorrect(self):
         """
-        Test that the dimension of the BERT embeddings is 768.
+        Test that the dimension of the embeddings is correct.
+
+        Raises
+        ------
+        ValueError
+            If the embedder object type (i.e. Bert, FastText, etc.) is
+            not recognised.
         """
         dim_bert = 768
-        for embedder in self.bert_object_list:
-            with self.subTest(embedder=embedder):
-                embedder.compute_embeddings()
-                vectorised_df = embedder.dataset
-                vectors = vectorised_df["sentence_vectorised"]
-                self.assertTrue(
-                    check_dimension(
-                        vectors, embedder.is_sentence_embedding, dim_bert
-                    )
-                )
-
-    def testDimensionOfFastTextEmbeddingsIsCorrect(self):
-        """
-        Test that the dimension of the FastText embeddings is 300.
-        """
         dim_ft = 300
-        for embedder in self.fasttext_object_list:
-            with self.subTest(embedder=embedder):
-                embedder.compute_embeddings()
-                vectorised_df = embedder.dataset
-                vectors = vectorised_df["sentence_vectorised"]
-                self.assertTrue(
-                    check_dimension(
-                        vectors, embedder.is_sentence_embedding, dim_ft
-                    )
-                )
-
-    def testDimensionOfEmberEmbeddingsIsCorrect(self):
-        """
-        Test that the dimension of the ember-v1 embeddings is 1024.
-        """
         dim_ember = 1024
-        for embedder in self.ember_object_list:
+
+        for embedder in self.embedders_list:
             with self.subTest(embedder=embedder):
                 embedder.compute_embeddings()
+                embedder.add_embeddings_to_dataset()
                 vectorised_df = embedder.dataset
                 vectors = vectorised_df["sentence_vectorised"]
+
+                if embedder in self.bert_object_list:
+                    dim = dim_bert
+                elif embedder in self.fasttext_object_list:
+                    dim = dim_ft
+                elif embedder in self.ember_object_list:
+                    dim = dim_ember
+                else:
+                    raise ValueError(
+                        "Error: embedder type not recognised."
+                        "Make sure this embedder is added to its appropriate embedder type list in setUpClass!"
+                    )
+
                 self.assertTrue(
                     check_dimension(
-                        vectors, embedder.is_sentence_embedding, dim_ember
+                        vectors, embedder.is_sentence_embedding, dim
                     )
                 )
 
@@ -278,6 +283,7 @@ class TestEmbedder(unittest.TestCase):
         for embedder in self.fasttext_dim_object_list:
             with self.subTest(embedder=embedder):
                 embedder.compute_embeddings()
+                embedder.add_embeddings_to_dataset()
                 vectorised_df = embedder.dataset
                 vectors = vectorised_df["sentence_vectorised"]
                 self.assertTrue(
@@ -292,12 +298,7 @@ class TestEmbedder(unittest.TestCase):
         TSV files by ensuring that what we are reading from the file is
         indeed a sentence or word embedding vector.
         """
-        embedders = (
-            self.bert_object_list
-            + self.fasttext_object_list
-            + self.ember_object_list
-        )
-        for embedder in embedders:
+        for embedder in self.embedders_list:
             with self.subTest(embedder=embedder):
                 filename = "test_file"
                 file_path = os.path.join(current_path, filename + ".tsv")
@@ -318,6 +319,57 @@ class TestEmbedder(unittest.TestCase):
                     self.assertTrue(check_sentence_embedding_type(vectors))
                 else:
                     self.assertTrue(check_word_embedding_type(vectors))
+
+    def testSentenceEmbeddingsForAGivenSentenceAreDifferentForDifferentEmbeddingTypes(
+        self,
+    ):
+        """
+        Checks that different vectorisation mechanisms yield different
+        embedding vectors.
+        """
+        for embedder1, embedder2 in combinations(self.embedders_list, 2):
+            if (
+                embedder1.is_sentence_embedding
+                == embedder2.is_sentence_embedding
+            ):
+                with self.subTest(embedder1=embedder1, embedder2=embedder2):
+                    embedding_list_1 = embedder1.dataset[
+                        "sentence_vectorised"
+                    ].values.tolist()
+                    embedding_list_2 = embedder2.dataset[
+                        "sentence_vectorised"
+                    ].values.tolist()
+                    self.assertNotEqual(embedding_list_1, embedding_list_2)
+
+    def checkAddingEmbeddingsToDatasetRaisesAttributeErrorIfEmbeddingsNotComputed(
+        self,
+    ):
+        """
+        Checks that if one calls the add_embeddings_to_dataset method
+        without previously computing the embeddings by calling
+        compute_embeddings, an attribute error is raised.
+        """
+        for embedder in self.error_embedder_list:
+            with self.subTest(embedder=embedder):
+                self.assertRaises(
+                    AttributeError, embedder.add_embedding_to_dataset()
+                )
+
+    def checkSavingEmbeddingsDatasetRaisesAttributeErrorIfEmbeddingsNotAddedToDataset(
+        self,
+    ):
+        """
+        Checks that if one calls the save_embeddings_dataset method
+        without previously adding the embeddings to the dataset by
+        calling add_embeddings_to_dataset, an attribute error is raised.
+        """
+
+        for embedder in self.error_embedder_list:
+            with self.subTest(embedder=embedder):
+                embedder.compute_embeddings()
+                self.assertRaises(
+                    ValueError, embedder.save_embedding_dataset()
+                )
 
 
 if __name__ == "__main__":
