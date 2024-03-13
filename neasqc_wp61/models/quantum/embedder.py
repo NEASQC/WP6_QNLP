@@ -17,6 +17,7 @@ import torch
 from pandas.core.api import DataFrame as DataFrame
 from sentence_transformers import SentenceTransformer
 from transformers import BertTokenizer, BertModel
+from typing import Union
 
 
 class Embedder(ABC):
@@ -41,28 +42,22 @@ class Embedder(ABC):
             embedding or word embedding vector for each sentence in the
             dataset. True is for sentence embedding, False is for word
             embedding.
-
-        Raises
-        ------
-        ValueError
-            If the dataset does not contain a "sentence" column with the
-            sentences to be vectorised.
         """
         self.dataset = dataset
         self.is_sentence_embedding = is_sentence_embedding
 
     @abstractmethod
-    def compute_embeddings(self) -> DataFrame:
+    def compute_embeddings(self) -> Union[list[float], list[list[float]]]:
         """
-        Creates embeddings for sentences in a dataset.
+        Computes vector embeddings for sentences in a dataset.
 
         Returns
         -------
-        pd.DataFrame
-            A pandas dataframe with the same structure as the original
-            dataset, but with an additional column containing the
-            embeddings corresponding to the sentence contained in each
-            row.
+        Union[list[float], list[list[float]]]
+            A list containing the vectorised representation of the
+            sentences in the dataset. A list of floats in the case of a
+            sentence embedding, and a list of float lists in the case of
+            word embeddings.
 
         Raises
         ------
@@ -71,6 +66,30 @@ class Embedder(ABC):
         """
         raise NotImplementedError(
             "Subclasses must implement compute_embeddings method."
+        )
+
+    @abstractmethod
+    def add_embeddings_to_dataset(self) -> None:
+        """
+        Adds the calculated sentence vectors to a new column in our
+        dataset.
+
+        Raises
+        ------
+        AttributeError
+            If the embeddings have not been previously computed.
+        NotImplementedError
+            If the method has not been implemented by subclasses.
+        """
+        try:
+            _ = self.embeddings
+        except AttributeError:
+            raise AttributeError(
+                "Attribute 'embeddings' not found. "
+                "Make sure 'embeddings' initialised by calling compute_embeddings."
+            )
+        raise NotImplementedError(
+            "Subclasses must implement add_embedding_to_dataset method."
         )
 
     @abstractmethod
@@ -98,13 +117,12 @@ class Embedder(ABC):
             If the method has not been implemented by subclasses.
         """
         try:
-            self.vectorised_sentences = self.dataset[
-                "sentence_vectorised"
-            ].tolist()
+            _ = self.dataset["sentence_vectorised"].tolist()
         except KeyError:
             raise ValueError(
                 "This dataset has not been vectorised. "
-                "You must call compute_embeddings before attempting to save the dataset."
+                "You must call compute_embeddings to create the embeddings and then add them "
+                "to the dataset with add_embedding_dataset before attempting to save the dataset."
             )
         raise NotImplementedError(
             "Subclasses must implement save_embedding_dataset method."
@@ -148,7 +166,7 @@ class Bert(Embedder):
         self.cased = cased
         self.kwargs = kwargs
 
-    def compute_embeddings(self, **kwargs) -> DataFrame:
+    def compute_embeddings(self, **kwargs) -> None:
         """
         Creates BERT embeddings for sentences in a dataset and adds them
         to a new column in the dataset.
@@ -189,8 +207,6 @@ class Bert(Embedder):
                     [tensor.item() for tensor in sentence_embedding]
                 )
 
-            embeddings_df["sentence_vectorised"] = vectorised_sentence_list
-
         else:
             vectorised_sentence_list = []
             for sentence in embeddings_df.sentence.values:
@@ -212,9 +228,14 @@ class Bert(Embedder):
                     sentence_word_embeddings.append(word_embedding.tolist())
                 vectorised_sentence_list.append(sentence_word_embeddings)
 
-            embeddings_df["sentence_vectorised"] = vectorised_sentence_list
+        self.embeddings = vectorised_sentence_list
 
-        self.dataset = embeddings_df
+    def add_embeddings_to_dataset(self) -> None:
+        """
+        Adds the calculated BERT embeddings to a new column in our
+        dataset.
+        """
+        self.dataset["sentence_vectorised"] = self.embeddings
 
     def save_embedding_dataset(self, path: str, filename: str) -> None:
         """
@@ -282,7 +303,7 @@ class FastText(Embedder):
             raise ValueError("Error: dimension must be <= 300")
         self.cased = cased
 
-    def compute_embeddings(self) -> DataFrame:
+    def compute_embeddings(self) -> None:
         """
         Creates FastText embeddings for sentences in a dataset and adds
         them to a new column in the dataset.
@@ -304,8 +325,6 @@ class FastText(Embedder):
                 ).tolist()
                 vectorised_sentence_list.append(sentence_embedding)
 
-            embeddings_df["sentence_vectorised"] = vectorised_sentence_list
-
         else:
             vectorised_sentence_list = []
             for sentence in embeddings_df.sentence.values:
@@ -315,9 +334,14 @@ class FastText(Embedder):
                     word_embeddings_list.append(word_embedding)
                 vectorised_sentence_list.append(word_embeddings_list)
 
-            embeddings_df["sentence_vectorised"] = vectorised_sentence_list
+        self.embeddings = vectorised_sentence_list
 
-        self.dataset = embeddings_df
+    def add_embeddings_to_dataset(self) -> None:
+        """
+        Adds the calculated FastText embeddings to a new column in our
+        dataset.
+        """
+        self.dataset["sentence_vectorised"] = self.embeddings
 
     def save_embedding_dataset(self, path: str, filename: str) -> None:
         """
@@ -348,7 +372,6 @@ class Ember(Embedder):
         self,
         dataset: DataFrame,
         is_sentence_embedding: bool = True,
-        cased: bool = False,
     ) -> None:
         """
         Initialises the Ember embedder class
@@ -378,7 +401,6 @@ class Ember(Embedder):
 
         if self.is_sentence_embedding:
             vectorised_sentence_list = model.encode(sentences).tolist()
-            embeddings_df["sentence_vectorised"] = vectorised_sentence_list
 
         else:
             vectorised_sentence_list = []
@@ -389,9 +411,14 @@ class Ember(Embedder):
                     word_embeddings_list.append(word_embedding)
                 vectorised_sentence_list.append(word_embeddings_list)
 
-            embeddings_df["sentence_vectorised"] = vectorised_sentence_list
+        self.embeddings = vectorised_sentence_list
 
-        self.dataset = embeddings_df
+    def add_embeddings_to_dataset(self) -> None:
+        """
+        Adds the calculated ember-v1 embeddings to a new column in our
+        dataset.
+        """
+        self.dataset["sentence_vectorised"] = self.embeddings
 
     def save_embedding_dataset(self, path: str, filename: str) -> None:
         """
