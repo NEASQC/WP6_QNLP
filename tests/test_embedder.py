@@ -393,9 +393,7 @@ class TestEmbedder(unittest.TestCase):
 
         for embedder in self.error_embedder_list:
             with self.subTest(embedder=embedder):
-                self.assertRaises(
-                    ValueError, embedder.save_embedding_dataset()
-                )
+                self.assertRaises(TypeError, embedder.save_embedding_dataset())
 
 
 if __name__ == "__main__":

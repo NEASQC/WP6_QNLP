@@ -152,9 +152,9 @@ class Embedder(ABC):
             If the method has not been implemented by subclasses.
         """
         try:
-            _ = self.dataset["sentence_vectorised"].tolist()
+            self.dataset["sentence_vectorised"]
         except KeyError:
-            raise ValueError(
+            raise KeyError(
                 "This dataset has not been vectorised. "
                 "You must call compute_embeddings to create the embeddings and then add them "
                 "to the dataset with add_embedding_dataset before attempting to save the dataset."
