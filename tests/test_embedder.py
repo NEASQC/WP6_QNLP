@@ -252,8 +252,7 @@ class TestEmbedder(unittest.TestCase):
 
         for embedder in self.embedders_list:
             with self.subTest(embedder=embedder):
-                embeddings = embedder.compute_embeddings()
-                embedder.add_embeddings_to_dataset(embeddings)
+                embedder.vectorise_dataset()
                 vectorised_df = embedder.dataset
                 vectors = vectorised_df["sentence_vectorised"]
 
@@ -282,8 +281,7 @@ class TestEmbedder(unittest.TestCase):
         """
         for embedder in self.fasttext_dim_object_list:
             with self.subTest(embedder=embedder):
-                embeddings = embedder.compute_embeddings()
-                embedder.add_embeddings_to_dataset(embeddings)
+                embedder.vectorise_dataset()
                 vectorised_df = embedder.dataset
                 vectors = vectorised_df["sentence_vectorised"]
                 self.assertTrue(
@@ -353,7 +351,7 @@ class TestEmbedder(unittest.TestCase):
             with self.subTest(embedder=embedder):
                 self.assertRaises(
                     RuntimeError,
-                    embedder.add_embedding_to_dataset(embeddings=[]),
+                    embedder._add_embedding_to_dataset(embeddings=[]),
                 )
 
     def checkAddingEmbeddingsToDatasetRaisesTypeErrorIfEmbeddingsNotList(
@@ -377,7 +375,7 @@ class TestEmbedder(unittest.TestCase):
                 for invalid_type in invalid_types:
                     self.assertRaises(
                         TypeError,
-                        embedder.add_embedding_to_dataset(
+                        embedder._add_embedding_to_dataset(
                             embeddings=invalid_type
                         ),
                     )

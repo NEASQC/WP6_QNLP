@@ -39,11 +39,14 @@ class Embedder(ABC):
 
     Methods
     -------
-    compute_embeddings:
-        Computes embedding vectors for the sentences in the dataset.
-    add_embeddings_to_dataset:
-        Adds the vector embeddings to a new column 'sentence_vectorised'
+    _compute_embeddings:
+        Private method. Computes embedding vectors for the sentences in the dataset.
+    _add_embeddings_to_dataset:
+        Private method. Adds the vector embeddings to a new column 'sentence_vectorised'
         in the dataset.
+    vectorise_dataset:
+        Calls _compute_embeddings, followed by
+        _add_embedding_to_dataset.
     save_embedding_dataset:
         Writes the dataset containing the embeddings to a TSV file.
     """
@@ -70,11 +73,12 @@ class Embedder(ABC):
         self.embeddings_computed = False
 
     @abstractmethod
-    def compute_embeddings(
+    def _compute_embeddings(
         self,
     ) -> Union[list[list[float]], list[list[list[float]]]]:
         """
-        Computes vector embeddings for sentences in a dataset.
+        Private method. Computes vector embeddings for sentences in a
+        dataset.
 
         Returns
         -------
@@ -90,16 +94,16 @@ class Embedder(ABC):
             If the method has not been implemented by subclasses.
         """
         raise NotImplementedError(
-            "Subclasses must implement compute_embeddings method."
+            "Subclasses must implement _compute_embeddings method."
         )
 
     @abstractmethod
-    def add_embeddings_to_dataset(
+    def _add_embeddings_to_dataset(
         self, embeddings: Union[list[list[float]], list[list[list[float]]]]
     ) -> None:
         """
-        Adds the calculated sentence vectors to a new column in our
-        dataset.
+        Private method. Adds the calculated sentence vectors to a new
+        column in our dataset.
 
         Parameters
         ----------
@@ -124,7 +128,16 @@ class Embedder(ABC):
         if not isinstance(embeddings, list):
             raise TypeError("embeddings must be of type list")
         raise NotImplementedError(
-            "Subclasses must implement add_embedding_to_dataset method."
+            "Subclasses must implement _add_embedding_to_dataset method."
+        )
+
+    @abstractmethod
+    def vectorise_dataset(self) -> None:
+        """
+        Computes the embeddings and adds them to the dataset.
+        """
+        raise NotImplementedError(
+            "Subclasses must implement vectorise_dataset method."
         )
 
     @abstractmethod
@@ -201,12 +214,12 @@ class Bert(Embedder):
         self.cased = cased
         self.kwargs = kwargs
 
-    def compute_embeddings(
+    def _compute_embeddings(
         self, **kwargs
     ) -> Union[list[list[float]], list[list[list[float]]]]:
         """
-        Creates BERT embeddings for sentences in a dataset and adds them
-        to a new column in the dataset.
+        Private method. Creates BERT embeddings for sentences in a
+        dataset and adds them to a new column in the dataset.
 
         Parameters
         ----------
@@ -275,12 +288,12 @@ class Bert(Embedder):
 
         return vectorised_sentence_list
 
-    def add_embeddings_to_dataset(
+    def _add_embeddings_to_dataset(
         self, embeddings: Union[list[list[float]], list[list[list[float]]]]
     ) -> None:
         """
-        Adds the calculated BERT embeddings to a new column in our
-        dataset.
+        Private method. Adds the calculated BERT embeddings to a new
+        column in our dataset.
 
         Parameters
         ----------
@@ -289,6 +302,13 @@ class Bert(Embedder):
             the dataset.
         """
         self.dataset["sentence_vectorised"] = embeddings
+
+    def vectorise_dataset(self) -> None:
+        """
+        Computes the BERT embeddings and adds them to the dataset.
+        """
+        embeddings = self._compute_embeddings()
+        self._add_embeddings_to_dataset(embeddings)
 
     def save_embedding_dataset(self, path: str, filename: str) -> None:
         """
@@ -356,12 +376,12 @@ class FastText(Embedder):
             raise ValueError("Error: dimension must be <= 300")
         self.cased = cased
 
-    def compute_embeddings(
+    def _compute_embeddings(
         self,
     ) -> Union[list[list[float]], list[list[list[float]]]]:
         """
-        Creates FastText embeddings for sentences in a dataset and adds
-        them to a new column in the dataset.
+        Private method. Creates FastText embeddings for sentences in a
+        dataset and adds them to a new column in the dataset.
 
         Returns
         -------
@@ -399,12 +419,12 @@ class FastText(Embedder):
 
         return vectorised_sentence_list
 
-    def add_embeddings_to_dataset(
+    def _add_embeddings_to_dataset(
         self, embeddings: Union[list[list[float]], list[list[list[float]]]]
     ) -> None:
         """
-        Adds the calculated FastText embeddings to a new column in our
-        dataset.
+        Private method. Adds the calculated FastText embeddings to a new
+        column in our dataset.
 
         Parameters
         ----------
@@ -413,6 +433,13 @@ class FastText(Embedder):
             the dataset.
         """
         self.dataset["sentence_vectorised"] = embeddings
+
+    def vectorise_dataset(self) -> None:
+        """
+        Computes the FastText embeddings and adds them to the dataset.
+        """
+        embeddings = self._compute_embeddings()
+        self._add_embeddings_to_dataset(embeddings)
 
     def save_embedding_dataset(self, path: str, filename: str) -> None:
         """
@@ -459,12 +486,12 @@ class Ember(Embedder):
         """
         super().__init__(dataset, is_sentence_embedding)
 
-    def compute_embeddings(
+    def _compute_embeddings(
         self,
     ) -> Union[list[list[float]], list[list[list[float]]]]:
         """
-        Creates ember-v1 embeddings for sentences in a dataset and adds them
-        as a new column in the dataset.
+        Private method. Creates ember-v1 embeddings for sentences in a
+        dataset and adds them as a new column in the dataset.
 
         Returns
         -------
@@ -494,10 +521,10 @@ class Ember(Embedder):
 
         return vectorised_sentence_list
 
-    def add_embeddings_to_dataset(self, embeddings) -> None:
+    def _add_embeddings_to_dataset(self, embeddings) -> None:
         """
-        Adds the calculated ember-v1 embeddings to a new column in our
-        dataset.
+        Private method. Adds the calculated ember-v1 embeddings to a new
+        column in our dataset.
 
         Parameters
         ----------
@@ -506,6 +533,13 @@ class Ember(Embedder):
             the dataset.
         """
         self.dataset["sentence_vectorised"] = embeddings
+
+    def vectorise_dataset(self) -> None:
+        """
+        Computes the ember-v1 embeddings and adds them to the dataset.
+        """
+        embeddings = self._compute_embeddings()
+        self._add_embeddings_to_dataset(embeddings)
 
     def save_embedding_dataset(self, path: str, filename: str) -> None:
         """
