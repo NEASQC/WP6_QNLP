@@ -60,12 +60,27 @@ class Circuit(ABC):
         self.n_layers = n_layers
         self.axis_embedding = axis_embedding
         self.observables = observables
-        if not all(x < self.n_qubits for x in self.observables.keys()): 
-            raise ValueError('Qubit index out of range.')
+        if output_probabilities == True:
+            measured_qubit_list = list(self.observables.keys())
+            operators_list = list(self.observables.values())
+            for i, (qubit, operator) in enumerate(zip(
+                measured_qubit_list,
+                operators_list
+            )):
+                if i == 0:
+                    self.operators_tensor_product = operator(qubit)
+                else:
+                    self.operators_tensor_product @= operator(qubit)
         self.device = qml.device(
             device_name, wires=self.n_qubits, **kwargs)
         self.output_probabilities = output_probabilities
         self.data_rescaling = data_rescaling
+        if self.n_qubits < 2:
+            raise ValueError(
+                'The number of qubits must be greater or equal 2.'
+            )
+        if not all(x < self.n_qubits for x in self.observables.keys()): 
+            raise ValueError('Qubit index out of range.')
 
     def rescale_circuit_inputs(self, input)-> None:
         """
@@ -245,9 +260,7 @@ class Sim14(Circuit):
                 qml.CRX(params[i, j + idx -1], wires= [ctrl, target])
 
         if self.output_probabilities:
-            return [qml.probs(
-                 op =self.observables[k](k)) for k in self.observables.keys()
-            ]
+            return [qml.probs(op = self.operators_tensor_product)]
         else:
             return [qml.expval(
                 self.observables[k](k)) for k in self.observables.keys()
@@ -351,9 +364,7 @@ class Sim15(Circuit):
                 qml.CNOT(wires= [ctrl, target])
 
         if self.output_probabilities:
-            return [qml.probs(
-                 op =self.observables[k](k)) for k in self.observables.keys()
-            ]
+            return [qml.probs(op = self.operators_tensor_product)]
         else:
             return [qml.expval(
                 self.observables[k](k)) for k in self.observables.keys()
@@ -450,9 +461,7 @@ class StronglyEntangling(Circuit):
             qml.CNOT(wires = [self.n_qubits - 1, 0])
 
         if self.output_probabilities:
-            return [qml.probs(
-                 op =self.observables[k](k)) for k in self.observables.keys()
-            ]
+            return [qml.probs(op = self.operators_tensor_product)]
         else:
             return [qml.expval(
                 self.observables[k](k)) for k in self.observables.keys()

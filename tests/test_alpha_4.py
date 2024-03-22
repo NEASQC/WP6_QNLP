@@ -14,7 +14,7 @@ current_path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(current_path + "/../neasqc_wp61/models/quantum/")
 sys.path.append(current_path + "/../neasqc_wp61/models/quantum/alpha_3_4/")
 import circuit as circ
-from alpha_3 import Alpha3 as alpha_3
+from alpha_3_4 import Alpha4 as alpha_4
 from utils import get_labels_one_hot_encoding
 
 test_args = {
@@ -22,7 +22,7 @@ test_args = {
     "n_vectors_train": 15,
     "n_vectors_val": 5,
     "n_vectors_test": 5,
-    "n_classes_limit": 5,
+    "n_classes_limit": 4,
     "n_layers_circuit_limit": 3,
     "vectors_limit_value": 1000,
     "vectors_size_limit": 8,
@@ -107,7 +107,7 @@ def set_up_test_parameters(test_args: dict) -> list:
                     n_layers,
                     axis_embedding,
                     observables,
-                    output_probabilities=False,
+                    output_probabilities=True,
                 )
                 epochs = np.random.randint(1, test_args["epochs_limit"])
                 lr = np.random.uniform(
@@ -116,7 +116,7 @@ def set_up_test_parameters(test_args: dict) -> list:
                 batch_size = np.random.randint(
                     1, test_args["batch_size_limit"]
                 )
-                alpha_3_model = alpha_3(
+                alpha_4_model = alpha_4(
                     vectors,
                     labels_one_hot_encoding,
                     n_classes,
@@ -129,19 +129,18 @@ def set_up_test_parameters(test_args: dict) -> list:
                     "cpu",
                     test_args["seed"],
                     init,
-                    init,
                 )
-                alpha_3_model.train()
-                alpha_3_model.compute_preds_probs_test()
-                loss_train = alpha_3_model.loss_train
-                loss_val = alpha_3_model.loss_val
-                preds_train = alpha_3_model.preds_train
-                preds_val = alpha_3_model.preds_val
-                preds_test = alpha_3_model.preds_test
-                probs_train = alpha_3_model.probs_train
-                probs_val = alpha_3_model.probs_val
-                probs_test = alpha_3_model.probs_test
-                params_run.append(alpha_3_model)
+                alpha_4_model.train()
+                alpha_4_model.compute_preds_probs_test()
+                loss_train = alpha_4_model.loss_train
+                loss_val = alpha_4_model.loss_val
+                preds_train = alpha_4_model.preds_train
+                preds_val = alpha_4_model.preds_val
+                preds_test = alpha_4_model.preds_test
+                probs_train = alpha_4_model.probs_train
+                probs_val = alpha_4_model.probs_val
+                probs_test = alpha_4_model.probs_test
+                params_run.append(alpha_4_model)
                 params_run.extend(
                     [
                         vectors,
@@ -153,7 +152,6 @@ def set_up_test_parameters(test_args: dict) -> list:
                         batch_size,
                         lr,
                         test_args["seed"],
-                        init,
                         init,
                         vector_length,
                         ansatz,
@@ -175,7 +173,7 @@ def set_up_test_parameters(test_args: dict) -> list:
 
 
 names_parameters = (
-    "alpha_3_model",
+    "alpha_4_model",
     "vectors",
     "labels_one_hot_encoding",
     "n_classes",
@@ -186,7 +184,6 @@ names_parameters = (
     "lr",
     "seed",
     "init_qubits",
-    "init_mlp",
     "vector_length",
     "ansatz",
     "n_layers",
@@ -204,7 +201,7 @@ names_parameters = (
 
 
 @parameterized_class(names_parameters, set_up_test_parameters(test_args))
-class TestAlpha3(unittest.TestCase):
+class TestAlpha4(unittest.TestCase):
     def test_model_raises_errors_if_number_of_qubits_is_not_correct(
         self,
     ) -> None:
@@ -219,10 +216,10 @@ class TestAlpha3(unittest.TestCase):
             self.n_layers,
             self.axis_embedding,
             observables,
-            output_probabilities=False,
+            output_probabilities=True,
         )
         with self.assertRaises(ValueError):
-            alpha_3_model = alpha_3(
+            alpha_4_model = alpha_4(
                 self.vectors,
                 self.labels_one_hot_encoding,
                 self.n_classes,
@@ -235,14 +232,13 @@ class TestAlpha3(unittest.TestCase):
                 "cpu",
                 self.seed,
                 self.init_qubits,
-                self.init_mlp,
             )
 
-    def test_model_raises_error_if_out_probabilities_true_in_circuit(
+    def test_model_raises_error_if_out_probabilities_false_in_circuit(
         self,
     ) -> None:
         """
-        Test that the model raises an error if output_probabilities = True
+        Test that the model raises an error if output_probabilities = False
         in the circuit.
         """
         circuit = self.ansatz(
@@ -250,10 +246,10 @@ class TestAlpha3(unittest.TestCase):
             self.n_layers,
             self.axis_embedding,
             self.observables,
-            output_probabilities=True,
+            output_probabilities=False,
         )
         with self.assertRaises(ValueError):
-            alpha_3_model = alpha_3(
+            alpha_4_model = alpha_4(
                 self.vectors,
                 self.labels_one_hot_encoding,
                 self.n_classes,
@@ -266,7 +262,35 @@ class TestAlpha3(unittest.TestCase):
                 "cpu",
                 self.seed,
                 self.init_qubits,
-                self.init_mlp,
+            )
+
+    def test_model_raises_error_if_not_enough_observables(self) -> None:
+        """
+        Test that the model raises an error if log2(n_measured_qubits)
+        is less than the number of classes in our dataset.
+        """
+        observables = {0: qml.PauliZ}
+        circuit = self.ansatz(
+            self.vector_length,
+            self.n_layers,
+            self.axis_embedding,
+            observables,
+            output_probabilities=False,
+        )
+        with self.assertRaises(ValueError):
+            alpha_4_model = alpha_4(
+                self.vectors,
+                self.labels_one_hot_encoding,
+                self.n_classes,
+                circuit,
+                self.optimiser,
+                self.epochs,
+                self.batch_size,
+                torch.nn.CrossEntropyLoss,
+                {"lr": self.lr},
+                "cpu",
+                self.seed,
+                self.init_qubits,
             )
 
     def test_loss_values_are_floats(self) -> None:
@@ -318,7 +342,7 @@ class TestAlpha3(unittest.TestCase):
 
     def test_probs_add_up_to_one(self) -> None:
         """
-        Test that the probabilities add up to one.
+        Test that the predicitons are integers.
         """
         for i, probs in enumerate([self.probs_train, self.probs_val]):
             for j in range(len(probs)):
