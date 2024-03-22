@@ -1,253 +1,329 @@
-import pandas as pd 
+"""
+PreAlpha2
+=========
+Module containing the class for PreAlpha2 model, 
+which classifies sentences using lambeq sofware.
+"""
+import pickle 
+from typing import Callable
+
 import lambeq
-import numpy as np
-import discopy
-import torch
-torch.set_num_threads(40)
-import pickle
+import torch 
 
 
 class PreAlpha2:
     """
-    A class to implement the lambeq version of pre-alpha
+    A class to implement sentence classification 
+    using lambeq library.
     """
-
-    @staticmethod
-    def load_dataset(
-        dataset : str  
-    ) -> list[list[str],list[list[int]]]:
+    def __init__(
+        self, sentences : list[list[str]],
+        labels : list[list[int]],
+        n_classes : int,
+        ansatz : lambeq.ansatz.CircuitAnsatz,
+        n_qubits_noun : int,
+        n_qubits_sentence : int,
+        n_layers : int,
+        n_single_qubits_params : int,
+        optimiser : torch.optim.Optimizer,
+        epochs : int,
+        batch_size : int,
+        loss_function : Callable = None, 
+        optimiser_args : dict = {'lr' : 0.001},
+        device : int = -1,
+        seed : int = 30031935
+    )-> None:
         """
-        Loads the chosen dataset as pandas dataframe.
+        Initialise the pre_alpha_2 class.
 
         Parameters
         ----------
-        dataset : str
-            Directory where the dataset is stored
-
-        Returns
-        -------
-        sentences : list[str]
-            List with the sentences of the dataset
-        labels: list[list[int]]
-            List with the labels of the dataset.
-            [1, 0] False, and [0, 1] True
-        """
-        df = pd.read_csv(
-            dataset, sep='\t+',
-            header=None, names=['label', 'sentence', 'structure_tilde'],
-            engine='python'
-        )
-        labels = []
-        sentences = df['sentence'].tolist()
-
-        for i in range(df.shape[0]):
-            if df['label'].iloc[i] == 1:
-                labels.append([0,1])
-            else:
-                labels.append([1,0])
-
-        return sentences, labels
-
-    @staticmethod
-    def create_diagrams(
-        data : list[str],
-    ) -> list[discopy.rigid.Diagram]:
-        """
-        Creates diagrams for the sentences in our dataset and 
-        simplifies them, removing the unnecesary cups
-
-        Parameters
-        ----------
-        data : list[str]
-            List with the sentences of the dataset
-
-        Returns
-        -------
-        diagrams : list[discopy.rigid.Diagram]
-            A list containing the simplified diagrams
-        """
-        parser = lambeq.BobcatParser()
-        raw_diagrams = parser.sentences2diagrams(data)
-        diagrams = [
-            lambeq.remove_cups(diagram) for diagram in raw_diagrams]
-        return diagrams
-    
-    def save_diagrams(
-        diagrams : list[discopy.rigid.Diagram],
-        path : str, name : str
-    ) -> None:
-        """
-        Saves the diagrams as a pickle object in a chosen path 
-
-        Parameters
-        ----------
-        diagrams : list[discopy.rigid.Diagram]
-            List with the discopy diagrams we want to save
-        path : str
-            Path where we want to save the diagrams as pickle objects
-        name : str
-            Name to give to stored diagrams
-        """
-        with open(path + name + '.pickle', 'wb') as file:
-            pickle.dump(diagrams, file)
-        
-    @staticmethod    
-    def create_circuits(
-        diagrams : list[discopy.rigid.Diagram],
-        ansatz : str = 'IQP', qn : int = 1, qs : int = 1, 
-        n_layers : int = 1,
-        n_single_qubits_params : int = 3,
-    ) -> list[discopy.quantum.circuit.Circuit]:
-        """
-        Creates quantum circuits from the train and test diagrams
-
-        Parameters
-        ----------
-        diagrams : list[discopy.rigid.Diagram]
-            List with our discopy diagrams
-        ansatz : str , default : IQP
-            Type of ansatz to use on our quantum circuits (IQP, Sim14, Sim15,
-            StronglyEntangling)
-        qn : int , default : 1
-            Number of qubits assigned to NOUN type
-        qs : int , default : 1
-            Number of qubits assigned to SENTENCE type
-        n_layers : int , default : 1
-            Number of layers in the circuit
-        n_single_qubit_params : int , default : 3
-            Number of variational parameters assigned to each qubit
-
-        Returns
-        -------
-        circuits : list[discopy.quantum.circuit.Circuit]
-            A list containing the quantum circuits
-        """
-        if ansatz == "IQP":
-            ansatz = lambeq.IQPAnsatz(
-                {lambeq.AtomicType.NOUN: qn, lambeq.AtomicType.SENTENCE: qs},
-                n_layers=n_layers,
-                n_single_qubit_params=n_single_qubits_params
-                )
-        elif ansatz == "Sim14":
-            ansatz = lambeq.Sim14Ansatz(
-                {lambeq.AtomicType.NOUN: qn, lambeq.AtomicType.SENTENCE: qs},
-                n_layers=n_layers,
-                n_single_qubit_params=n_single_qubits_params
-            )
-        elif ansatz == "Sim15":
-            ansatz = lambeq.Sim15Ansatz(
-                {lambeq.AtomicType.NOUN: qn, lambeq.AtomicType.SENTENCE: qs},
-                n_layers=n_layers,
-                n_single_qubit_params=n_single_qubits_params
-                )
-        elif ansatz == "StronglyEntangling":
-            ansatz = lambeq.StronglyEntanglingAnsatz(
-                {lambeq.AtomicType.NOUN: qn, lambeq.AtomicType.SENTENCE: qs},
-                n_layers=n_layers,
-                n_single_qubit_params=n_single_qubits_params
-            )
-        circuits = [
-            ansatz(diagram) for diagram in diagrams
-        ]
-
-        return circuits
-
-    @staticmethod
-    def create_dataset(
-        circuits : list[discopy.quantum.circuit.Circuit],
-        labels : list[list[int]], batch_size : int
-    ) -> lambeq.Dataset:
-        """
-        Creates a Dataset class for the training of the lambeq model
-
-        Parameters
-        ----------
-        circuits : list[discopy.quantum.circuit.Circuit]
-            List containing quantum circuits
+        sentences : list[list[str]]
+            List with the train, validation and test sentences.
         labels : list[list[int]]
-            List containing our labels
-        batch_size : int
-            batch size to be used in fitting 
-        Returns
-        -------
-        dataset : lambeq.Dataset
-            A lambeq dataset that can be used for training 
-        """
-        dataset = lambeq.Dataset(
-            circuits, labels, batch_size
-        )
-        return dataset
-   
-    @staticmethod
-    def create_model(
-        all_circuits : list[discopy.quantum.circuit.Circuit]
-    ) -> lambeq.PennyLaneModel:
-        """
-        Creates a model that can be used for training
-
-        Parameters
-        ----------
-        all_circuits : list[discopy.quantum.circuit.Circuit]
-            List with both training and testing circuits.
-        Returns
-        -------
-        model : lambeq.training
-            Model that can be use in training 
-        """
-        model = lambeq.PennyLaneModel.from_diagrams(
-            all_circuits
-        )
-        return model
-
-    @staticmethod    
-    def create_trainer(
-        model : lambeq.PennyLaneModel, loss_function : torch.nn.functional,
-        optimiser : torch.optim.Optimizer, epochs : int,
-        evaluate_functions : dict ,learning_rate : float = 0.001,
-        optimizer_args : dict = None, seed : int = 18051967,
-        device : int = -1
-        ) -> lambeq.QuantumTrainer:
-        """
-        Creates a lambeq trainer 
-
-        Parameters
-        ----------
-        model : lambeq.PennyLaneModel
-            Model to be used in training
-        loss_function : torch.nn.functional
-            Loss function to be used in training
-        optimizer : torch.optim.Optimizer
-            Optimizer to be used in training
+            List with the train, validation and test labels.
+        n_classes : int
+            Total number of classes in our datasets.
+        n_qubits_noun : int
+            Number of qubits per noun type.
+        n_qubits_sentence : int
+            Number of qubits per sentence type.
+        n_layers : int
+            Number of layers of the circuits.
+        n_single_qubit_params : int
+            Number of rotations per single qubit.
+        optimiser : torch.optim.Optimizer
+            Optimiser to use for training the model.
         epochs : int
-            Epochs to be performed in optimization
-        learning_rate : float, default : 0.001
-            Learning rate provided to the optimizer
-        optimizer_args : dict, default : None
-            Optional arguments to be passed to the optimizer
-        seed : int, default : 18051967
-            Seed used in the optimizer
-
-        Returns
-        -------
-        trainer : lambeq.QuantumTrainer
-            A lambeq trainer for our set of sentences. 
-        """
-        trainer = lambeq.PytorchTrainer(
-        model = model,
-        loss_function = loss_function,
-        epochs = epochs,
-        evaluate_functions = evaluate_functions , 
-        optimizer = optimiser,
-        learning_rate = learning_rate,
-        optimizer_args = optimizer_args,
-        seed=seed,
-        device = device
+            Number of epochs to be done in training. 
+        batch_size : int
+            Batch size to use in training.
+        loss_function : Callable
+            Loss function to use in training. If None,
+            a class default method (cross_entropy_loss_wrapper)
+            defined in the class will be used. If other function
+            is chosen, a wrapper similar to the one 
+            in cross_entropy_loss_wrapper should be applied 
+            to the cost function.
+        optimiser_args : dict
+            Optional arguments for the optmiser. 
+        device : int
+            CUDA device ID used for tensor operation speed-up.
+            -1 will use the CPU.
+        seed : int
+            Random seed for generating the initial parameters. 
+        """    
+        if n_classes > 2 ** n_qubits_sentence:
+            raise ValueError(
+                "Base 2 logarithm of the number of sentence qubits"\
+                "must be greater than the number of classes.")
+        self.sentences_train = sentences[0]
+        self.sentences_val = sentences[1]
+        self.sentences_test = sentences[2]
+        self.labels_train = labels[0]
+        self.labels_val = labels[1]
+        self.labels_test = labels[2]
+        self.n_classes = n_classes
+        self.n_qubits_sentence = n_qubits_sentence
+        self.ansatz = ansatz(
+            {
+                lambeq.AtomicType.NOUN : n_qubits_noun,
+                lambeq.AtomicType.SENTENCE : n_qubits_sentence
+            },
+            n_layers = n_layers,
+            n_single_qubit_params = n_single_qubits_params
         )
-        return trainer
+        self.optimiser = optimiser
+        self.epochs = epochs
+        self.batch_size = batch_size
+        if loss_function == None:
+            self.loss_function = self.cross_entropy_loss_wrapper()
+        else:
+            self.loss_function = loss_function
+        self.optimiser_args = optimiser_args
+        self.device = device
+        self.seed = seed
 
-
-    @staticmethod
-    def post_selected_output(
-        model, circuits):
-        return model.get_diagram_output(circuits)
+    def cross_entropy_loss_wrapper(self)-> None:
+        """
+        Wrapper for computing the cross entropy loss.
+        """
+        def cross_entropy_loss(y_hat,y):
+            y_hat = self.reshape_output_lambeq_model(y_hat)
+            entropies = y * torch.log(y_hat)
+            loss = -torch.sum(entropies)/len(y)
+            return loss, y_hat
+        return cross_entropy_loss
     
+    def reshape_output_lambeq_model(
+        self, probs : torch.tensor, epsilon : float = 1e-13
+    )-> None:
+        """
+        Reshape the probabilities ouput from a lambeq circuit
+        so that it has the correct shape to be input in the 
+        cross_entropy function. It also clips the vector so that
+        no overflow is found in the logarithms. 
+
+        Parameters
+        ----------
+        probs : torch.tensor
+            Tensor with probabilities output from a lambeq circuit.
+        epsilon : float
+            Value to clip x with.
+        """
+        probs = probs.view(probs.shape[0], 2 ** self.n_qubits_sentence)
+        probs = probs[:,:self.n_classes]
+        probs = torch.nn.functional.normalize(probs, p=1)
+        probs = torch.clip(probs, epsilon, 1 - epsilon)
+        return probs
+            
+    def create_diagrams(
+        self, kwargs_parser : dict = {}, kwargs_diagrams : dict = {}
+    )-> None:
+        """
+        Create train, validation and test sentence diagrams. 
+
+        Parameters
+        ----------
+        kwargs_parser : dict
+            Dictionary with keyword arguments for a lambeq.BobcatParser object.
+        kwargs_diagrams : dict
+            Dictionary with keyword arguments for the method converting the
+            sentences to diagrams. 
+        """
+        parser = lambeq.BobcatParser(**kwargs_parser)
+        self.diagrams_train = parser.sentences2diagrams(
+            self.sentences_train, **kwargs_diagrams
+        )
+        self.diagrams_val = parser.sentences2diagrams(
+            self.sentences_val, **kwargs_diagrams
+        )
+        self.diagrams_test = parser.sentences2diagrams(
+            self.sentences_test, **kwargs_diagrams
+        )
+
+    def save_diagrams(self, filename : str, filepath : str)-> None:
+        """
+        Save the diagrams in a given path. It must be called after having
+        created the diagrams. 
+
+        Parameters
+        ----------
+        filename : str
+            Name of the file where to save the diagrams. 
+        filepath : str
+            Path where to save the diagrams to. 
+        """
+        diagrams = [
+            self.diagrams_train, self.diagrams_val, self.diagrams_test
+        ]
+        for i, dataset in enumerate(('train', 'val', 'test')):
+            with open(
+                filepath + filename + f'_{dataset}.pickle', 'wb') as file:
+                pickle.dump(diagrams[i], file)
+
+    def load_diagrams(self, filename : str, filepath : str)-> None:
+        """
+        Load the diagrams from a given path and assigns them as instance
+        attributes.
+
+        Parameters
+        ----------
+        filename : str
+            Name of the file where to save the diagrams. 
+        filepath : str
+            Path where to save the diagrams to. 
+        """
+        diagrams = []
+        for dataset in ('train', 'val', 'test'):
+            with open(
+                filepath + filename + f'_{dataset}.pickle', 'rb') as file:
+                dg = pickle.load(file)
+                diagrams.append(dg)
+        self.diagrams_train = diagrams[0]
+        self.diagrams_val = diagrams[1]
+        self.diagrams_test = diagrams[2]
+
+    def create_circuits(self)-> None:
+        """
+        Create train, validation and test lambeq circuits.
+        """
+        self.circuits_train = [
+            self.ansatz(diagram) for diagram in self.diagrams_train
+        ]
+        self.circuits_val = [
+            self.ansatz(diagram) for diagram in self.diagrams_val
+        ]
+        self.circuits_test = [
+            self.ansatz(diagram) for diagram in self.diagrams_test
+        ]
+    
+    def create_dataset(self)-> None:
+        """
+        Create train, validation and test lambeq datasets.
+        """
+        self.dataset_train = lambeq.Dataset(
+            self.circuits_train, self.labels_train,
+            self.batch_size, shuffle = False
+        )
+        self.dataset_val = lambeq.Dataset(
+            self.circuits_val, self.labels_val,
+            self.batch_size, shuffle = False
+        )
+        self.dataset_test = lambeq.Dataset(
+            self.circuits_test, self.labels_test,
+            self.batch_size, shuffle = False
+        )
+
+    def create_model(self, backend_config : dict = None)-> None:
+        """
+        Create lambeq pennylane model. 
+
+        Parameters
+        ----------
+        backend_config : dict
+            Configuration for hardware simulator to be used. If None, uses
+            default.qubit Pennylane simulator analitically, with normalized
+            outputs.
+        """
+        if backend_config == None:
+            self.model = lambeq.PennyLaneModel.from_diagrams(
+                self.circuits_train + self.circuits_val + self.circuits_test
+            )
+        else:
+            self.model = lambeq.PennyLaneModel.from_diagrams(
+                self.circuits_train + self.circuits_val + self.circuits_test,
+                backend_config
+            )
+
+    def create_trainer(self, kwargs)-> None:
+        """
+        Create lambeq trainer. 
+
+        Parameters
+        ----------
+        kwargs : dict
+            Keyword arguments for lambeq.PytorchTrainer object.
+        """
+        self.trainer = lambeq.PytorchTrainer(
+            model = self.model, loss_function = self.loss_function, 
+            epochs = self.epochs, optimizer = self.optimiser,
+            device = self.device, optimizer_args = self.optimiser_args,
+            seed = self.seed, **kwargs
+        )
+
+    def fit(
+        self, kwargs_parser : dict = {}, kwargs_diagrams : dict = {},
+        kwargs_trainer : dict  = {}, backend_config : dict = None
+    )-> None:
+        """
+        Create diagrams, circuits, datasets, model, trainer. 
+        After that fit the trainer with train and val datasets.
+
+        Parameters
+        ----------
+        kwargs_parser : dict
+            Dictionary with keyword arguments for a lambeq.BobcatParser object.
+        kwargs_diagrams : dict
+            Dictionary with keyword arguments for the method converting the
+            sentences to diagrams. 
+        kwargs_trainer : dict
+            Keyword arguments for lambeq.PytorchTrainer object.
+        backend_config : dict
+            Configuration for hardware simulator to be used. If None, uses
+            default.qubit Pennylane simulator analitically, with normalized
+            outputs.
+        """
+        self.create_diagrams(kwargs_parser, kwargs_diagrams)
+        self.create_circuits()
+        self.create_dataset()
+        self.create_model(backend_config)
+        self.create_trainer(kwargs_trainer)
+        self.trainer.fit(
+            self.dataset_train, self.dataset_val)
+        self.loss_train = self.trainer.train_epoch_costs
+        self.loss_val = self.trainer.val_costs
+        
+    def compute_probabilities(self)-> None:
+        """
+        Compute train, validation and test probabilities.
+        """
+        self.probs_train = self.trainer.train_probabilities
+        self.probs_val =  self.trainer.val_probabilities       
+        probs_test_raw = self.model.get_diagram_output(self.circuits_test)
+        self.probs_test = self.reshape_output_lambeq_model(probs_test_raw)
+        self.probs_test = self.probs_test.tolist()
+    
+    def compute_predictions(self)-> None:
+        """
+        Compute train, validation and test predictions.
+        """
+        self.preds_train = self.trainer.train_predictions
+        self.preds_val = self.trainer.val_predictions
+        self.preds_test = []
+        for i in range(len(self.probs_test)):
+            self.preds_test.append(self.probs_test[i].index(max(self.probs_test[i])))
+
+
+
+

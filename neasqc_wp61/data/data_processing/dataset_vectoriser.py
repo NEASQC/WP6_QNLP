@@ -74,7 +74,7 @@ def main():
     the vectorise function with this input..
     '''
     parser = argparse.ArgumentParser()
-    parser.add_argument("dataset", help="the filename of your dataset")
+    parser.add_argument("-d","--dataset", help="the filename of your dataset")
     parser.add_argument("-e","--embedding", required=True, help="choice of embedding (sentence or word)", type=str)
 
     args = parser.parse_args()
