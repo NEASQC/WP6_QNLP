@@ -40,8 +40,9 @@ nltk = "^3.8.1"
 torchvision = "==0.15.2"
 pennylane = "^0.31.0"
 plotly = "^5.15.0"
-parameterized = "^0.9.0"
-umap-learn = "^0.5.5"
+parameterized = ">=0.9.0"
+sentence-transformers = "^2.2.2"
+umap-learn = "|^0.5.5"
 pyclustering = "^0.10.1.2"
 
 [tool.poetry.group.docs]
