@@ -25,8 +25,10 @@ from utils import Dataset
 
 class NewAlphaModel(ABC, torch.nn.Module):
     """
-    A class to implement Alpha3 class, which implements a classifier
-    using a circuit with a post-processing linear layer.
+    An abstract class to implement the new Alpha models, Alpha 3 and
+    Alpha 4, which are structurally very similar. New models that
+    exploit this structure can be developed as children classes of this
+    class.
     """
 
     def __init__(
@@ -42,7 +44,6 @@ class NewAlphaModel(ABC, torch.nn.Module):
         optimiser_args: dict = {},
         device: str = "cpu",
         seed: int = 1906,
-        circuit_params_initialisation: torch.nn.init = None,
     ) -> None:
         """
         Initialise the alpha3 class.
@@ -81,9 +82,6 @@ class NewAlphaModel(ABC, torch.nn.Module):
         circuit_params_initialisation : torch.nn.init
             Function to be used to initialise circuit
             optimisable parameters.
-        mlp_params_initialisation : torch.nn.init
-            Function to be used to initialise post-processing
-            layer optimisable parameters (weights and biases).
         """
         torch.manual_seed(seed)
         super().__init__()
@@ -124,6 +122,11 @@ class NewAlphaModel(ABC, torch.nn.Module):
         ----------
         sentence_tensors : torch.tensor
             Sentence tensors to be input to the model.
+
+        Returns
+        -------
+        torch.tensor
+            The output of the model.
         """
         raise NotImplementedError(
             "Subclasses must implement the forward method."
@@ -139,6 +142,11 @@ class NewAlphaModel(ABC, torch.nn.Module):
         ----------
         sentence_tensors : torch.tensor
             Sentence tensors to be input to the model.
+
+        Returns
+        -------
+        torch.tensor
+            The output probabilities of the model.
         """
         raise NotImplementedError(
             "Subclasses must implement the compute_probs method."
@@ -165,7 +173,7 @@ class NewAlphaModel(ABC, torch.nn.Module):
 
     def train(self) -> None:
         """
-        Train the model.
+        Trains the model.
         """
         loss_train_val = [[], []]
         preds_train_val = [[], []]
@@ -212,9 +220,8 @@ class NewAlphaModel(ABC, torch.nn.Module):
 
     def compute_preds_probs_test(self) -> None:
         """
-        Once the model is trained,
-        compute the predictions and probabilities for each
-        epoch for the test dataset.
+        Once the model is trained, compute the predictions and
+        probabilities for each epoch for the test dataset.
         """
         self.preds_test = []
         self.probs_test = []
@@ -232,7 +239,10 @@ class NewAlphaModel(ABC, torch.nn.Module):
 
 
 class Alpha3(NewAlphaModel):
-    """ """
+    """
+    A class for the Alpha3 model, a classifier using a circuit with a
+    post-processing linear layer.
+    """
 
     def __init__(
         self,
@@ -250,7 +260,18 @@ class Alpha3(NewAlphaModel):
         circuit_params_initialisation: torch.nn.init = None,
         mlp_params_initialisation: torch.nn.init = None,
     ) -> None:
-        """ """
+        """
+        Initialises the Alpha3 class with the attributes specified in
+        the abstrac class, as well as:
+
+        circuit_params_initialisation : torch.nn.init
+            Function to be used to initialise circuit optimisable
+            parameters (default: None).
+        mlp_params_initialisation : torch.nn.init
+            Function to be used to initialise post-processing layer
+            optimisable parameters, i.e. weights and biases (default:
+            None).
+        """
         super().__init__(
             sentence_vectors,
             labels,
@@ -263,7 +284,6 @@ class Alpha3(NewAlphaModel):
             optimiser_args,
             device,
             seed,
-            circuit_params_initialisation,
         )
         self.n_outputs_quantum_circuit = len(self.circuit.observables.keys())
         if self.circuit.output_probabilities == True:
@@ -330,7 +350,10 @@ class Alpha3(NewAlphaModel):
 
 
 class Alpha4(NewAlphaModel):
-    """ """
+    """
+    A class for the Alpha4 model, a classifier based on the output
+    probabilities of a quantum circuit.
+    """
 
     def __init__(
         self,
@@ -347,6 +370,14 @@ class Alpha4(NewAlphaModel):
         seed: int = 1906,
         circuit_params_initialisation: torch.nn.init = None,
     ) -> None:
+        """
+        Initialises the Alpha4 class with the attributes specified in
+        the abstrac class, as well as:
+
+        circuit_params_initialisation : torch.nn.init
+            Function to be used to initialise circuit optimisable
+            parameters (default: None).
+        """
         super().__init__(
             sentence_vectors,
             labels,
@@ -381,7 +412,7 @@ class Alpha4(NewAlphaModel):
             quantum_node, weight_shapes, circuit_params_initialisation
         )
 
-    def forward(self, sentence_tensors: torch.tensor) -> None:
+    def forward(self, sentence_tensors: torch.tensor) -> torch.tensor:
         """
         Compute the output of the network for a a tensor containing a
         number of sentence vectors equal to the batch size.
@@ -400,7 +431,7 @@ class Alpha4(NewAlphaModel):
 
         Returns
         -------
-        circuit_output: torch.tensor
+        circuit_output_trimmed: torch.tensor
             The output of the model, which is trimmed to ensure its
             dimension is equal to the number of classes.
         """
