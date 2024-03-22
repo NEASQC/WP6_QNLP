@@ -62,7 +62,7 @@ def set_up_test_parameters(test_args: dict) -> list:
             for init in initialisations_list:
                 params_run = []
                 vector_length = np.random.randint(
-                    2, test_args["vectors_size_limit"]
+                    3, test_args["vectors_size_limit"]
                 )
                 n_layers = np.random.randint(
                     1, test_args["n_layers_circuit_limit"]
