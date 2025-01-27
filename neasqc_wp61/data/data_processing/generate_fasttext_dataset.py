@@ -3,7 +3,7 @@ import fasttext as ft
 import fasttext.util as ftu
 
 # Load the dataframe
-df = pd.read_csv("../datasets/agnews_balanced_test.csv")
+df = pd.read_csv("../datasets/agnews_balanced_test.csv", sep='\t')
 
 # Rename the "text" column to "sentence"
 # df.rename(columns={"text": "sentence"}, inplace=True)
@@ -30,4 +30,4 @@ for embedding in embeddings:
 
 df["reduced_embedding"] = out_embeddings
 
-df.to_csv("../datasets/agnews_balanced_test_ft.csv", index=False)
+df.to_csv("../datasets/agnews_balanced_test_ft.csv", sep='\t', index=False)

@@ -2,12 +2,60 @@ import os
 import random
 import numpy as np
 import torch
+import json
 import pandas as pd
 from sklearn import preprocessing
 from sklearn.decomposition import PCA
 import ast
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader
+from sklearn.preprocessing import LabelEncoder
 
+class EmbeddingDataset(Dataset):
+    """Bert Embedding dataset."""
+
+    def __init__(self, X, Y):
+        self.X = X
+        self.Y = Y
+
+    def __len__(self):
+        return len(self.X)
+
+    def __getitem__(self, idx):
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+
+        # Convert features and labels to tensors
+        feature = torch.tensor(self.X.iloc[idx], dtype=torch.float)
+        label = torch.tensor(self.Y.iloc[idx], dtype=torch.long)
+        return feature, label
+
+def load_json_data(file_path):
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    return data
+
+def extract_features_labels(data):
+    X = [item['sentence_vectorized'][0] for item in data]
+    Y = [item['class'] for item in data]
+    return X, Y
+
+def encode_labels(Y):
+    if isinstance(Y[0], str):
+        le = LabelEncoder()
+        Y_encoded = le.fit_transform(Y)
+        return Y_encoded, le
+    else:
+        return Y, None
+
+def create_pandas_series(X, Y):
+    X_series = pd.Series(X)
+    Y_series = pd.Series(Y)
+    return X_series, Y_series
+
+def create_dataloader(X, Y, batch_size=32, shuffle=True):
+    dataset = EmbeddingDataset(X, Y)
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
+    return dataloader
 
 def seed_everything(seed: int):
     random.seed(seed)
@@ -143,7 +191,7 @@ def preprocess_train_test_dataset_for_beta_2(
     test_csv_file,
 ):
     """
-    Preprocess function for the dataset for the alpha 3 model
+    Preprocess function for the dataset for the beta 2 model
     """
 
     df_dataset = pd.read_csv(dataset_csv_file)
@@ -269,59 +317,3 @@ def preprocess_train_test_dataset_for_beta_3(
     )
 
     return X_train, X_val, X_test, y_train, y_val, y_test
-
-
-def preprocess_train_test_dataset_for_beta_2_3_tests(
-    train_csv_file, test_csv_file
-):
-    """
-    Preprocess function for the dataset for the alpha 3 model
-    """
-    df_train = pd.read_csv(train_csv_file)
-    df_test = pd.read_csv(test_csv_file)
-    # df_dummy = pd.read_csv(dummy_csv_file)
-
-    df_train["reduced_embedding"] = df_train["reduced_embedding"].apply(eval)
-    df_test["reduced_embedding"] = df_test["reduced_embedding"].apply(eval)
-    # df_dummy['sentence_embedding'] = np.array([np.fromstring(embedding.strip(' []'), sep=',') for embedding in df_test['sentence_embedding']]).tolist()
-
-    enc = preprocessing.OneHotEncoder(handle_unknown="ignore")
-    enc.fit(df_train["class"].append(df_test["class"]).values.reshape(-1, 1))
-
-    df_train["class"] = (
-        enc.transform(df_train["class"].values.reshape(-1, 1))
-        .toarray()
-        .tolist()
-    )
-    df_test["class"] = (
-        enc.transform(df_test["class"].values.reshape(-1, 1))
-        .toarray()
-        .tolist()
-    )
-    # df_dummy['class'] = enc.transform(df_dummy['class'].values.reshape(-1, 1)).toarray().tolist()
-
-    X_train, y_train, X_test, y_test = (
-        df_train["reduced_embedding"],
-        df_train["class"],
-        df_test["reduced_embedding"],
-        df_test["class"],
-    )
-
-    return X_train, X_test, y_train, y_test
-
-
-class BertEmbeddingDataset(Dataset):
-    """Bert Embedding dataset."""
-
-    def __init__(self, X, Y):
-        self.X = X
-        self.Y = Y
-
-    def __len__(self):
-        return len(self.X)
-
-    def __getitem__(self, idx):
-        if torch.is_tensor(idx):
-            idx = idx.tolist()
-
-        return torch.tensor(self.X.iloc[idx]), torch.tensor(self.Y.iloc[idx])

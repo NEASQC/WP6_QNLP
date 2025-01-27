@@ -23,12 +23,6 @@ parser = argparse.ArgumentParser()
 # To chose the model
 
 parser.add_argument(
-    "-m",
-    "--model",
-    help="Model to be ran - either beta_2_tests or beta_3_tests",
-    type=str,
-)
-parser.add_argument(
     "-op", "--optimiser", help="Choice of torch optimiser.", type=str
 )
 parser.add_argument(
@@ -45,13 +39,20 @@ parser.add_argument("-r", "--runs", help="Number of runs", type=int, default=1)
 parser.add_argument(
     "-dat",
     "--dataset",
-    help="Directory of the full dataset, from which train and val subsets are extracted.",
+    help="Path of the train dataset.",
     type=str,
+)
+parser.add_argument(
+    "-va",
+    "--valid",
+    help="Path of the valid dataset",
+    type=str,
+    default="../datasets/multiclass/reviews_filtered_test_sentence_bert.csv",
 )
 parser.add_argument(
     "-te",
     "--test",
-    help="Directory of the test dataset",
+    help="Path of the test dataset",
     type=str,
     default="../datasets/multiclass/reviews_filtered_test_sentence_bert.csv",
 )
@@ -111,24 +112,23 @@ def main(args):
     seed_list = random.sample(range(1, int(2**32 - 1)), int(args.runs))
 
     model_name = "beta_2_3_tests"
+    
+    ds = {"input_args": {"runs": 30,"iterations": 100},
+            "best_val_acc": 0,
+            "best_run": 0,
+            "time": [],
+            "train_acc": [],
+            "train_loss": [],
+            "val_acc": [],
+            "val_loss": [],
+            "test_acc": [],
+            "test_loss": []}
 
-    all_training_loss_list = []
-    all_training_acc_list = []
-    all_test_loss_list = []
-    all_test_acc_list = []
-
-    all_prediction_list = []
-    all_time_list = []
-
-    all_best_model_state_dict = []
-
-    best_test_acc_all_runs = 0
+    best_valid_acc_all_runs = 0
     best_run = 0
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
 
-    # Create the JsonOutputer object
-    json_outputer = JsonOutputer(model_name, timestr, args.output)
 
     num_completed_runs = 0
     num_runs_left = args.runs - num_completed_runs
@@ -146,6 +146,7 @@ def main(args):
             i,
             args.iterations,
             args.dataset,
+            args.valid,
             args.test,
             seed_list[i + num_completed_runs],
             args.n_qubits,
@@ -160,43 +161,49 @@ def main(args):
         (
             training_loss_list,
             training_acc_list,
-            test_loss_list,
-            test_acc_list,
-            best_test_acc,
+            valid_loss_list,
+            valid_acc_list,
+            best_valid_acc,
             best_model,
         ) = trainer.train()
+        
+        ds["train_acc"].append(training_acc_list)
+        ds["train_loss"].append(training_loss_list)
+        ds["val_acc"].append(valid_acc_list)
+        ds["val_loss"].append(valid_loss_list)
+        
+        
 
         t_after = time.time()
         print("Time taken for this run = ", t_after - t_before, "\n")
         time_taken = t_after - t_before
+        ds["time"].append(time_taken)
 
         prediction_list = trainer.predict().tolist()
 
-        # test_loss, test_acc = trainer.compute_test_logs(best_model)
-        if best_test_acc > best_test_acc_all_runs:
-            best_test_acc_all_runs = best_test_acc
+        test_loss, test_acc = trainer.compute_test_logs(best_model)
+        
+        ds["test_acc"].append(test_acc)
+        ds["test_loss"].append(test_loss)
+        if best_valid_acc > best_valid_acc_all_runs:
+            best_valid_acc_all_runs = best_valid_acc
             best_run = i + num_completed_runs
+            ds["best_val_acc"] = best_valid_acc_all_runs
 
-        # Save the results of each run in a json file
-        json_outputer.save_json_output_run_by_run(
-            args,
-            prediction_list,
-            time_taken,
-            best_test_acc=best_test_acc_all_runs,
-            best_run=best_run,
-            seed_list=seed_list[i + num_completed_runs],
-            test_acc=test_acc_list,
-            test_loss=test_loss_list,
-            train_acc=training_acc_list,
-            train_loss=training_loss_list,
-        )
+        if len(valid_acc_list) < ds["input_args"]["iterations"]:
+            ds["input_args"]["iterations"] = len(valid_acc_list)
+
+        if not os.path.exists(args.output):
+            os.makedirs(args.output)
 
         model_path = os.path.join(
             args.output,
             f"{model_name}_{timestr}_run_{i + num_completed_runs}.pt",  # CHANGED FOR CHECKPOINT
         )
         torch.save(best_model, model_path)
-
+        trainer.save_label_encoder(model_path + ".label_encoder.pkl")
+        with open(f"{args.output}/results.json", "w", encoding="utf-8") as f:
+            json.dump(ds, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
     args = parser.parse_args()

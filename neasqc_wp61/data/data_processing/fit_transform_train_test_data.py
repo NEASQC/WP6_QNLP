@@ -5,8 +5,8 @@ import numpy as np
 # Load the datasets
 train_path = "./data/datasets/agnews_balanced_bert.csv"
 test_path = "./data/datasets/agnews_balanced_test_bert.csv"
-train_df = pd.read_csv(train_path)
-test_df = pd.read_csv(test_path)
+train_df = pd.read_csv(train_path, sep='\t')
+test_df = pd.read_csv(test_path, sep='\t')
 
 # Ensure the sentence embeddings are in the correct format (list of floats)
 train_df["sentence_embedding"] = train_df["sentence_embedding"].apply(eval)
@@ -29,10 +29,10 @@ test_df["reduced_embedding"] = X_test_reduced.tolist()
 
 # Save the updated datasets
 train_df.to_csv(
-    "./data/datasets/agnews_balanced_bert_train_pca_tests.csv", index=False
+    "./data/datasets/agnews_balanced_bert_train_pca_tests.csv", sep='\t', index=False
 )
 test_df.to_csv(
-    "./data/datasets/agnews_balanced_bert_test_pca_tests.csv", index=False
+    "./data/datasets/agnews_balanced_bert_test_pca_tests.csv", sep='\t', index=False
 )
 
 print("Transformation complete and files saved.")

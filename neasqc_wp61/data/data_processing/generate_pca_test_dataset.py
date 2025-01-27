@@ -3,9 +3,9 @@ from sklearn.decomposition import PCA
 import numpy as np
 
 #NOTE: input file on which to FIT goes here
-df_train = pd.read_csv("../datasets/agnews_balanced_train_sentence_bert.csv")
+df_train = pd.read_csv("../datasets/agnews_balanced_train_sentence_bert.csv", sep='\t')
 #NOTE: input file on which to apply the TRANSFORM goes here
-df_test = pd.read_csv("../datasets/agnews_balanced_test_sentence_bert.csv")
+df_test = pd.read_csv("../datasets/agnews_balanced_test_sentence_bert.csv", sep='\t')
 
 # Convert the string representation to actual lists of embeddings
 df_train["sentence_embedding"] = df_train["sentence_embedding"].apply(eval)
@@ -25,7 +25,7 @@ df_test["reduced_embedding"] = reduced_embeddings_test.tolist()
 df_train["reduced_embedding"] = reduced_embeddings_train.tolist()
 
 #NOTE: desired output file directory/location goes here
-df_test.to_csv("../datasets/agnews_balanced_test_bert_pca.csv", index=False)
-df_train.to_csv("../datasets/agnews_balanced_train_bert_pca.csv", index=False)
+df_test.to_csv("../datasets/agnews_balanced_test_bert_pca.csv", sep='\t', index=False)
+df_train.to_csv("../datasets/agnews_balanced_train_bert_pca.csv", sep='\t', index=False)
 
 

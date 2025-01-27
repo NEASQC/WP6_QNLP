@@ -14,9 +14,7 @@ def vectorise(dataset, embedding):
     and from it, builds a corresponding dataset with the chosen embedding for
     each sentence.
     """
-    dftrain = pd.read_csv(dataset)
-    # dftrain = dftrain.drop(columns=[2])
-    # dftrain.columns = ['class', 'sentence']
+    dftrain = pd.read_csv(dataset, sep='\t', header=None, usecols=[0, 1], names=['class','sentence'], dtype=str)
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
     bert_model = BertModel.from_pretrained("bert-base-uncased")
 
@@ -49,7 +47,7 @@ def vectorise(dataset, embedding):
 
         dftrain["sentence_embedding"] = sentence_embedding_list
         dftrain.to_csv( #NOTE: change desired output file name?
-            directory + "/" + file_name.split(".")[0] + "_sentence_bert.csv",
+            directory + "/" + file_name.split(".")[0] + "_sentence_bert.tsv", sep='\t',
             index=False,
         )
         print("Done!")
@@ -79,8 +77,8 @@ def vectorise(dataset, embedding):
         dftrain["sentence_vectorized"] = sentence_embedding_list
         dftrain.to_csv(
             os.path.join(
-                directory, file_name.split(".")[0] + "_word_bert.csv"
-            ),
+                directory, file_name.split(".")[0] + "_word_bert.tsv"
+            ), sep='\t',
             index=False,
         )
         print("Done!")
